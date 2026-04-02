@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './profile-page.component.scss',
 })
 export class ProfilePageComponent {
-  // Мокові дані користувача
+
   user = {
     firstName: 'Іван',
     lastName: 'Іванов',

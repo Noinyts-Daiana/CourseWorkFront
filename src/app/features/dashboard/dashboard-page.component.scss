@@ -1,4 +1,4 @@
-﻿/* Розбиваємо нижню частину на дві колонки */
+﻿
 .dashboard-bottom {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -25,7 +25,7 @@
   }
 }
 
-/* --- Швидкі дії --- */
+
 .actions-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -61,7 +61,7 @@
       color: #374151;
     }
 
-    /* Ховер ефект (робимо кнопку трохи блакитною) */
+
     &:hover {
       background: #EFF6FF;
       border-color: #BFDBFE;
@@ -70,7 +70,7 @@
   }
 }
 
-/* --- Системні сповіщення --- */
+
 .notifications-list {
   display: flex;
   flex-direction: column;
@@ -107,7 +107,7 @@
   }
 }
 
-/* Темна кнопка для модалки звіту */
+
 .btn-dark {
   background-color: #111827;
   color: white;
@@ -120,26 +120,26 @@
   &:hover { background-color: #374151; }
 }
 
-/* Додай це до інших тем у stat-card.component.scss */
-:host(.green) .card-container, /* Або як у тебе називається головний клас обгортки */
+
+:host(.green) .card-container,
 .theme-green {
-  background-color: #ECFDF5; /* Світло-м'ятний фон */
+  background-color: #ECFDF5;
   border: 1px solid #D1FAE5;
 
   .icon-box {
-    color: #059669; /* Темно-зелена іконка */
+    color: #059669;
     background-color: white;
   }
 
   .stat-title {
-    color: #065F46; /* Темно-зелений текст заголовка */
+    color: #065F46;
   }
 
   .stat-value {
-    color: #064E3B; /* Найтемніший зелений для цифр */
+    color: #064E3B;
   }
 
   .watermark {
-    color: rgba(16, 185, 129, 0.05); /* Ледве помітний зелений водяний знак */
+    color: rgba(16, 185, 129, 0.05);
   }
 }

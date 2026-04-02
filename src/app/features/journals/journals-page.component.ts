@@ -13,11 +13,10 @@ import { ModalComponent } from '../../shared/components/modal/modal.component';
 export class JournalsPageComponent {
   isAddModalOpen = false;
 
-  // Змінна для перемикання вкладок
   activeTab: 'feeding' | 'finance' | 'users' = 'feeding';
   selectedTypeForAdd: 'feeding' | 'finance' | 'users' = 'feeding';
 
-  // Дані для Журналу годувань
+
   feedingLogs = [
     {
       time: '08:00',
@@ -37,7 +36,7 @@ export class JournalsPageComponent {
     },
   ];
 
-  // Дані для Фінансових транзакцій
+
   financeLogs = [
     {
       date: '25.10.2023',

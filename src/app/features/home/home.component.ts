@@ -1,6 +1,6 @@
 ﻿import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router'; // Додаємо роутер для переходу в адмінку
+import { Router } from '@angular/router';
 import { ModalComponent } from '../../shared/components/modal/modal.component';
 
 @Component({

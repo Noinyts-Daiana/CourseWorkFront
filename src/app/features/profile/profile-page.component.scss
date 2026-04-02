@@ -1,7 +1,7 @@
-﻿/* Загальна структура */
+﻿
 .page-container {
   padding: 32px;
-  max-width: 1200px; /* Звужуємо сторінку, щоб форми не були занадто довгими */
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -13,7 +13,7 @@
 
 .profile-grid {
   display: grid;
-  grid-template-columns: 320px 1fr; /* Ліва колонка фіксована, права займає решту */
+  grid-template-columns: 320px 1fr;
   gap: 32px;
 }
 
@@ -27,9 +27,6 @@
   gap: 24px;
 }
 
-/* ========================================= */
-/* ЛІВА КОЛОНКА (Картки)                     */
-/* ========================================= */
 .summary-card {
   background: white;
   border-radius: 20px;
@@ -47,7 +44,7 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 40px; color: #3B82F6;
     margin-bottom: 16px;
-    border: 4px solid #DBEAFE; /* Красива обводка аватара */
+    border: 4px solid #DBEAFE;
   }
 
   h2 { margin: 0 0 8px 0; font-size: 20px; color: #111827; }
@@ -73,7 +70,6 @@
   }
 }
 
-/* Синя картка рівня доступу */
 .access-card {
   background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
   color: white;
@@ -90,15 +86,12 @@
     position: absolute;
     right: -20px; bottom: -30px;
     font-size: 120px;
-    opacity: 0.1; /* Напівпрозорий щит на фоні */
+    opacity: 0.1;
     z-index: 1;
     pointer-events: none;
   }
 }
 
-/* ========================================= */
-/* ПРАВА КОЛОНКА (Форми)                     */
-/* ========================================= */
 .form-card {
   background: white;
   border-radius: 20px;

@@ -11,13 +11,10 @@ import { ModalComponent } from '../../shared/components/modal/modal.component';
   styleUrl: './animals-page.component.scss',
 })
 export class AnimalsPageComponent {
-  // Стейт для модалки додавання
   isAddModalOpen = false;
 
-  // Стейт для обраної тварини (для детальної картки)
   selectedAnimal: any = null;
 
-  // 🔥 ДОДАЙ ОСЬ ЦЕЙ РЯДОК:
   isEditMode = false;
 
   animals = [
@@ -55,9 +52,7 @@ export class AnimalsPageComponent {
     this.isEditMode = false;
   }
 
-  // Метод для збереження змін (поки просто вимикає режим редагування)
   saveChanges() {
-    // В реальному проєкті тут був би запит на сервер
     this.isEditMode = false;
   }
 }

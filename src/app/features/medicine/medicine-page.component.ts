@@ -14,10 +14,8 @@ export class MedicinePageComponent {
   isVaccineModalOpen = false;
   selectedRecord: any = null;
 
-  // 🔥 НОВА ЗМІННА ДЛЯ Вкладок
-  activeTab: 'vaccines' | 'exams' = 'exams'; // За замовчуванням відкриті "Огляди"
+  activeTab: 'vaccines' | 'exams' = 'exams';
 
-  // Дані для оглядів (залишаються як були)
   medicalRecords = [
     {
       patientName: 'Рекс',
@@ -35,7 +33,6 @@ export class MedicinePageComponent {
     },
   ];
 
-  // 🔥 НОВІ ДАНІ для списку вакцин
   vaccineRecords = [
     {
       patientName: 'Барон',

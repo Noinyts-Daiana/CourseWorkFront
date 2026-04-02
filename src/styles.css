@@ -15,30 +15,27 @@ body {
   font-family: 'Nunito', sans-serif;
   background-color: var(--bg-color);
   color: var(--dark-text);
-  /*overflow: hidden; /* 🔥 Прибираємо подвійний скрол браузера */
 }
 
 html {
   scroll-behavior: smooth;
 }
 
-/* --- ГЛОБАЛЬНИЙ ЛЕЙАУТ АДМІНКИ --- */
 .app-layout {
   display: flex;
-  height: 100vh; /* 🔥 Фіксована висота екрану */
+  height: 100vh;
   background-color: var(--bg-color);
-  overflow: hidden; /* 🔥 Блокуємо зайву прокрутку */
+  overflow: hidden;
 }
 
 .main-content {
   flex: 1;
   height: 100vh;
-  overflow-y: auto; /* 🔥 Скрол тільки всередині контенту */
-  padding-bottom: 40px; /* Повітря знизу, щоб контент не прилипав до екрану */
+  overflow-y: auto;
+  padding-bottom: 40px;
   position: relative;
 }
 
-/* --- СТОРІНКИ --- */
 .page-container {
   padding: 32px;
   max-width: 1200px;
@@ -48,13 +45,12 @@ html {
 .page-header {
   display: flex;
   justify-content: space-between;
-  align-items: center; /* 🔥 Змінили з flex-start на center */
+  align-items: center;
   margin-bottom: 24px;
 
-  h1 { margin: 0 0 4px; font-size: 28px; color: #111827; } /* Трохи менший відступ знизу */
+  h1 { margin: 0 0 4px; font-size: 28px; color: #111827; }
   p { margin: 0; color: #6B7280; }
 }
-/* Сітка для карток тварин */
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -63,12 +59,10 @@ html {
 
 .stats-row {
   display: grid;
-  /* Міняємо на 4 колонки, щоб усі картки стали в один рядок */
   grid-template-columns: repeat(4, 1fr);
   gap: 24px;
 }
 
-/* Адаптивність залишаємо, щоб на ноутбуках і телефонах воно красиво складалося */
 @media (max-width: 1400px) {
   .stats-row { grid-template-columns: repeat(2, 1fr); }
 }
@@ -76,13 +70,12 @@ html {
 @media (max-width: 768px) {
   .stats-row { grid-template-columns: 1fr; }
 }
-/* --- МОДАЛЬНІ ВІКНА ТА ФОРМИ --- */
 .modal-header h2 { margin: 0 0 8px; font-size: 20px; }
 .modal-header p { margin: 0 0 24px; color: #6B7280; font-size: 14px; }
 
 .form-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Дві однакові колонки */
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
   margin-bottom: 24px;
 }
@@ -100,7 +93,7 @@ html {
   }
 
   input, select {
-    box-sizing: border-box; /* 🔥 Забороняє полям вилазити за межі форми */
+    box-sizing: border-box;
     width: 100%;
     padding: 12px 14px;
     border: 1px solid #D1D5DB;
@@ -148,10 +141,10 @@ html {
 }
 
 .btn-primary, .btn-secondary, .btn-outline, .btn-pink, .btn-purple {
-  display: inline-flex; /* 🔥 Робимо флексом */
-  align-items: center;  /* 🔥 Центруємо іконку і текст по вертикалі */
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  gap: 8px;            /* Відступ між іконкою та текстом */
+  gap: 8px;
   padding: 10px 24px;
   border-radius: 12px;
   font-weight: 600;
@@ -162,7 +155,6 @@ html {
   border: none;
 }
 
-/* --- ДЕТАЛЬНА КАРТКА ТВАРИНИ (МОДАЛКА) --- */
 .detail-header-card {
   display: flex;
   gap: 16px;
@@ -226,10 +218,9 @@ html {
 
 app-modal { pointer-events: none; }
 
-/* --- Стилі для блоків статистики всередині модалки --- */
 .detail-stats-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Робимо дві колонки */
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
   margin: 24px 0;
 }
@@ -268,14 +259,12 @@ app-modal { pointer-events: none; }
       font-weight: 600;
     }
 
-    /* Якщо це блок з попередженням (мінімальний поріг) */
     &.warning {
       .value, .unit { color: #CA8A04; }
     }
   }
 }
 
-/* --- Секція швидких дій --- */
 .actions-section {
   margin-top: 24px;
 
@@ -296,9 +285,8 @@ app-modal { pointer-events: none; }
   }
 }
 
-/* --- Кнопки для розділу Медицина (Рожеві) --- */
 .btn-pink {
-  background-color: #E11D48; /* Яскравий малиново-рожевий */
+  background-color: #E11D48;
   color: white;
   padding: 10px 24px;
   border-radius: 12px;
@@ -326,7 +314,6 @@ app-modal { pointer-events: none; }
   &:hover { background-color: #FFF1F2; }
 }
 
-/* Світло-рожева кнопка "Деталі" на картках */
 .btn-outline-pink-light {
   background-color: #FFF1F2;
   color: #E11D48;
@@ -341,7 +328,6 @@ app-modal { pointer-events: none; }
   &:hover { background-color: #FFE4E6; }
 }
 
-/* Поле textarea для діагнозів */
 .form-textarea {
   box-sizing: border-box;
   width: 100%;
@@ -350,7 +336,7 @@ app-modal { pointer-events: none; }
   border-radius: 8px;
   font-size: 14px;
   font-family: inherit;
-  resize: vertical; /* Дозволяє тягнути за куточок тільки вниз */
+  resize: vertical;
   outline: none;
   transition: border-color 0.2s;
 
@@ -358,9 +344,8 @@ app-modal { pointer-events: none; }
 }
 
 
-/* --- Кнопки для розділу Журнали (Фіолетові) --- */
 .btn-purple {
-  background-color: #A855F7; /* Фіолетовий колір */
+  background-color: #A855F7;
   color: white;
   padding: 10px 24px;
   border-radius: 12px;
@@ -391,7 +376,6 @@ app-modal { pointer-events: none; }
   &:hover { background-color: #F3F4F6; }
 }
 
-/* Жовтий бейдж для тексту в таблиці (як тип корму) */
 .badge-yellow-light {
   background-color: #FEF9C3;
   color: #854D0E;
@@ -402,7 +386,6 @@ app-modal { pointer-events: none; }
   display: inline-block;
 }
 
-/* --- Стилі для сторінки Користувачів --- */
 .badge-purple-light {
   background-color: #F3E8FF;
   color: #7E22CE;
@@ -432,7 +415,6 @@ app-modal { pointer-events: none; }
   &.inactive { background-color: #9CA3AF; }
 }
 
-/* Кнопка тексту (для "Деактивувати") */
 .btn-text-danger {
   background: transparent;
   color: #DC2626;

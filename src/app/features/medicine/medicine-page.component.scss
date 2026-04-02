@@ -1,4 +1,4 @@
-﻿/* --- Верхня панель пошуку та фільтрів --- */
+﻿
 .filter-bar {
   display: flex;
   justify-content: space-between;
@@ -62,7 +62,7 @@
   }
 }
 
-/* --- Список медичних записів --- */
+
 .records-list {
   display: flex;
   flex-direction: column;
@@ -130,7 +130,7 @@
   }
 }
 
-/* Вирівнювання тексту по центру для карток статистики в модалці */
+
 .align-center {
   align-items: center;
   text-align: center;
@@ -138,11 +138,11 @@
   padding: 24px 16px;
 }
 
-/* Додай це до існуючих стилів, якщо ще немає */
+
 .btn-outline-pink {
   background: white;
-  color: #E11D48; /* Рожевий текст */
-  border: 1px solid #FDA4AF; /* Світло-рожева рамка */
+  color: #E11D48;
+  border: 1px solid #FDA4AF;
   padding: 10px 20px;
   border-radius: 10px;
   font-weight: 600;
@@ -152,7 +152,7 @@
   transition: all 0.2s;
 
   &:hover {
-    background: #FFF1F2; /* Легкий рожевий фон при наведенні */
+    background: #FFF1F2;
     border-color: #FB7185;
   }
 }

@@ -1,4 +1,4 @@
-﻿/* --- Shared Buttons --- */
+﻿
 .btn-primary, .btn-secondary, .btn-outline {
   padding: 12px 24px;
   border-radius: 8px;
@@ -28,7 +28,7 @@
   &:hover { background-color: #E0E7FF; }
 }
 
-/* --- Header --- */
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -52,7 +52,7 @@
   }
 }
 
-/* --- Hero Section --- */
+
 .hero {
   display: flex;
   align-items: center;
@@ -98,13 +98,12 @@
     position: relative;
     width: 50%;
     height: 400px;
-    /* Тут можна додати стилі для блакитної підложки та позіціонування картинок */
     background: #EBF4FF;
     border-radius: 40px;
   }
 }
 
-/* --- Pets Grid Section --- */
+
 .pets-section {
   padding: 60px 5%;
   background: white;
@@ -182,7 +181,7 @@
   }
 }
 
-/* --- Footer --- */
+
 .footer {
   background: var(--footer-bg);
   color: white;
@@ -193,12 +192,12 @@
   .made-with-love { color: #D1D5DB; }
 }
 
-/* --- Блакитна плашка обраної тварини --- */
+
 .selected-pet-card {
   display: flex;
   align-items: center;
   gap: 16px;
-  background-color: #EFF6FF; /* Світло-блакитний фон */
+  background-color: #EFF6FF;
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 24px;
@@ -213,7 +212,7 @@
     align-items: center;
     justify-content: center;
     font-size: 24px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Легка тінь як на макеті */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
 
   .pet-info {
@@ -234,9 +233,9 @@
   }
 }
 
-/* --- Синя кнопка "Надіслати заявку" --- */
+
 .btn-primary-blue {
-  background-color: #2563EB; /* Насичений синій */
+  background-color: #2563EB;
   color: white;
   padding: 10px 24px;
   border-radius: 12px;
@@ -257,9 +256,9 @@
 }
 
 
-/* --- СЕКЦІЯ "ЯК ДОПОМОГТИ" --- */
+
 .help-section {
-  background-color: #FEFCE8; /* Світло-жовтий колір фону */
+  background-color: #FEFCE8;
   padding: 80px 5%;
   font-family: 'Nunito', sans-serif;
 }
@@ -304,7 +303,7 @@
     align-items: center;
     gap: 20px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
-    border: 1px solid #FEF08A; /* Легка жовтувата рамка */
+    border: 1px solid #FEF08A;
     transition: transform 0.2s;
 
     &:hover {
@@ -369,7 +368,7 @@
   }
 }
 
-/* Нахилена картинка */
+
 .help-visual {
   flex: 1;
   display: flex;
@@ -378,18 +377,18 @@
 
   .image-wrapper {
     position: relative;
-    transform: rotate(3deg); /* Легкий нахил */
+    transform: rotate(3deg);
     transition: transform 0.3s ease;
 
     &:hover {
-      transform: rotate(0deg); /* Вирівнюється при наведенні */
+      transform: rotate(0deg);
     }
 
     img {
       width: 100%;
       max-width: 500px;
       border-radius: 24px;
-      border: 12px solid white; /* Біла рамка як фотографія */
+      border: 12px solid white;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
       display: block;
     }
@@ -413,7 +412,7 @@
   }
 }
 
-/* Адаптивність для телефонів */
+
 @media (max-width: 900px) {
   .help-container {
     flex-direction: column;
@@ -424,7 +423,7 @@
   }
 }
 
-/* --- МОДАЛКА АВТОРИЗАЦІЇ --- */
+
 .auth-tabs {
   display: flex;
   border-bottom: 2px solid #F3F4F6;
@@ -442,11 +441,11 @@
     position: relative;
     transition: color 0.2s;
 
-    /* Синя лінія знизу для активного таба */
+
     &::after {
       content: '';
       position: absolute;
-      bottom: -2px; /* Накладається на сірий бордер батька */
+      bottom: -2px;
       left: 0;
       width: 100%;
       height: 2px;
@@ -465,7 +464,7 @@
 
 .btn-full-blue {
   width: 100%;
-  background-color: #2563EB; /* Яскраво-синій */
+  background-color: #2563EB;
   color: white;
   padding: 14px;
   border-radius: 12px;
@@ -481,7 +480,7 @@
 }
 
 .demo-warning-box {
-  background-color: #FEF9C3; /* Світло-жовтий */
+  background-color: #FEF9C3;
   border: 1px solid #FEF08A;
   border-radius: 12px;
   padding: 16px;

@@ -11,5 +11,5 @@ import { CommonModule } from '@angular/common';
 export class StatCardComponent {
   @Input() title: string = '';
   @Input() value: string | number = '';
-  @Input() theme: 'blue' | 'pink' | 'yellow' | 'green' = 'blue'; // Синя за замовчуванням
+  @Input() theme: 'blue' | 'pink' | 'yellow' | 'green' = 'blue';
 }

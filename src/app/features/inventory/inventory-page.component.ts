@@ -11,7 +11,7 @@ import { ModalComponent } from '../../shared/components/modal/modal.component';
   styleUrl: './inventory-page.component.scss',
 })
 export class InventoryPageComponent {
-  isAddModalOpen = false; // Має бути false!
+  isAddModalOpen = false;
 
   inventoryItems = [
     {
@@ -40,11 +40,10 @@ export class InventoryPageComponent {
     },
   ];
 
-  isIncomeModalOpen = false; // Модалка "Прибуття"
-  isExpenseModalOpen = false; // Модалка "Списання"
-  selectedItem: any = null; // Обраний товар для операції
+  isIncomeModalOpen = false;
+  isExpenseModalOpen = false;
+  selectedItem: any = null;
 
-  // Функції для відкриття модалок з конкретним товаром
   openIncomeModal(item: any) {
     this.selectedItem = item;
     this.isIncomeModalOpen = true;

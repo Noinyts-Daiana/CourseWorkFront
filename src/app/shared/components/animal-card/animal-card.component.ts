@@ -17,6 +17,5 @@ export class AnimalCardComponent {
   @Input() isSterilized: boolean = false;
   @Input() animalType: string = 'dog';
 
-  // Заглушка для іконки, поки не підключиш реальні картинки
   iconPath = '';
 }

@@ -1,4 +1,4 @@
-﻿/* --- Кнопки для Інвентарю --- */
+﻿
 .btn-warning {
   background-color: #FACC15;
   color: #854D0E;
@@ -49,7 +49,7 @@
   &:hover { background-color: #FEE2E2; }
 }
 
-/* Картка обраного товару всередині модалки */
+
 .selected-item-card {
   display: flex;
   align-items: center;
@@ -76,7 +76,7 @@
   }
 }
 
-/* Спеціальне поле вводу з текстом "шт" всередині */
+
 .input-with-suffix {
   position: relative;
   display: flex;
@@ -84,7 +84,7 @@
 
   input {
     width: 100%;
-    padding: 12px 48px 12px 16px; /* Залишаємо місце справа для тексту "шт" */
+    padding: 12px 48px 12px 16px;
     border-radius: 12px;
     font-size: 15px;
     outline: none;
@@ -97,24 +97,24 @@
     color: #4B5563;
     font-weight: 700;
     font-size: 14px;
-    pointer-events: none; /* Щоб клік проходив крізь текст на інпут */
+    pointer-events: none;
   }
 
-  /* Зелений бордер для приходу */
+
   &.input-green input {
     border: 1px solid #10B981;
     &:focus { box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
   }
 
-  /* Червоний бордер для списання */
+
   &.input-red input {
     border: 1px solid #EF4444;
-    color: #EF4444; /* Колір тексту як на скріншоті */
+    color: #EF4444;
     &:focus { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1); }
   }
 }
 
-/* Нові кнопки */
+
 .btn-green {
   background: #10B981; color: white;
   padding: 12px 24px; border-radius: 12px;

@@ -13,7 +13,6 @@ export class UsersPageComponent {
   isAddModalOpen = false;
   selectedUser: any = null;
 
-  // Мокові дані для карток
   users = [
     {
       name: 'Олена Петрівна',

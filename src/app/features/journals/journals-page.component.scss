@@ -1,12 +1,12 @@
-﻿/* Обгортка для таблиці та вкладок */
+﻿
 .table-card {
   background: white;
   border-radius: 16px;
   border: 1px solid #F3F4F6;
-  overflow: hidden; /* Щоб краї таблиці не вилазили за заокруглення */
+  overflow: hidden;
 }
 
-/* Навігація вкладок */
+
 .tabs-nav {
   display: flex;
   background: #F9FAFB;
@@ -35,7 +35,6 @@
   }
 }
 
-/* Сама таблиця */
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -59,12 +58,12 @@
     vertical-align: middle;
   }
 
-  /* Останній рядок без нижньої рамки */
+
   tr:last-child td { border-bottom: none; }
 
   .fw-bold { font-weight: 700; color: #111827; }
 
-  /* Стилі для конкретних клітинок */
+
   .time-cell {
     color: #6B7280;
     .icon { margin-right: 6px; }
@@ -90,7 +89,7 @@
 .form-select-main {
   width: 100%;
   padding: 14px;
-  border: 2px solid #F3E8FF; /* Світло-фіолетовий бордюр */
+  border: 2px solid #F3E8FF;
   border-radius: 12px;
   font-size: 16px;
   font-weight: 600;
@@ -98,7 +97,7 @@
   background-color: #FAF5FF;
   outline: none;
   cursor: pointer;
-  appearance: none; /* Прибираємо стандартну стрілку браузера */
+  appearance: none;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237C3AED' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 14px center;
