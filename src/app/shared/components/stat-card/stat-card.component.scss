@@ -1,0 +1,61 @@
+﻿.stat-card {
+  position: relative;
+  padding: 24px;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 220px;
+  border: 1px solid transparent;
+
+  /* Декоративна іконка на фоні */
+  .watermark-icon {
+    position: absolute;
+    right: -10%;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.1;
+    font-size: 120px;
+  }
+
+  .icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    font-size: 24px;
+  }
+
+  .stat-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .stat-value {
+    margin: 0;
+    font-size: 36px;
+    font-weight: 800;
+  }
+
+  /* --- Теми кольорів --- */
+  &.blue {
+    background: #EBF4FF;
+    .stat-title, .stat-value, .icon-wrapper { color: #1C5BFF; }
+  }
+
+  &.pink {
+    background: #FDF2F8;
+    .stat-title, .stat-value, .icon-wrapper { color: #DB2777; }
+  }
+
+  &.yellow {
+    background: #FEF9C3;
+    border-color: #FEF08A;
+    .stat-title, .stat-value, .icon-wrapper { color: #CA8A04; }
+  }
+}

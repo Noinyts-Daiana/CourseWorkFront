@@ -1,0 +1,139 @@
+﻿/* --- Верхня панель пошуку та фільтрів --- */
+.filter-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  background: white;
+  padding: 12px 16px;
+  border-radius: 16px;
+  border: 1px solid #F3F4F6;
+
+  .search-box {
+    position: relative;
+    width: 300px;
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9CA3AF;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 10px 10px 36px;
+      border: 1px solid #E5E7EB;
+      border-radius: 12px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+
+      &:focus { border-color: #E11D48; }
+    }
+  }
+
+  .filter-toggles {
+    display: flex;
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 4px;
+    gap: 4px;
+
+    .toggle-btn {
+      padding: 6px 16px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: #6B7280;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &.active {
+        background: #FFF1F2;
+        color: #E11D48;
+      }
+    }
+  }
+}
+
+/* --- Список медичних записів --- */
+.records-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.record-row {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #F3F4F6;
+  padding: 24px;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  }
+
+  .record-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+
+    .avatar {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      &.pink-bg { background: #FFF1F2; color: #E11D48; }
+    }
+
+    .info {
+      flex: 1;
+      h3 { margin: 0 0 4px; font-size: 18px; color: #111827; }
+      .date { margin: 0; font-size: 14px; color: #6B7280; }
+    }
+
+    .stats-mini {
+      display: flex;
+      gap: 16px;
+      .stat {
+        background: #F8FAFC;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        display: flex; align-items: center; gap: 6px;
+      }
+    }
+  }
+
+  .record-notes {
+    background: #F9FAFB;
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #F3F4F6;
+
+    .notes-content {
+      strong { font-size: 13px; color: #4B5563; display: block; margin-bottom: 6px; }
+      p { margin: 0; font-size: 14px; color: #111827; }
+    }
+  }
+}
+
+/* Вирівнювання тексту по центру для карток статистики в модалці */
+.align-center {
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  padding: 24px 16px;
+}

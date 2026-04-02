@@ -1,0 +1,132 @@
+﻿<div class="page-container">
+  <header class="page-header">
+    <div>
+      <h1>Медичні записи</h1>
+      <p>Історія оглядів та вакцинацій</p>
+    </div>
+    <button class="btn-pink" (click)="isAddModalOpen = true">
+      + Новий огляд
+    </button>
+  </header>
+
+  <div class="filter-bar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="Пошук пацієнта...">
+    </div>
+    <div class="filter-toggles">
+      <button class="toggle-btn">Вакцинації</button>
+      <button class="toggle-btn active">Огляди</button>
+    </div>
+  </div>
+
+  <div class="records-list">
+    @for (record of medicalRecords; track record.patientName) {
+      <div class="record-row">
+        <div class="record-header">
+          <div class="avatar pink-bg">🩺</div>
+          <div class="info">
+            <h3>{{ record.patientName }}</h3>
+            <p class="date">📄 Огляд від {{ record.date }}</p>
+          </div>
+          <div class="stats-mini">
+            <span class="stat" style="color: #EA580C;">🌡️ {{ record.temp }}°C</span>
+            <span class="stat" style="color: #2563EB;">⚖️ {{ record.weight }} кг</span>
+          </div>
+        </div>
+
+        <div class="record-notes">
+          <div class="notes-content">
+            <strong>Нотатки лікаря:</strong>
+            <p>{{ record.notes }}</p>
+          </div>
+          <button class="btn-outline-pink-light" (click)="selectedRecord = record">
+            Деталі
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (isAddModalOpen) {
+    <app-modal (close)="isAddModalOpen = false">
+      <div class="modal-header">
+        <h2>Додати медичний огляд</h2>
+        <p>Заповніть результати огляду тварини.</p>
+      </div>
+
+      <form class="modal-form">
+        <div class="form-group">
+          <label>Пацієнт (Тварина)</label>
+          <select><option>Оберіть тварину...</option></select>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Дата огляду</label>
+            <input type="date">
+          </div>
+          <div class="form-group">
+            <label>Температура (°C)</label>
+            <input type="number" placeholder="38.5" step="0.1">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Вага під час огляду (кг)</label>
+          <input type="number" placeholder="Введіть вагу">
+        </div>
+        <div class="form-group">
+          <label>Нотатки лікаря / Діагноз</label>
+          <textarea rows="4" class="form-textarea" placeholder="Введіть результати огляду, призначення тощо"></textarea>
+        </div>
+
+        <div class="form-actions" style="margin-top: 24px;">
+          <button type="button" class="btn-secondary" (click)="isAddModalOpen = false">Скасувати</button>
+          <button type="button" class="btn-pink">Зберегти огляд</button>
+        </div>
+      </form>
+    </app-modal>
+  }
+
+  @if (selectedRecord) {
+    <app-modal (close)="selectedRecord = null">
+      <div class="modal-header" style="margin-bottom: 24px;">
+        <h2>Картка медичного огляду</h2>
+      </div>
+
+      <div class="detail-header-card" style="background: #FFF1F2;">
+        <div class="avatar pink-bg" style="background: #FFE4E6; color: #E11D48;">🩺</div>
+        <div class="info">
+          <h3>Пацієнт: {{ selectedRecord.patientName }}</h3>
+          <p style="margin: 0; color: #6B7280; font-size: 14px;">📅 {{ selectedRecord.date }}</p>
+        </div>
+      </div>
+
+      <div class="detail-stats-grid">
+        <div class="stat-box align-center">
+          <div style="color: #EA580C; font-size: 28px; margin-bottom: 8px;">🌡️</div>
+          <span class="label">ТЕМПЕРАТУРА</span>
+          <span class="value">{{ selectedRecord.temp }}°C</span>
+        </div>
+        <div class="stat-box align-center">
+          <div style="color: #2563EB; font-size: 28px; margin-bottom: 8px;">⚖️</div>
+          <span class="label">ВАГА</span>
+          <span class="value">{{ selectedRecord.weight }} кг</span>
+        </div>
+      </div>
+
+      <div class="notes-section" style="margin-top: 24px;">
+        <h4 style="font-size: 14px; color: #111827; margin: 0 0 12px; display: flex; align-items: center; gap: 8px;">
+          📄 Висновок ветеринара
+        </h4>
+        <div style="background: #F8FAFC; border: 1px solid #E5E7EB; border-radius: 12px; padding: 16px; color: #4B5563; font-size: 14px; min-height: 100px;">
+          {{ selectedRecord.notes }}
+        </div>
+      </div>
+
+      <div class="form-actions" style="margin-top: 32px; justify-content: space-between;">
+        <button type="button" class="btn-secondary">🕒 Історія пацієнта</button>
+        <button type="button" class="btn-outline-pink">✏️ Редагувати</button>
+      </div>
+    </app-modal>
+  }
+</div>

@@ -1,0 +1,35 @@
+﻿<div class="animal-card">
+  <div class="card-header">
+    <div class="avatar" [ngClass]="animalType === 'cat' ? 'cat-bg' : 'dog-bg'">
+      <span style="font-size: 24px;">{{ animalType === 'cat' ? '🐱' : '🐶' }}</span>
+    </div>
+    <div class="info">
+      <div class="name-row">
+        <h3>{{ name }}</h3>
+        <span class="gender-badge" [ngClass]="gender === 'Хлопчик' ? 'boy' : 'girl'">
+          {{ gender }}
+        </span>
+      </div>
+      <p class="breed">{{ breed }}</p>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="stat-row">
+      <span class="label">Вага:</span>
+      <span class="value">{{ weight }} кг</span>
+    </div>
+    <div class="stat-row">
+      <span class="label">Дата народження:</span>
+      <span class="value">{{ dob }}</span>
+    </div>
+    <div class="stat-row">
+      <span class="label">Стерилізація:</span>
+      <span class="value" [class.success]="isSterilized" [class.neutral]="!isSterilized">
+        {{ isSterilized ? 'Так' : 'Ні' }}
+      </span>
+    </div>
+
+    <button class="btn-outline" style="margin-top: 16px;">Деталі</button>
+  </div>
+</div>

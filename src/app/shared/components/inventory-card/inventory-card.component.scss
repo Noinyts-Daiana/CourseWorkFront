@@ -1,0 +1,62 @@
+﻿.inventory-card {
+  background: #FFFFFF;
+  border: 1px solid #F3F4F6;
+  border-radius: 16px;
+  padding: 20px;
+  position: relative;
+  transition: all 0.2s;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &.warning-card {
+    border-color: #FDE047; /* Жовта рамка */
+    box-shadow: 0 4px 12px rgba(253, 224, 71, 0.1);
+  }
+
+  .warning-badge {
+    position: absolute;
+    top: -12px; right: 16px;
+    background: #FEF9C3;
+    color: #854D0E;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex; align-items: center; gap: 4px;
+    border: 1px solid #FDE047;
+    .icon { border: 1px solid #854D0E; border-radius: 50%; width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; }
+  }
+
+  .card-header {
+    display: flex; gap: 12px; margin-bottom: 24px; margin-top: 8px;
+    .icon-box {
+      width: 48px; height: 48px; border-radius: 12px; background: #F8FAFC; display: flex; align-items: center; justify-content: center; font-size: 20px;
+      &.warning-icon { background: #FEF9C3; color: #CA8A04; }
+    }
+    .info h3 { margin: 0 0 4px; font-size: 18px; color: #111827; line-height: 1.2; }
+    .info p { margin: 0; font-size: 14px; color: #6B7280; }
+  }
+
+  .stock-info {
+    margin-bottom: 24px; flex: 1;
+    .stock-labels {
+      display: flex; justify-content: space-between; margin-bottom: 8px; align-items: flex-end;
+      .label { font-size: 13px; color: #6B7280; }
+      .value { font-size: 16px; font-weight: 800; color: #111827; }
+      .text-warning { color: #CA8A04; }
+    }
+    .progress-bg {
+      height: 8px; background: #F3F4F6; border-radius: 4px; overflow: hidden; margin-bottom: 8px;
+      .progress-fill { height: 100%; border-radius: 4px; transition: width 0.3s ease; }
+      .fill-success { background: #10B981; } /* Зелений */
+      .fill-warning { background: #FACC15; } /* Жовтий */
+    }
+    .min-label { font-size: 12px; color: #9CA3AF; }
+  }
+
+  .btn-order {
+    width: 100%; padding: 10px; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; color: #374151; font-weight: 600; cursor: pointer; transition: 0.2s;
+    &:hover { background: #F3F4F6; }
+  }
+}

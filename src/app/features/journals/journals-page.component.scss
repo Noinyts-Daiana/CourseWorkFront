@@ -1,0 +1,118 @@
+﻿/* Обгортка для таблиці та вкладок */
+.table-card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #F3F4F6;
+  overflow: hidden; /* Щоб краї таблиці не вилазили за заокруглення */
+}
+
+/* Навігація вкладок */
+.tabs-nav {
+  display: flex;
+  background: #F9FAFB;
+  padding: 12px 24px;
+  gap: 8px;
+  border-bottom: 1px solid #F3F4F6;
+
+  .tab-btn {
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: none;
+    background: transparent;
+    color: #6B7280;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover { color: #111827; }
+
+    &.active {
+      background: white;
+      color: #111827;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+/* Сама таблиця */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+
+  th {
+    padding: 16px 24px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #9CA3AF;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #F3F4F6;
+  }
+
+  td {
+    padding: 20px 24px;
+    font-size: 14px;
+    color: #374151;
+    border-bottom: 1px solid #F3F4F6;
+    vertical-align: middle;
+  }
+
+  /* Останній рядок без нижньої рамки */
+  tr:last-child td { border-bottom: none; }
+
+  .fw-bold { font-weight: 700; color: #111827; }
+
+  /* Стилі для конкретних клітинок */
+  .time-cell {
+    color: #6B7280;
+    .icon { margin-right: 6px; }
+    .date { color: #9CA3AF; font-size: 13px; margin-left: 4px; }
+  }
+
+  .person-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #4B5563;
+
+    .avatar-mini {
+      width: 24px; height: 24px;
+      background: #F3F4F6;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+    }
+  }
+}
+
+.form-select-main {
+  width: 100%;
+  padding: 14px;
+  border: 2px solid #F3E8FF; /* Світло-фіолетовий бордюр */
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #7C3AED;
+  background-color: #FAF5FF;
+  outline: none;
+  cursor: pointer;
+  appearance: none; /* Прибираємо стандартну стрілку браузера */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237C3AED' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px;
+
+  &:focus {
+    border-color: #A855F7;
+    box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1);
+  }
+}
+
+.divider {
+  height: 1px;
+  background: #F3F4F6;
+  margin: 20px 0;
+}
+

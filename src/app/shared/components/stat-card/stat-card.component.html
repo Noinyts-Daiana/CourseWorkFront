@@ -1,0 +1,11 @@
+﻿<div class="stat-card" [ngClass]="theme">
+  <div class="watermark-icon">
+    <ng-content select="[watermark]"></ng-content>
+  </div>
+
+  <div class="icon-wrapper">
+    <ng-content select="[icon]"></ng-content>
+  </div>
+  <p class="stat-title">{{ title }}</p>
+  <h2 class="stat-value">{{ value }}</h2>
+</div>

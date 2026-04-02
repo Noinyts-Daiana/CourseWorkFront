@@ -1,0 +1,135 @@
+﻿<div class="page-container">
+  <header class="page-header">
+    <div>
+      <h1>Користувачі</h1>
+      <p>Управління персоналом та волонтерами</p>
+    </div>
+    <button class="btn-primary" (click)="isAddModalOpen = true">
+      + Додати
+    </button>
+  </header>
+
+  <div class="search-container">
+    <span class="search-icon">🔍</span>
+    <input type="text" class="search-input" placeholder="Пошук за ім'ям або email...">
+  </div>
+
+  <div class="cards-grid">
+    @for (user of users; track user.email) {
+      <div class="user-card" (click)="selectedUser = user">
+        <div class="card-header">
+          <div class="avatar-blue">👤</div>
+          <div class="info">
+            <h3>{{ user.name }}</h3>
+            <p>✉️ {{ user.email }}</p>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="stat-row">
+            <span class="label">РОЛЬ</span>
+            <span [ngClass]="user.role === 'Адміністратор' ? 'badge-purple-light' : 'badge-blue-light'">
+              {{ user.role }}
+            </span>
+          </div>
+          <div class="stat-row">
+            <span class="label">СТАТУС</span>
+            <span class="status-text" [style.color]="user.status === 'Активний' ? '#10B981' : '#9CA3AF'">
+              <span class="status-dot" [ngClass]="user.status === 'Активний' ? 'active' : 'inactive'"></span>
+              {{ user.status }}
+            </span>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (isAddModalOpen) {
+    <app-modal (close)="isAddModalOpen = false">
+      <div class="modal-header">
+        <h2>Додати користувача</h2>
+        <p>Створіть новий обліковий запис для співробітника або волонтера.</p>
+      </div>
+
+      <form class="modal-form">
+        <div class="form-group">
+          <label>ПІБ</label>
+          <input type="text" placeholder="Введіть повне ім'я" required>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" placeholder="name@shelter.com" required>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Роль</label>
+            <select>
+              <option>Працівник</option>
+              <option>Адміністратор</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Пароль (тимчасовий)</label>
+            <input type="password" placeholder="********" required>
+          </div>
+        </div>
+
+        <div class="form-actions" style="margin-top: 32px;">
+          <button type="button" class="btn-secondary" (click)="isAddModalOpen = false">Скасувати</button>
+          <button type="button" class="btn-primary">Створити</button>
+        </div>
+      </form>
+    </app-modal>
+  }
+
+  @if (selectedUser) {
+    <app-modal (close)="selectedUser = null">
+      <div class="modal-header" style="margin-bottom: 24px;">
+        <h2>Профіль користувача</h2>
+      </div>
+
+      <div class="profile-main-card">
+        <div class="avatar-blue large">👤</div>
+        <div class="info">
+          <h3>{{ selectedUser.name }}</h3>
+          <p>✉️ {{ selectedUser.email }}</p>
+        </div>
+      </div>
+
+      <div class="profile-stats-grid">
+        <div class="stat-box">
+          <div class="icon">🛡️</div>
+          <div>
+            <span class="label">ПРАВА ДОСТУПУ</span>
+            <span [ngClass]="selectedUser.role === 'Адміністратор' ? 'badge-purple-light' : 'badge-blue-light'" style="display: inline-block; margin-top: 4px;">
+              {{ selectedUser.role }}
+            </span>
+          </div>
+        </div>
+        <div class="stat-box">
+          <div class="icon">📈</div>
+          <div>
+            <span class="label">СТАТУС</span>
+            <div class="status-text" style="margin-top: 4px; font-weight: 600;" [style.color]="selectedUser.status === 'Активний' ? '#10B981' : '#9CA3AF'">
+              <span class="status-dot" [ngClass]="selectedUser.status === 'Активний' ? 'active' : 'inactive'"></span>
+              {{ selectedUser.status }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="login-history-box">
+        <div class="icon">📅</div>
+        <div>
+          <span class="label">Останній вхід</span>
+          <div class="value">{{ selectedUser.lastLogin }}</div>
+        </div>
+      </div>
+
+      <div class="form-actions" style="margin-top: 32px; justify-content: space-between;">
+        <button type="button" class="btn-text-danger">Деактивувати</button>
+        <button type="button" class="btn-secondary">Редагувати профіль</button>
+      </div>
+    </app-modal>
+  }
+</div>

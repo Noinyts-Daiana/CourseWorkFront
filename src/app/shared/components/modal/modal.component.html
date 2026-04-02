@@ -1,0 +1,10 @@
+﻿<div class="modal-overlay" (click)="onClose($event)">
+
+  <div class="modal-content" (click)="preventClose($event)">
+
+    <button class="close-x" (click)="onClose($event)">✕</button>
+
+    <ng-content></ng-content>
+
+  </div>
+</div>

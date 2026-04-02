@@ -1,0 +1,112 @@
+﻿<div class="page-container">
+  <header class="page-header">
+    <div>
+      <h1>Склад та інвентар</h1>
+      <p>Управління кормами та медикаментами</p>
+    </div>
+    <button class="btn-warning" (click)="isAddModalOpen = true">
+      + Додати позицію
+    </button>
+  </header>
+
+  <div class="cards-grid">
+    @for (item of inventoryItems; track item.title) {
+      <div (click)="selectedItem = item" class="clickable-card">
+        <app-inventory-card
+          [title]="item.title"
+          [brand]="item.brand"
+          [currentStock]="item.currentStock"
+          [minStock]="item.minStock"
+          [unit]="item.unit"
+          [isLowStock]="item.isLowStock">
+        </app-inventory-card>
+      </div>
+    }
+  </div>
+
+  @if (isAddModalOpen) {
+    <app-modal (close)="isAddModalOpen = false">
+      <div class="modal-header">
+        <h2>Додати позицію інвентарю</h2>
+        <p>Заповніть інформацію про новий товар на складі.</p>
+      </div>
+
+      <form class="modal-form">
+        <div class="form-group">
+          <label>Назва</label>
+          <input type="text" placeholder="Наприклад: Сухий корм для собак">
+        </div>
+        <div class="form-group">
+          <label>Бренд</label>
+          <input type="text" placeholder="Наприклад: Royal Canin">
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Одиниця виміру</label>
+            <select><option>Кг</option><option>Шт</option><option>Доза</option></select>
+          </div>
+          <div class="form-group">
+            <label>Поточний залишок</label>
+            <input type="number" placeholder="0">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Мінімальний поріг</label>
+          <input type="text" placeholder="Попереджати, якщо менше ніж...">
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="isAddModalOpen = false">Скасувати</button>
+          <button type="button" class="btn-warning">Зберегти позицію</button>
+        </div>
+      </form>
+    </app-modal>
+  }
+
+  @if (selectedItem) {
+    <app-modal (close)="selectedItem = null">
+      <div class="modal-header" style="margin-bottom: 24px;">
+        <h2>Картка товару</h2>
+      </div>
+
+      <div class="detail-header-card">
+        <div class="avatar" style="background: #FEF9C3; color: #CA8A04;">📦</div>
+        <div class="info">
+          <h3>{{ selectedItem.title }}</h3>
+          <p>{{ selectedItem.brand }}</p>
+        </div>
+      </div>
+
+      <div class="detail-stats-grid">
+        <div class="stat-box">
+          <span class="label">Поточний залишок</span>
+          <div class="value-row">
+            <span class="value">{{ selectedItem.currentStock }}</span>
+            <span class="unit">{{ selectedItem.unit }}</span>
+          </div>
+        </div>
+
+        <div class="stat-box">
+          <span class="label">Мін. поріг</span>
+          <div class="value-row warning">
+            <span class="value">{{ selectedItem.minStock }}</span>
+            <span class="unit">{{ selectedItem.unit }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions-section">
+        <h4 class="section-title">📈 Швидкі дії з балансом</h4>
+        <div class="action-buttons">
+          <button class="btn-action-green">↗ Прихід</button>
+          <button class="btn-action-red">↘ Списання</button>
+        </div>
+      </div>
+
+      <div class="form-actions" style="margin-top: 32px;">
+        <button type="button" class="btn-secondary" (click)="selectedItem = null">Закрити</button>
+        <button type="button" class="btn-outline-yellow">Редагувати</button>
+      </div>
+    </app-modal>
+  }
+</div>

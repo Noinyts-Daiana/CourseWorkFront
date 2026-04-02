@@ -1,0 +1,100 @@
+﻿<header class="header">
+  <div class="logo">
+    <span>ShelterSys</span>
+  </div>
+  <nav class="nav-links">
+    <a href="#pets">Наші тварини</a>
+    <a href="#about">Про нас</a>
+  </nav>
+  <button class="btn-primary login-btn">Вхід для персоналу</button>
+</header>
+
+<section class="hero">
+  <div class="hero-content">
+    <div class="badge">♡ Знайди друга</div>
+    <h1>Подаруй їм дім<br>та свою любов</h1>
+    <p>Наш притулок дбає про тварин, що залишилися без домівки. Оберіть улюбленця, щоб подарувати йому щасливе життя.</p>
+    <div class="hero-actions">
+      <button class="btn-primary">Переглянути тварин</button>
+      <button class="btn-secondary">ⓘ Як допомогти</button>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="blob-bg"></div>
+  </div>
+</section>
+
+<section class="pets-section" id="pets">
+  <div class="section-title">
+    <h2>Чекають на родину</h2>
+    <p>Ці чудові хвостики мріють про люблячих господарів.</p>
+  </div>
+
+  <div class="pets-grid">
+    <div class="pet-card" *ngFor="let pet of pets">
+      <div class="card-img-wrapper">
+        <span class="pet-type-badge">{{ pet.type }}</span>
+      </div>
+      <div class="card-content">
+        <h3>{{ pet.name }}</h3>
+        <p class="breed">{{ pet.breed }}</p>
+        <div class="pet-stats">
+          <span>{{ pet.gender }}</span>
+          <span class="weight">{{ pet.weight }}</span>
+        </div>
+
+        <button class="btn-outline" (click)="openAdoptionModal(pet)">Прихистити →</button>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <section class="about-section" id="about">
+  </section>
+  <p>© 2026 ShelterSys. Всі права захищено.</p>
+  <p class="made-with-love">Створено з любов'ю до тварин ❤️</p>
+</footer>
+
+@if (isAdoptionModalOpen && selectedPetForAdoption) {
+  <app-modal (close)="isAdoptionModalOpen = false">
+    <div class="modal-header">
+      <h2>Заявка на прилаштування</h2>
+      <p>Заповніть анкету, щоб ми могли зв'язатися з вами щодо прилаштування {{ selectedPetForAdoption.name }}.</p>
+    </div>
+
+    <form class="modal-form">
+      <div class="selected-pet-card">
+        <div class="pet-avatar">
+          {{ selectedPetForAdoption.type === 'cat' ? '🐱' : '🐶' }}
+        </div>
+        <div class="pet-info">
+          <span class="label">Ви обрали:</span>
+          <strong>{{ selectedPetForAdoption.name }} ({{ selectedPetForAdoption.breed }})</strong>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Ваше ім'я</label>
+        <input type="text" placeholder="Ім'я та прізвище" required>
+      </div>
+
+      <div class="form-group">
+        <label>Номер телефону</label>
+        <input type="tel" placeholder="+380 (__) ___-__-__" required>
+      </div>
+
+      <div class="form-group">
+        <label>Коротко про ваш досвід</label>
+        <textarea rows="3" class="form-textarea" placeholder="Чи були у вас раніше домашні тварини?"></textarea>
+      </div>
+
+      <div class="form-actions" style="margin-top: 32px;">
+        <button type="button" class="btn-secondary" (click)="isAdoptionModalOpen = false">Скасувати</button>
+        <button type="button" class="btn-primary-blue">♡ Надіслати заявку</button>
+      </div>
+    </form>
+  </app-modal>
+}

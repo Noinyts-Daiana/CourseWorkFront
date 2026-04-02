@@ -1,0 +1,71 @@
+﻿.animal-card {
+  background: white;
+  border: 1px solid #F3F4F6;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+
+  .card-header {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 24px;
+
+    .avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &.dog-bg { background: #FEF9C3; color: #CA8A04; }
+      &.cat-bg { background: #EFF6FF; color: #1C5BFF; }
+
+      img { width: 32px; height: 32px; }
+    }
+
+    .info {
+      flex: 1;
+      .name-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+
+        h3 { margin: 0; font-size: 18px; font-weight: 700; color: #111827; }
+
+        .gender-badge {
+          padding: 4px 10px;
+          border-radius: 8px;
+          font-size: 12px;
+          font-weight: 600;
+
+          &.boy { background: #EFF6FF; color: #1C5BFF; }
+          &.girl { background: #FDF2F8; color: #DB2777; }
+        }
+      }
+      .breed { margin: 0; font-size: 14px; color: #6B7280; }
+    }
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+
+      .label { color: #6B7280; }
+      .value {
+        font-weight: 600; color: #111827;
+
+        &.success { color: #10B981; } /* Зелений "Так" */
+        &.neutral { color: #6B7280; } /* Сірий "Ні" */
+      }
+    }
+  }
+}

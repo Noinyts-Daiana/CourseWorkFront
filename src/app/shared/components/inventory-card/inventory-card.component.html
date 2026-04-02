@@ -1,0 +1,36 @@
+﻿<div class="inventory-card" [class.warning-card]="isLowStock">
+  @if (isLowStock) {
+    <div class="warning-badge">
+      <span class="icon">!</span> Мало запасу
+    </div>
+  }
+
+  <div class="card-header">
+    <div class="icon-box" [class.warning-icon]="isLowStock">📦</div>
+    <div class="info">
+      <h3>{{ title }}</h3>
+      <p>{{ brand }}</p>
+    </div>
+  </div>
+
+  <div class="stock-info">
+    <div class="stock-labels">
+      <span class="label">Поточний залишок:</span>
+      <span class="value" [class.text-warning]="isLowStock">{{ currentStock }} {{ unit }}</span>
+    </div>
+
+    <div class="progress-bg">
+      <div class="progress-fill"
+           [style.width.%]="getPercentage()"
+           [class.fill-warning]="isLowStock"
+           [class.fill-success]="!isLowStock">
+      </div>
+    </div>
+
+    <div class="min-label">Мін: {{ minStock }} {{ unit }}</div>
+  </div>
+
+  <button class="btn-order" (click)="$event.stopPropagation()">
+    🛒 Замовити
+  </button>
+</div>

@@ -1,0 +1,87 @@
+﻿<div class="page-container">
+  <header class="page-header">
+    <div>
+      <h1>Огляд системи</h1>
+      <p>Керування притулком на сьогодні</p>
+    </div>
+    <button class="btn-outline" (click)="isReportModalOpen = true">
+      <span class="icon">📈</span> Звіт
+    </button>
+  </header>
+
+  <div class="stats-row">
+    <app-stat-card theme="blue" title="Всього тварин" value="4">
+      <span icon>🐾</span>
+      <span watermark>🐾</span>
+    </app-stat-card>
+    <app-stat-card theme="pink" title="Медичні завдання" value="2">
+      <span icon>💉</span>
+      <span watermark>💉</span>
+    </app-stat-card>
+    <app-stat-card theme="yellow" title="Низькі запаси" value="2">
+      <span icon>⚠️</span>
+      <span watermark>⚠️</span>
+    </app-stat-card>
+  </div>
+
+  <div class="dashboard-bottom">
+
+    <section class="quick-actions-section">
+      <h3><span class="icon">⚡</span> Швидкі дії</h3>
+      <div class="actions-grid">
+        @for (action of quickActions; track action.label) {
+          <button class="action-btn">
+            <span class="action-icon">{{ action.icon }}</span>
+            <span class="action-label">{{ action.label }}</span>
+          </button>
+        }
+      </div>
+    </section>
+
+    <section class="notifications-section">
+      <h3><span class="icon">🔔</span> Системні сповіщення</h3>
+      <div class="notifications-list">
+        @for (note of notifications; track note.message) {
+          <div class="notification-card" [ngClass]="note.type">
+            <span class="note-icon">{{ note.icon }}</span>
+            <div class="note-content">
+              <p>{{ note.message }}</p>
+              <span class="note-date">{{ note.date }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  </div>
+
+  @if (isReportModalOpen) {
+    <app-modal (close)="isReportModalOpen = false">
+      <div class="modal-header">
+        <h2>Згенерувати звіт</h2>
+        <p>Оберіть параметри для створення системного звіту.</p>
+      </div>
+
+      <form class="modal-form">
+        <div class="form-group">
+          <label>Тип звіту</label>
+          <select>
+            <option>Щоденний звіт (годування та медицина)</option>
+            <option>Фінансовий звіт</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Період</label>
+          <select>
+            <option>Сьогодні</option>
+            <option>Цей тиждень</option>
+            <option>Цей місяць</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <button type="button" class="btn-secondary" (click)="isReportModalOpen = false">Скасувати</button>
+          <button type="button" class="btn-dark">Створити PDF</button>
+        </div>
+      </form>
+    </app-modal>
+  }
+</div>
