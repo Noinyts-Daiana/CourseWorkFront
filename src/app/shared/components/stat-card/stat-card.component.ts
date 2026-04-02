@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './stat-card.component.scss',
 })
 export class StatCardComponent {
-  @Input() theme: string = 'blue';
   @Input() title: string = '';
   @Input() value: string | number = '';
+  @Input() theme: 'blue' | 'pink' | 'yellow' | 'green' = 'blue'; // Синя за замовчуванням
 }

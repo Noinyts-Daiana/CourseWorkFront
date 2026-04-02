@@ -7,6 +7,7 @@ import { InventoryPageComponent } from './features/inventory/inventory-page.comp
 import { MedicinePageComponent } from './features/medicine/medicine-page.component';
 import { JournalsPageComponent } from './features/journals/journals-page.component';
 import { UsersPageComponent } from './features/users/users-page.component';
+import { ProfilePageComponent } from './features/profile/profile-page.component';
 
 export const routes: Routes = [
   // 1. СТОРІНКИ БЕЗ САЙДБАРУ
@@ -23,10 +24,11 @@ export const routes: Routes = [
       // Оскільки шлях '' вже зайнятий Home, давай дамо Дашборду свою адресу
       { path: 'dashboard', component: DashboardPageComponent },
       { path: 'animals', component: AnimalsPageComponent },
-      {path: "inventory", component: InventoryPageComponent },
-      {path: "medicine", component: MedicinePageComponent },
-      {path: "journals", component: JournalsPageComponent },
-      {path: "users", component: UsersPageComponent },
+      { path: 'inventory', component: InventoryPageComponent },
+      { path: 'medicine', component: MedicinePageComponent },
+      { path: 'journals', component: JournalsPageComponent },
+      { path: 'users', component: UsersPageComponent },
+      { path: 'user-profile', component: ProfilePageComponent },
       // Сюди ж потім додаш inventory, medicine і т.д.
     ],
   },

@@ -119,3 +119,27 @@
 
   &:hover { background-color: #374151; }
 }
+
+/* Додай це до інших тем у stat-card.component.scss */
+:host(.green) .card-container, /* Або як у тебе називається головний клас обгортки */
+.theme-green {
+  background-color: #ECFDF5; /* Світло-м'ятний фон */
+  border: 1px solid #D1FAE5;
+
+  .icon-box {
+    color: #059669; /* Темно-зелена іконка */
+    background-color: white;
+  }
+
+  .stat-title {
+    color: #065F46; /* Темно-зелений текст заголовка */
+  }
+
+  .stat-value {
+    color: #064E3B; /* Найтемніший зелений для цифр */
+  }
+
+  .watermark {
+    color: rgba(16, 185, 129, 0.05); /* Ледве помітний зелений водяний знак */
+  }
+}

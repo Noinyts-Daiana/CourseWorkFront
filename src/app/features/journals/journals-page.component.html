@@ -5,8 +5,18 @@
       <p>Історія годувань, транзакцій та активностей</p>
     </div>
     <div style="display: flex; gap: 12px;">
-      <button class="btn-outline-gray"><span>▽</span> Фільтрувати</button>
-      <button class="btn-purple" (click)="isAddModalOpen = true">+ Додати запис</button>
+      <button class="btn-outline-gray">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+        </svg>
+        Фільтрувати
+      </button>
+      <button class="btn-purple" (click)="isAddModalOpen = true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+          <path d="M5 12h14m-7-7v14"/>
+        </svg>
+        Додати запис
+      </button>
     </div>
   </header>
 
@@ -38,12 +48,24 @@
           @for (log of feedingLogs; track log.time) {
             <tr>
               <td class="time-cell">
-                <span class="icon">🕒</span> {{ log.time }} <span class="date">({{ log.date }})</span>
+                <span class="icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                </span>
+                {{ log.time }} <span class="date">({{ log.date }})</span>
               </td>
               <td class="fw-bold">{{ log.animal }}</td>
               <td><span class="badge-yellow-light">{{ log.food }}</span></td>
               <td>{{ log.amount }}</td>
-              <td class="person-cell"><span class="avatar-mini">👤</span> {{ log.person }}</td>
+              <td class="person-cell">
+                <span class="avatar-mini">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </span>
+                {{ log.person }}
+              </td>
             </tr>
           }
         </tbody>
@@ -64,7 +86,14 @@
         <tbody>
           @for (log of financeLogs; track log.date) {
             <tr>
-              <td class="time-cell"><span class="icon">📅</span> {{ log.date }}</td>
+              <td class="time-cell">
+                <span class="icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                </span>
+                {{ log.date }}
+              </td>
               <td [style.color]="log.type === 'Надходження' ? '#10B981' : '#E11D48'" class="fw-bold">
                 {{ log.type }}
               </td>
@@ -72,7 +101,14 @@
               <td class="fw-bold" [style.color]="log.type === 'Надходження' ? '#10B981' : '#111827'">
                 {{ log.amount }}
               </td>
-              <td class="person-cell"><span class="avatar-mini">👤</span> {{ log.person }}</td>
+              <td class="person-cell">
+                <span class="avatar-mini">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </span>
+                {{ log.person }}
+              </td>
             </tr>
           }
         </tbody>
@@ -91,9 +127,9 @@
         <div class="form-group" style="margin-bottom: 24px;">
           <label>Тип активності</label>
           <select (change)="selectedTypeForAdd = $any($event.target).value" class="form-select-main">
-            <option value="feeding">🍲 Годування</option>
-            <option value="finance">💰 Фінансова транзакція</option>
-            <option value="users">👤 Дія користувача</option>
+            <option value="feeding">Годування</option>
+            <option value="finance">Фінансова транзакція</option>
+            <option value="users">Дія користувача</option>
           </select>
         </div>
 
@@ -134,7 +170,12 @@
 
         <div class="form-actions" style="margin-top: 32px;">
           <button type="button" class="btn-secondary" (click)="isAddModalOpen = false">Скасувати</button>
-          <button type="button" class="btn-purple">Зберегти у журнал</button>
+          <button type="button" class="btn-purple">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+            </svg>
+            Зберегти у журнал
+          </button>
         </div>
       </form>
     </app-modal>

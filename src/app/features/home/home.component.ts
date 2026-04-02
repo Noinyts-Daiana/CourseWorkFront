@@ -1,12 +1,11 @@
 ﻿import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// 1. ДОДАЙ ЦЕЙ ІМПОРТ (перевір, чи правильний шлях до папки з модалкою)
+import { Router } from '@angular/router'; // Додаємо роутер для переходу в адмінку
 import { ModalComponent } from '../../shared/components/modal/modal.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  // 2. ДОДАЙ ModalComponent СЮДИ:
   imports: [CommonModule, ModalComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
@@ -14,6 +13,7 @@ import { ModalComponent } from '../../shared/components/modal/modal.component';
 export class HomeComponent {
   isAdoptionModalOpen = false;
   selectedPetForAdoption: any = null;
+
   pets = [
     {
       name: 'Рекс',
@@ -49,8 +49,35 @@ export class HomeComponent {
     },
   ];
 
+  isAuthModalOpen = false;
+  authTab: 'login' | 'register' = 'login';
+
+  constructor(private router: Router) {}
+
+
   openAdoptionModal(pet: any) {
     this.selectedPetForAdoption = pet;
     this.isAdoptionModalOpen = true;
+  }
+
+  openAuthModal() {
+    this.isAuthModalOpen = true;
+    this.authTab = 'login';
+  }
+
+  loginAsDemo() {
+    this.isAuthModalOpen = false;
+    this.router.navigate(['/dashboard']);
+  }
+
+  copyToClipboard(text: string) {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        alert('Скопійовано: ' + text);
+      })
+      .catch((err) => {
+        console.error('Помилка копіювання', err);
+      });
   }
 }

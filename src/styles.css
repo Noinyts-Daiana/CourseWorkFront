@@ -48,13 +48,12 @@ html {
 .page-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px; /* 🔥 Зменшили відступ, щоб шапка і картки були ближче */
+  align-items: center; /* 🔥 Змінили з flex-start на center */
+  margin-bottom: 24px;
 
-  h1 { margin: 0 0 8px; font-size: 28px; color: #111827; }
+  h1 { margin: 0 0 4px; font-size: 28px; color: #111827; } /* Трохи менший відступ знизу */
   p { margin: 0; color: #6B7280; }
 }
-
 /* Сітка для карток тварин */
 .cards-grid {
   display: grid;
@@ -62,14 +61,21 @@ html {
   gap: 24px;
 }
 
-/* 🔥 Сітка для карток статистики (вирівнює їх ідеально порівну) */
 .stats-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  /* Міняємо на 4 колонки, щоб усі картки стали в один рядок */
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
-  margin-bottom: 32px;
 }
 
+/* Адаптивність залишаємо, щоб на ноутбуках і телефонах воно красиво складалося */
+@media (max-width: 1400px) {
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .stats-row { grid-template-columns: 1fr; }
+}
 /* --- МОДАЛЬНІ ВІКНА ТА ФОРМИ --- */
 .modal-header h2 { margin: 0 0 8px; font-size: 20px; }
 .modal-header p { margin: 0 0 24px; color: #6B7280; font-size: 14px; }
@@ -141,8 +147,11 @@ html {
   margin-top: 24px;
 }
 
-/* --- ГЛОБАЛЬНІ КНОПКИ --- */
-.btn-primary, .btn-secondary {
+.btn-primary, .btn-secondary, .btn-outline, .btn-pink, .btn-purple {
+  display: inline-flex; /* 🔥 Робимо флексом */
+  align-items: center;  /* 🔥 Центруємо іконку і текст по вертикалі */
+  justify-content: center;
+  gap: 8px;            /* Відступ між іконкою та текстом */
   padding: 10px 24px;
   border-radius: 12px;
   font-weight: 600;
@@ -150,56 +159,7 @@ html {
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
-}
-
-.btn-primary {
-  background-color: var(--primary-blue);
-  color: white;
   border: none;
-  &:hover { background-color: #154ad8; }
-}
-
-.btn-secondary {
-  background-color: #FAFAFA;
-  color: #374151;
-  border: 1px solid #E5E7EB;
-  &:hover { background-color: #F3F4F6; }
-}
-
-/* Кнопка "Звіт" та інші легкі блакитні кнопки */
-.btn-outline {
-  background-color: #EFF6FF;
-  color: #1C5BFF;
-  padding: 10px 24px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 15px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  font-family: inherit;
-
-  &:hover { background-color: #DBEAFE; }
-}
-
-/* 🔥 Розтягуємо кнопку "Деталі" ТІЛЬКИ всередині карток тварин */
-.card-body .btn-outline {
-  width: 100%;
-}
-
-/* Кнопка "Редагувати" у модалці */
-.btn-outline-blue {
-  background-color: transparent;
-  color: #1C5BFF;
-  padding: 10px 24px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 15px;
-  border: 1px solid #1C5BFF;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover { background-color: rgba(28, 91, 255, 0.05); }
 }
 
 /* --- ДЕТАЛЬНА КАРТКА ТВАРИНИ (МОДАЛКА) --- */

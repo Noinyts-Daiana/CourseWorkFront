@@ -11,9 +11,13 @@ import { ModalComponent } from '../../shared/components/modal/modal.component';
 })
 export class MedicinePageComponent {
   isAddModalOpen = false;
+  isVaccineModalOpen = false;
   selectedRecord: any = null;
 
-  // Мокові дані для записів (як на твоєму скріншоті)
+  // 🔥 НОВА ЗМІННА ДЛЯ Вкладок
+  activeTab: 'vaccines' | 'exams' = 'exams'; // За замовчуванням відкриті "Огляди"
+
+  // Дані для оглядів (залишаються як були)
   medicalRecords = [
     {
       patientName: 'Рекс',
@@ -28,6 +32,22 @@ export class MedicinePageComponent {
       temp: 38.2,
       weight: 6,
       notes: 'Легка алергія, призначено дієту.',
+    },
+  ];
+
+  // 🔥 НОВІ ДАНІ для списку вакцин
+  vaccineRecords = [
+    {
+      patientName: 'Барон',
+      date: '12.08.2023',
+      vaccineName: 'Комплексна (Nobivac)',
+      nextDate: '12.08.2024',
+    },
+    {
+      patientName: 'Сніжок',
+      date: '05.09.2023',
+      vaccineName: 'Сказ (Rabisin)',
+      nextDate: '05.09.2024',
     },
   ];
 }

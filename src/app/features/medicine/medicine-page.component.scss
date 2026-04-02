@@ -137,3 +137,22 @@
   justify-content: center;
   padding: 24px 16px;
 }
+
+/* Додай це до існуючих стилів, якщо ще немає */
+.btn-outline-pink {
+  background: white;
+  color: #E11D48; /* Рожевий текст */
+  border: 1px solid #FDA4AF; /* Світло-рожева рамка */
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #FFF1F2; /* Легкий рожевий фон при наведенні */
+    border-color: #FB7185;
+  }
+}
