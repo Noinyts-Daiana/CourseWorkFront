@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './features/home/home.component';
+import {HomeComponent} from './features/home/home.component';
 import { AdminLayoutComponent } from './core/components/admin-layout/admin-layout.component';
 import { DashboardPageComponent } from './features/dashboard/dashboard-page.component';
 import { AnimalsPageComponent } from './features/animals/animals-page.component';

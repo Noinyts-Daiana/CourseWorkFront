@@ -428,3 +428,33 @@ app-modal { pointer-events: none; }
 
   &:hover { background: #FEE2E2; }
 }
+
+.error-text {
+  color: #ff4d4d;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.backend-error {
+  background: #fff2f2;
+  color: #d8000c;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  text-align: center;
+  border: 1px solid #d8000c;
+}
+
+.btn-full-blue:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+input.ng-invalid.ng-touched {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2;
+}
+
+input {
+  transition: border-color 0.2s, box-shadow 0.2s;
+}

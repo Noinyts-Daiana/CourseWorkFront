@@ -2,11 +2,12 @@
 import { CommonModule } from '@angular/common';
 import { AnimalCardComponent } from '../../shared/components/animal-card/animal-card.component';
 import { ModalComponent } from '../../shared/components/modal/modal.component';
+import { AnimalCardDetailComponent } from '../../shared/components/animal-card-detail/animal-card-detail.component';
 
 @Component({
   selector: 'app-animals-page',
   standalone: true,
-  imports: [CommonModule, AnimalCardComponent, ModalComponent],
+  imports: [CommonModule, AnimalCardComponent, AnimalCardDetailComponent, ModalComponent],
   templateUrl: './animals-page.component.html',
   styleUrl: './animals-page.component.scss',
 })

@@ -1,0 +1,114 @@
+<div class="animal-detail-modal">
+  <div class="detail-header-card">
+    <div class="avatar" [ngClass]="animalType() === 'cat' ? 'cat-bg' : 'dog-bg'">
+      @if (animalType() === 'cat') {
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/>
+          <path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z"/>
+        </svg>
+      } @else {
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/>
+          <path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z"/>
+        </svg>
+      }
+    </div>
+    <div class="info">
+      <div class="name-row">
+        <h2>{{ name() }}</h2>
+        <span class="gender-badge" [ngClass]="gender() === 'Хлопчик' ? 'boy' : 'girl'">
+          {{ gender() }}
+        </span>
+      </div>
+      <p class="breed">{{ breed() }}</p>
+    </div>
+  </div>
+
+  <div class="detail-tabs">
+    <button class="tab-btn" [class.active]="activeTab === 'general'" (click)="activeTab = 'general'">
+      Загальна інформація
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'medical'" (click)="activeTab = 'medical'">
+      Медична історія
+    </button>
+  </div>
+
+  <div class="tab-content">
+    @if (activeTab === 'general') {
+      <div class="detail-stats-grid">
+        <div class="stat-box">
+          <span class="label">ВАГА</span>
+          <span class="value">{{ weight() }} кг</span>
+        </div>
+        <div class="stat-box">
+          <span class="label">НАРОДЖЕННЯ</span>
+          <span class="value">{{ dob() }}</span>
+        </div>
+        <div class="stat-box">
+          <span class="label">СТЕРИЛІЗАЦІЯ</span>
+          <span class="value" [class.text-success]="isSterilized()" [class.text-muted]="!isSterilized()">
+            {{ isSterilized() ? 'Так' : 'Ні' }}
+          </span>
+        </div>
+      </div>
+    }
+
+    @if (activeTab === 'medical') {
+      <div class="medical-section">
+        <div class="section-header">
+          <h4 class="title-pink">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+              <path d="m18 2 4 4"/><path d="m17 7 3-3"/><path d="M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5"/><path d="m9 11 4 4"/><path d="m5 19-3 3"/><path d="m14 4 6 6"/>
+            </svg>
+            ВАКЦИНАЦІЇ
+          </h4>
+        </div>
+
+        <div class="vaccine-list">
+          @for (vaccine of vaccines; track vaccine.name) {
+            <div class="vaccine-card">
+              <div class="v-info">
+                <strong>{{ vaccine.name }}</strong>
+                <span class="v-date">Дата: {{ vaccine.date }}</span>
+              </div>
+              <div class="v-next">
+                <span class="label">НАСТУПНА</span>
+                <span class="date-alert">{{ vaccine.nextDate }}</span>
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="section-header" style="margin-top: 32px;">
+          <h4 class="title-blue">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+              <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/>
+            </svg>
+            ІСТОРІЯ ХВОРОБИ
+          </h4>
+        </div>
+
+        <div class="timeline">
+          @for (record of medicalHistory; track record.date) {
+            <div class="timeline-item">
+              <div class="dot blue"></div>
+
+              @if (!$last) {
+                <div class="line"></div>
+              }
+
+              <div class="timeline-content">
+                <div class="t-header">
+                  <span class="t-type badge-blue">{{ record.type }}</span>
+                  <span class="t-date">{{ record.date }}</span>
+                </div>
+                <p class="t-desc">{{ record.description }}</p>
+                <span class="t-doctor">Лікар: {{ record.doctor }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>
