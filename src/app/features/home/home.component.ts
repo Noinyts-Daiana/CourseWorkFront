@@ -1,6 +1,7 @@
 ﻿import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { NgForm } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/service/AuthService';
 import { ModalComponent } from '../../shared/components/modal/modal.component';
@@ -37,8 +38,6 @@ export class HomeComponent {
     { name: 'Сніжок', type: 'Кіт', breed: 'Британська', gender: 'Хлопчик', weight: '4.5 кг' },
   ];
 
-
-
   openAuthModal() {
     this.isAuthModalOpen = true;
     this.authTab = 'login';
@@ -56,9 +55,12 @@ export class HomeComponent {
     });
   }
 
-
-  onSubmit() {
+  onSubmit(form: NgForm) {
     this.errorMessage.set(null);
+    if (form.invalid) {
+      form.control.markAllAsTouched();
+      return;
+    }
 
     if (this.authTab === 'register') {
       this.onRegister();
@@ -69,24 +71,26 @@ export class HomeComponent {
 
   onRegister() {
     const dataToSend = {
-      fullName: this.regData.fullName,
-      email: this.regData.email,
+      fullName: this.regData.fullName.trim(),
+      email: this.regData.email.trim(),
       password: this.regData.password,
-      roleId: 1, // Роль за замовчуванням
+      roleId: 1,
     };
 
     this.authService.register(dataToSend).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         console.log('Реєстрація успішна!', res);
+
+        if (res && res.token) {
+          localStorage.setItem('token', res.token);
+        }
+
         this.isAuthModalOpen = false;
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
-        const serverMessage = err.error?.message || 'Помилка реєстрації. Перевірте дані.';
-
-        this.errorMessage.set(serverMessage);
-
-        console.error('Помилка з сервера:', err);
+        const msg = err.error?.message || 'Помилка реєстрації. Перевірте дані.';
+        this.errorMessage.set(msg);
       },
     });
   }

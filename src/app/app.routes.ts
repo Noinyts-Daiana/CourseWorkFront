@@ -7,7 +7,7 @@ import { InventoryPageComponent } from './features/inventory/inventory-page.comp
 import { MedicinePageComponent } from './features/medicine/medicine-page.component';
 import { JournalsPageComponent } from './features/journals/journals-page.component';
 import { UsersPageComponent } from './features/users/users-page.component';
-import { ProfilePageComponent } from './features/profile/profile-page.component';
+import ProfilePageComponent from './features/profile/profile-page.component';
 
 export const routes: Routes = [
   {

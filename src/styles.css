@@ -458,3 +458,86 @@ input.ng-invalid.ng-touched {
 input {
   transition: border-color 0.2s, box-shadow 0.2s;
 }
+
+
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #E5E7EB;
+  color: #4B5563;
+  font-size: 14px;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  .pagination-info strong {
+    color: #111827;
+    font-weight: 600;
+  }
+
+  .pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+
+    .page-size-selector {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      select {
+        padding: 6px 12px;
+        border: 1px solid #D1D5DB;
+        border-radius: 6px;
+        background-color: white;
+        color: #111827;
+        font-size: 14px;
+        outline: none;
+        cursor: pointer;
+
+        &:focus {
+          border-color: #2563EB;
+          box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+      }
+    }
+
+    .page-buttons {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .page-indicator {
+        font-weight: 500;
+        color: #111827;
+      }
+
+      .btn-page {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border: 1px solid #D1D5DB;
+        border-radius: 8px;
+        background-color: white;
+        color: #374151;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover:not(:disabled) {
+          background-color: #F3F4F6;
+          color: #111827;
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          background-color: #F9FAFB;
+        }
+      }
+    }
+  }
+}

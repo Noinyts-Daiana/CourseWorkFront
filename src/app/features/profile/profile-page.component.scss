@@ -63,9 +63,23 @@
     padding-top: 24px;
 
     .info-item {
-      display: flex; align-items: center; gap: 12px;
-      font-size: 14px; color: #4B5563;
-      .icon { color: #9CA3AF; font-size: 16px; }
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      color: #4B5563;
+      line-height: 1.5;
+
+      .icon {
+        color: #9CA3AF;
+        flex-shrink: 0;
+        margin-top: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      word-break: break-word;
     }
   }
 }

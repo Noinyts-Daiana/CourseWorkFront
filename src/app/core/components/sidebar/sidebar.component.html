@@ -79,9 +79,9 @@
       </svg>
     </div>
     <div class="info">
-      <p class="name">Профіль</p>
-      <p class="role">Адміністратор</p>
-    </div>
+    <p class="name">{{ currentUser()?.fullName }}</p>
+    <p class="role">{{ currentUser()?.roleName }}</p>
+  </div>
   </a>
 
 </aside>

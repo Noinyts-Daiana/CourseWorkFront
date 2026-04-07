@@ -1,150 +1,146 @@
 ﻿<div class="page-container">
-  <header class="page-header">
-    <div>
-      <h1>Мій профіль</h1>
-      <p>Особиста інформація та налаштування акаунту</p>
-    </div>
-  </header>
 
-  <div class="profile-grid">
+  @if (user(); as userData) {
 
-    <div class="profile-sidebar">
+    <header class="page-header">
+      <div>
+        <h1>Мій профіль</h1>
+        <p>Особиста інформація та налаштування акаунту</p>
+      </div>
 
-      <div class="summary-card">
-        <div class="avatar-circle">
-          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-          </svg>
-        </div>
-        <h2>{{ user.firstName }} {{ user.lastName }}</h2>
-        <span class="role-badge">{{ user.role }}</span>
+    </header>
 
-        <div class="info-list">
-          <div class="info-item">
+    <div class="profile-grid">
+      <div class="profile-sidebar">
+        <div class="summary-card">
+          <div class="avatar-circle">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <h2>{{ userData.firstName }} {{ userData.lastName }}</h2>
+          <span class="role-badge">{{ userData.role }}</span>
+
+          <div class="info-list">
+            <div class="info-item">
             <span class="icon">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
               </svg>
             </span>
-            {{ user.email }}
-          </div>
-          <div class="info-item">
-            <span class="icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l2.28-2.28a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-              </svg>
-            </span>
-            {{ user.formattedPhone }}
-          </div>
-          <div class="info-item">
-            <span class="icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>
-              </svg>
-            </span>
-            {{ user.department }}
-          </div>
-          <div class="info-item">
+              {{ userData.email }}
+            </div>
+
+            <div class="info-item">
             <span class="icon">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
               </svg>
             </span>
-            Працює з: {{ user.joinedDate }}
+              Працює з: {{ userData.joinedDate }}
+            </div>
+          </div>
+        </div>
+
+        <div class="access-card">
+          <h3>Рівень доступу</h3>
+          <p>У вас є доступ до редагування профілів тварин та медичних карток.</p>
+          <div class="bg-shield">
+            <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
           </div>
         </div>
       </div>
 
-      <div class="access-card">
-        <h3>Рівень доступу</h3>
-        <p>У вас є доступ до редагування профілів тварин та медичних карток.</p>
-        <div class="bg-shield">
-          <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/>
-            <path d="m9 12 2 2 4-4"/>
-          </svg>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="profile-main">
-
-      <div class="form-card">
-        <div class="card-header">
+      <div class="profile-main">
+        <div class="form-card">
+          <div class="card-header">
           <span class="icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
             </svg>
           </span>
-          <h3>Особиста інформація</h3>
+            <h3>Особиста інформація</h3>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Ім'я</label>
+              <input type="text" [(ngModel)]="regData.firstName" name="firstName">
+            </div>
+            <div class="form-group">
+              <label>Прізвище</label>
+              <input type="text" [(ngModel)]="regData.lastName" name="lastName">
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" [(ngModel)]="regData.email" name="email">
+            </div>
+          </div>
+
+          <div class="form-actions right">
+            <button type="button" class="btn-primary" (click)="onUpdate()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+              </svg>
+              Зберегти зміни
+            </button>
+          </div>
         </div>
 
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Ім'я</label>
-            <input type="text" [value]="user.firstName">
+        @if (successMessage()) {
+          <div style="color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; padding: 10px; border-radius: 5px; margin-top: 15px;">
+            {{ successMessage() }}
           </div>
-          <div class="form-group">
-            <label>Прізвище</label>
-            <input type="text" [value]="user.lastName">
-          </div>
-          <div class="form-group">
-            <label>Email</label>
-            <input type="email" [value]="user.email">
-          </div>
-          <div class="form-group">
-            <label>Телефон</label>
-            <input type="tel" [value]="user.phone">
-          </div>
-        </div>
+        }
 
-        <div class="form-actions right">
-          <button type="button" class="btn-primary">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
-            </svg>
-            Зберегти зміни
-          </button>
-        </div>
-      </div>
-
-      <div class="form-card">
-        <div class="card-header">
+        @if (errorMessage()) {
+          <div style="color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 5px; margin-top: 15px;">
+            {{ errorMessage() }}
+          </div>
+        }
+        <div class="form-card">
+          <div class="card-header">
           <span class="icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
             </svg>
           </span>
-          <h3>Зміна пароля</h3>
-        </div>
-
-        <div class="form-group full-width">
-          <label>Поточний пароль</label>
-          <input type="password" placeholder="••••••••">
-        </div>
-
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Новий пароль</label>
-            <input type="password" placeholder="••••••••">
+            <h3>Зміна пароля</h3>
           </div>
-          <div class="form-group">
-            <label>Підтвердіть новий пароль</label>
-            <input type="password" placeholder="••••••••">
-          </div>
-        </div>
 
-        <div class="form-actions right">
-          <button type="button" class="btn-dark">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="M12 8v4"/><path d="M12 16h.01"/>
-            </svg>
-            Оновити пароль
-          </button>
+          <div class="form-group full-width">
+            <label>Поточний пароль</label>
+            <input type="password" placeholder="••••••••" [(ngModel)]="passData.currentPassword">
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Новий пароль</label>
+              <input type="password" placeholder="••••••••" [(ngModel)]="passData.newPassword">
+            </div>
+            <div class="form-group">
+              <label>Підтвердіть новий пароль</label>
+              <input type="password" placeholder="••••••••" [(ngModel)]="passData.confirmPassword">
+            </div>
+          </div>
+
+          <div class="form-actions right">
+            <button type="button" class="btn-dark" (click)="onChangePassword()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="M12 8v4"/><path d="M12 16h.01"/>
+              </svg>
+              Оновити пароль
+            </button>
+          </div>
         </div>
       </div>
-
     </div>
-  </div>
+  } @else {
+    <div class="loading-container">
+      <p>Завантажуємо профіль "ShelterSys"... 🐾</p>
+    </div>
+  }
 </div>
