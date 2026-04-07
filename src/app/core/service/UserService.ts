@@ -49,12 +49,29 @@ export class UserService {
     return this.http.put(`${this.apiUrl}/me/password`, dataToSend, { withCredentials: true });
   }
 
-  getUsers(pageNumber: number, pageSize: number) {
-    let params = new HttpParams().set('pageNumber', pageNumber).set('pageSize', pageSize);
+  getUsers(page: number, size: number, searchTerm: string = '') {
+    return this.http.get(
+      `${this.apiUrl}/?pageNumber=${page}&pageSize=${size}&searchTerm=${searchTerm}`,
+    );
+  }
 
-    return this.http.get<PagedResult<User>>(this.apiUrl, {
-      params: params,
-      withCredentials: true,
-    });
+  editUser(id: number, regData: any) {
+    const dataToSend = {
+      fullName: regData.fullName,
+      email: regData.email,
+      roleId: regData.roleId,
+    };
+    return this.http.put(`${this.apiUrl}/${id}`, dataToSend, { withCredentials: true });
+  }
+
+  addUser(regData: any) {
+    const dataToSend = {
+      fullName: regData.fullName,
+      email: regData.email,
+      roleId: regData.roleId,
+      password: regData.password,
+    };
+
+    return this.http.post(`${this.apiUrl}`, dataToSend, { withCredentials: true });
   }
 }

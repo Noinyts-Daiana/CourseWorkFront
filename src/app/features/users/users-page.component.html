@@ -4,12 +4,17 @@
       <h1>Користувачі</h1>
       <p>Управління персоналом та волонтерами</p>
     </div>
+    <div class="header-actions" style="display: flex; gap: 16px; align-items: center;">
+      <div class="search-container" style="width: 300px;">
+      </div>
+
     <button class="btn-primary" (click)="isAddModalOpen = true">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
         <path d="M5 12h14m-7-7v14"/>
       </svg>
       Додати
     </button>
+      </div>
   </header>
 
   <div class="search-container">
@@ -18,7 +23,10 @@
         <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
       </svg>
     </span>
-    <input type="text" class="search-input" placeholder="Пошук за ім'ям або email...">
+    <input type="text"
+           class="search-input"
+           placeholder="Пошук за ім'ям або email..."
+           [(ngModel)]="searchQuery"       (keyup.enter)="onSearch()">
   </div>
 
   <div class="cards-grid">
@@ -66,18 +74,10 @@
       <strong>{{ (currentPage() - 1) * pageSize() + 1 }}</strong>
       -
       <strong>{{ Math.min(currentPage() * pageSize(), totalCount()) }}</strong>
-      з <strong>{{ totalCount }}</strong> користувачів
+      з <strong>{{ totalCount() }}</strong> користувачів
     </div>
 
     <div class="pagination-controls">
-      <div class="page-size-selector">
-        <label>Показувати:</label>
-        <select [ngModel]="pageSize" (ngModelChange)="changePageSize($event)">
-          <option [value]="10">10</option>
-          <option [value]="20">20</option>
-          <option [value]="50">50</option>
-        </select>
-      </div>
 
       <div class="page-buttons">
         <button class="btn-page" [disabled]="currentPage() === 1" (click)="prevPage()">
@@ -86,9 +86,9 @@
           </svg>
         </button>
 
-        <span class="page-indicator">Сторінка {{ currentPage }} з {{ totalPages || 1 }}</span>
+        <span class="page-indicator">Сторінка {{ currentPage() }} з {{ totalPages() }}</span>
 
-        <button class="btn-page" [disabled]="currentPage >= totalPages" (click)="nextPage()">
+        <button class="btn-page" [disabled]="currentPage() >= totalPages()" (click)="nextPage()">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"/>
           </svg>
@@ -98,7 +98,7 @@
   </div>
 
   @if (isAddModalOpen) {
-    <app-modal (close)="isAddModalOpen = false">
+    <app-modal (close)="isAddModalOpen = false; errorMessage.set('')">
       <div class="modal-header">
         <h2>Додати користувача</h2>
         <p>Створіть новий обліковий запис для співробітника або волонтера.</p>
@@ -107,38 +107,47 @@
       <form class="modal-form">
         <div class="form-group">
           <label>ПІБ</label>
-          <input type="text" placeholder="Введіть повне ім'я" required>
+          <input type="text" [(ngModel)]="regData.fullName" name="regFullName" placeholder="Введіть повне ім'я" required>
         </div>
         <div class="form-group">
           <label>Email</label>
-          <input type="email" placeholder="name@shelter.com" required>
+          <input type="email" [(ngModel)]="regData.email" name="regEmail" placeholder="name@shelter.com" required>
         </div>
         <div class="form-grid">
           <div class="form-group">
             <label>Роль</label>
-            <select>
-              <option>Працівник</option>
-              <option>Адміністратор</option>
+            <select [(ngModel)]="regData.roleId" name="regRole" class="search-input">
+              <option [value]="1">Адміністратор</option>
+              <option [value]="2">Працівник</option>
+              <option [value]="3">Користувач</option>
             </select>
           </div>
           <div class="form-group">
             <label>Пароль (тимчасовий)</label>
-            <input type="password" placeholder="********" required>
+            <input type="password" [(ngModel)]="regData.password" name="regPassword" placeholder="********" required>
           </div>
         </div>
 
-        <div class="form-actions" style="margin-top: 32px;">
-          <button type="button" class="btn-secondary" (click)="isAddModalOpen = false">Скасувати</button>
-          <button type="button" class="btn-primary">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>
+        @if (errorMessage()) {
+          <div class="error-banner">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
+            <span>{{ errorMessage() }}</span>
+          </div>
+        }
+        <div class="form-actions" style="margin-top: 32px;">
+          <button type="button" class="btn-secondary" (click)="isAddModalOpen = false; errorMessage.set('')" >Скасувати</button>
+          <button type="button" class="btn-primary" (click)="onAddUser()">
             Створити
           </button>
         </div>
       </form>
     </app-modal>
+
+
   }
+
 
   @if (selectedUser) {
     <app-modal (close)="selectedUser = null">
@@ -154,22 +163,12 @@
         </div>
         <div class="info">
           <h3>{{ selectedUser.fullName }}</h3>
-          <p>
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: middle;">
-              <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-            </svg>
-            {{ selectedUser.email }}
-          </p>
+          <p>{{ selectedUser.email }}</p>
         </div>
       </div>
 
       <div class="profile-stats-grid">
         <div class="stat-box">
-          <div class="icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/>
-            </svg>
-          </div>
           <div>
             <span class="label">ПРАВА ДОСТУПУ</span>
             <span [ngClass]="selectedUser.roleName === 'admin' ? 'badge-purple-light' : 'badge-blue-light'" style="display: inline-block; margin-top: 4px;">
@@ -178,11 +177,6 @@
           </div>
         </div>
         <div class="stat-box">
-          <div class="icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-            </svg>
-          </div>
           <div>
             <span class="label">СТАТУС</span>
             <div class="status-text" style="margin-top: 4px; font-weight: 600;" [style.color]="selectedUser.isActive ? '#10B981' : '#9CA3AF'">
@@ -194,19 +188,56 @@
       </div>
 
       <div class="form-actions" style="margin-top: 32px; justify-content: space-between;">
-        <button type="button" class="btn-text-danger">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="17" y1="11" x2="22" y2="11"/>
-          </svg>
-          Деактивувати
-        </button>
-        <button type="button" class="btn-secondary">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-          </svg>
-          Редагувати профіль
-        </button>
+        <button type="button" class="btn-text-danger">Деактивувати</button>
+        <button type="button" class="btn-secondary" (click)="onEdit()">Редагувати профіль</button>
       </div>
+    </app-modal>
+  }
+
+  @if (isEditModalOpen()) {
+    <app-modal (close)="isEditModalOpen.set(false); errorMessage.set('')">
+      <div class="modal-header">
+        <h2>Редагувати профіль</h2>
+        <p>Змініть дані користувача <strong>{{ editData.fullName }}</strong></p>
+      </div>
+
+      <form class="modal-form">
+        <div class="form-group">
+          <label>ПІБ</label>
+          <input type="text" [(ngModel)]="editData.fullName" name="editFullName" placeholder="Введіть повне ім'я" required>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" [(ngModel)]="editData.email" name="editEmail" placeholder="name@shelter.com" required>
+        </div>
+        <div class="form-group">
+          <label>Роль</label>
+          <select [(ngModel)]="editData.roleId" name="editRole" class="search-input">
+            <option [value]="1">Адміністратор</option>
+            <option [value]="2">Працівник</option>
+            <option [value]="3">Користувач</option>
+          </select>
+        </div>
+
+        @if (errorMessage()) {
+          <div class="error-banner">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <span>{{ errorMessage() }}</span>
+          </div>
+        }
+
+        <div class="form-actions" style="margin-top: 32px;">
+          <button type="button" class="btn-secondary" (click)="isEditModalOpen.set(false); errorMessage.set('')">Скасувати</button>
+          <button type="button" class="btn-primary" (click)="onSaveEdit()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+            </svg>
+            Зберегти зміни
+          </button>
+        </div>
+      </form>
     </app-modal>
   }
 </div>
