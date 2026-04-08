@@ -12,7 +12,7 @@
         </svg>
         Вакцина
       </button>
-      <button class="btn-pink" (click)="isAddModalOpen = true">
+      <button class="btn-pink" (click)="openAddExamModal()">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
           <path d="M5 12h14m-7-7v14"/>
         </svg>
@@ -28,7 +28,7 @@
           <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
         </svg>
       </span>
-      <input type="text" placeholder="Пошук пацієнта...">
+      <input type="text" placeholder="Пошук пацієнта..." [(ngModel)]="searchQuery" (keyup.enter)="loadMedicalExams()">
     </div>
 
     <div class="filter-toggles">
@@ -44,7 +44,7 @@
   <div class="records-list">
 
     @if (activeTab === 'exams') {
-      @for (record of medicalRecords; track record.patientName) {
+      @for (record of medicalExams(); track record.id) {
         <div class="record-row">
           <div class="record-header">
             <div class="avatar pink-bg">
@@ -53,12 +53,12 @@
               </svg>
             </div>
             <div class="info">
-              <h3>{{ record.patientName }}</h3>
+              <h3>{{ record.animalName || record.patientName }}</h3>
               <p class="date">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: middle;">
                   <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/>
                 </svg>
-                Огляд від {{ record.date }}
+                Огляд від {{ (record.examDate | date:'dd.MM.yyyy') || record.date }}
               </p>
             </div>
             <div class="stats-mini">
@@ -66,7 +66,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;">
                   <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>
                 </svg>
-                {{ record.temp }}°C
+                {{ record.temperature || record.temp }}°C
               </span>
               <span class="stat" style="color: #2563EB; background: #EFF6FF; padding: 6px 12px; border-radius: 8px; font-weight: 600;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;">
@@ -82,10 +82,27 @@
               <strong>Нотатки лікаря:</strong>
               <p>{{ record.notes }}</p>
             </div>
-            <button class="btn-outline-pink-light" (click)="selectedRecord = record">Деталі</button>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-outline-pink-light" (click)="selectedRecord = record">Деталі</button>
+              <button class="btn-outline-pink-light" (click)="openEditExamModal(record)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       }
+
+      <app-pagination
+        [currentPage]="currentPage()"
+        [pageSize]="pageSize()"
+        [totalCount]="totalCount()"
+        [totalPages]="totalPages()"
+        itemName="оглядів"
+        (pageChange)="onPageChange($event)">
+      </app-pagination>
+
     }
 
     @else {
@@ -106,7 +123,7 @@
                 Дата щеплення: {{ vaccine.date }}
               </p>
             </div>
-            <div class="stats-mini">
+            <div class="stats-mini" style="flex: 1;">
               <span class="stat" style="background: #ECFDF5; color: #059669; padding: 6px 12px; border-radius: 8px; font-weight: 600; display: flex; align-items: center;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
@@ -120,14 +137,21 @@
                 Наступне: {{ vaccine.nextDate }}
               </span>
             </div>
+            <div style="display: flex; align-items: center; margin-left: 16px;">
+              <button class="btn-outline-pink-light" (click)="openEditVaccineModal(vaccine)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       }
     }
   </div>
 
-  @if (isAddModalOpen) {
-    <app-modal (close)="isAddModalOpen = false">
+  @if (isAddModalOpen()) {
+    <app-modal (close)="isAddModalOpen.set(false)">
       <div class="modal-header">
         <h2>Додати медичний огляд</h2>
         <p>Заповніть результати огляду тварини.</p>
@@ -136,33 +160,37 @@
       <form class="modal-form">
         <div class="form-group">
           <label>Пацієнт (Тварина)</label>
-          <select><option>Оберіть тварину...</option></select>
+          <select class="form-control" [(ngModel)]="newExamRecord.animalId" name="animalId">
+            <option [ngValue]="null" disabled>Оберіть тварину...</option>
+            @for (animal of animals(); track animal.id) {
+              <option [ngValue]="animal.id">
+                {{ animal.name }}
+              </option>
+            }
+          </select>
         </div>
         <div class="form-grid">
           <div class="form-group">
             <label>Дата огляду</label>
-            <input type="date">
+            <input type="date" [(ngModel)]="newExamRecord.examDate" name="examDate">
           </div>
           <div class="form-group">
             <label>Температура (°C)</label>
-            <input type="number" placeholder="38.5" step="0.1">
+            <input type="number" placeholder="38.5" step="0.1" [(ngModel)]="newExamRecord.temperature" name="temperature">
           </div>
         </div>
         <div class="form-group">
           <label>Вага під час огляду (кг)</label>
-          <input type="number" placeholder="Введіть вагу">
+          <input type="number" placeholder="Введіть вагу" [(ngModel)]="newExamRecord.weight" name="weight">
         </div>
         <div class="form-group">
           <label>Нотатки лікаря / Діагноз</label>
-          <textarea rows="4" class="form-textarea" placeholder="Введіть результати огляду, призначення тощо"></textarea>
+          <textarea rows="4" class="form-textarea" placeholder="Введіть результати огляду..." [(ngModel)]="newExamRecord.notes" name="notes"></textarea>
         </div>
 
         <div class="form-actions" style="margin-top: 24px;">
-          <button type="button" class="btn-secondary" (click)="isAddModalOpen = false">Скасувати</button>
-          <button type="button" class="btn-pink">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
-            </svg>
+          <button type="button" class="btn-secondary" (click)="isAddModalOpen.set(false)">Скасувати</button>
+          <button type="button" class="btn-pink" (click)="onAddRecord()">
             Зберегти огляд
           </button>
         </div>
@@ -225,12 +253,12 @@
           </svg>
         </div>
         <div class="info">
-          <h3>Пацієнт: {{ selectedRecord.patientName }}</h3>
+          <h3>Пацієнт: {{ selectedRecord.animalName || selectedRecord.patientName }}</h3>
           <p style="margin: 0; color: #6B7280; font-size: 14px;">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: middle;">
               <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
             </svg>
-            {{ selectedRecord.date }}
+            {{ (selectedRecord.examDate | date:'dd.MM.yyyy') || selectedRecord.date }}
           </p>
         </div>
       </div>
@@ -243,7 +271,7 @@
             </svg>
           </div>
           <span class="label">ТЕМПЕРАТУРА</span>
-          <span class="value">{{ selectedRecord.temp }}°C</span>
+          <span class="value">{{ selectedRecord.temperature || selectedRecord.temp }}°C</span>
         </div>
         <div class="stat-box align-center">
           <div style="color: #2563EB; margin-bottom: 8px;">
@@ -275,13 +303,66 @@
           </svg>
           Історія пацієнта
         </button>
-        <button type="button" class="btn-outline-pink">
+        <button type="button" class="btn-outline-pink" (click)="openEditExamModal(selectedRecord); selectedRecord = null">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
           </svg>
           Редагувати
         </button>
       </div>
+    </app-modal>
+  }
+  @if (isEditExamModalOpen()) {
+    <app-modal (close)="isEditExamModalOpen.set(false)">
+      <div class="modal-header">
+        <h2>Редагувати медичний огляд</h2>
+        <p>Відредагуйте результати огляду тварини.</p>
+      </div>
+
+      <form class="modal-form">
+        <div class="form-group">
+          <label>Пацієнт (Тварина)</label>
+          <select class="form-control" [(ngModel)]="editExamData.animalId" name="editAnimalId">
+            <option [ngValue]="null" disabled>Оберіть тварину...</option>
+            @for (animal of animals(); track animal.id) {
+              <option [ngValue]="animal.id">
+                {{ animal.name }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Дата огляду</label>
+            <input type="date" [(ngModel)]="editExamData.examDate" name="editDate">
+          </div>
+          <div class="form-group">
+            <label>Температура (°C)</label>
+            <input type="number" [(ngModel)]="editExamData.temperature" name="editTemp" step="0.1">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Вага під час огляду (кг)</label>
+          <input type="number" [(ngModel)]="editExamData.weight" name="editWeight">
+        </div>
+
+        <div class="form-group">
+          <label>Нотатки лікаря / Діагноз</label>
+          <textarea rows="4" class="form-textarea" [(ngModel)]="editExamData.notes" name="editNotes"></textarea>
+        </div>
+
+        <div class="form-actions" style="margin-top: 24px;">
+          <button type="button" class="btn-secondary" (click)="isEditExamModalOpen.set(false)">Скасувати</button>
+          <button type="button" class="btn-pink" (click)="onSaveEditExams()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+            </svg>
+            Зберегти зміни
+          </button>
+        </div>
+      </form>
     </app-modal>
   }
 </div>

@@ -2,24 +2,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 
 
-export interface PagedResult<T> {
-  items: T[];
-  totalCount: number;
-  pageNumber: number;
-  pageSize: number;
-  totalPages: number;
-}
-
-export interface User {
-  userId: number;
-  fullName: string;
-  email: string;
-  roleName: string;
-  isActive: boolean;
-  password?: string | null;
-  createdAt?: string;
-  updatedAt?: string | null;
-}
 
 @Injectable({ providedIn: 'root' })
 export class UserService {

@@ -68,34 +68,14 @@
     }
   </div>
 
-  <div class="pagination-container">
-    <div class="pagination-info">
-      Показано
-      <strong>{{ (currentPage() - 1) * pageSize() + 1 }}</strong>
-      -
-      <strong>{{ Math.min(currentPage() * pageSize(), totalCount()) }}</strong>
-      з <strong>{{ totalCount() }}</strong> користувачів
-    </div>
-
-    <div class="pagination-controls">
-
-      <div class="page-buttons">
-        <button class="btn-page" [disabled]="currentPage() === 1" (click)="prevPage()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 18 9 12 15 6"/>
-          </svg>
-        </button>
-
-        <span class="page-indicator">Сторінка {{ currentPage() }} з {{ totalPages() }}</span>
-
-        <button class="btn-page" [disabled]="currentPage() >= totalPages()" (click)="nextPage()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-  </div>
+  <app-pagination
+    [currentPage]="currentPage()"
+    [pageSize]="pageSize()"
+    [totalCount]="totalCount()"
+    [totalPages]="totalPages()"
+    itemName="користувачів"
+    (pageChange)="onPageChange($event)">
+  </app-pagination>
 
   @if (isAddModalOpen) {
     <app-modal (close)="isAddModalOpen = false; errorMessage.set('')">

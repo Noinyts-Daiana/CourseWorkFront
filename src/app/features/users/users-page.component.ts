@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../../shared/components/modal/modal.component';
 import { UserService } from '../../core/service/UserService';
+import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 
 @Component({
   selector: 'app-users-page',
   standalone: true,
-  imports: [CommonModule, ModalComponent, FormsModule],
+  imports: [CommonModule, ModalComponent, FormsModule, PaginationComponent],
   templateUrl: './users-page.component.html',
   styleUrl: './users-page.component.scss',
 })
@@ -107,6 +108,10 @@ export class UsersPageComponent implements OnInit {
     this.loadUsers();
   }
 
+  onPageChange(newPage: number) {
+    this.currentPage.set(newPage);
+    this.loadUsers();
+  }
   loadUsers() {
     this.userService.getUsers(this.currentPage(), this.pageSize(), this.searchQuery).subscribe({
       next: (response: any) => {
@@ -118,17 +123,4 @@ export class UsersPageComponent implements OnInit {
     });
   }
 
-  nextPage() {
-    if (this.currentPage() < this.totalPages()) {
-      this.currentPage.update((p) => p + 1);
-      this.loadUsers();
-    }
-  }
-
-  prevPage() {
-    if (this.currentPage() > 1) {
-      this.currentPage.update((p) => p - 1);
-      this.loadUsers();
-    }
-  }
 }
