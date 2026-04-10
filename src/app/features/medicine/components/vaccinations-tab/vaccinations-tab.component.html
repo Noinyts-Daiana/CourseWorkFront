@@ -1,0 +1,110 @@
+﻿@for (vaccine of vaccineExams(); track vaccine.id) {
+  <div class="record-row">
+    <div class="record-header" style="margin-bottom: 0;">
+      <div class="avatar" style="background: #EFF6FF; color: #2563EB;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+          <path d="m18 2 4 4"/><path d="m17 7 3-3"/><path d="M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5"/><path d="m9 11 4 4"/><path d="m5 19-3 3"/><path d="m14 4 6 6"/>
+        </svg>
+      </div>
+
+      <div class="info">
+        <h3>{{ vaccine.animalName || vaccine.patientName }}</h3>
+        <p class="date">Дата щеплення: {{ (vaccine.dateAdministered | date:'dd.MM.yyyy') }}</p>
+      </div>
+
+      <div class="stats-mini">
+        <span class="stat" style="background: #ECFDF5; color: #059669; padding: 6px 12px; border-radius: 8px;">
+          {{ vaccine.vaccineName }}
+        </span>
+        <span class="stat" style="background: #F3F4F6; color: #4B5563; padding: 6px 12px; border-radius: 8px;">
+          Наступне: {{ vaccine.nextDueDate | date:'dd.MM.yyyy' }}
+        </span>
+      </div>
+
+      <div style="display: flex; align-items: center; margin-left: auto;">
+        <button class="btn-outline-pink-light" (click)="openEditVaccineModal(vaccine)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<app-pagination
+  [currentPage]="currentPage()"
+  [pageSize]="pageSize()"
+  [totalCount]="totalCount()"
+  [totalPages]="totalPages()"
+  itemName="вакцинацій"
+  (pageChange)="onPageChange($event)">
+</app-pagination>
+
+@if (isVaccineModalOpen()) {
+  <app-modal (close)="isVaccineModalOpen.set(false)">
+    <div class="modal-header">
+      <h2>Додати вакцинацію</h2>
+      <p>Зареєструйте нове щеплення для тварини.</p>
+    </div>
+    <form class="modal-form">
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>Пацієнт (Тварина)</label>
+        <select class="form-control" [(ngModel)]="newVaccinationRecord.animalId" name="animalId">
+          <option [ngValue]="null" disabled>Оберіть тварину...</option>
+          @for (animal of animals(); track animal.id) {
+            <option [ngValue]="animal.id">{{ animal.name }}</option>
+          }
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>Назва вакцини</label>
+        <input type="text" [(ngModel)]="newVaccinationRecord.vaccineName" name="vaccineName">
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Дата щеплення</label><input type="date" [(ngModel)]="newVaccinationRecord.dateAdministered" name="dateAdministered"></div>
+        <div class="form-group"><label>Наступне щеплення</label><input type="date" [(ngModel)]="newVaccinationRecord.nextDueDate" name="nextDueDate"></div>
+      </div>
+      <div class="form-actions" style="margin-top: 32px;">
+        <button type="button" class="btn-secondary" (click)="isVaccineModalOpen.set(false)">Скасувати</button>
+        <button type="button" class="btn-pink" (click)="onSaveVaccination()">Зберегти вакцинацію</button>
+      </div>
+    </form>
+  </app-modal>
+} @if (isEditVaccineModalOpen()) {
+  <app-modal (close)="isEditVaccineModalOpen.set(false)">
+    <div class="modal-header">
+      <h2>Редагувати вакцинацію</h2>
+      <p>Відредагуйте дані про щеплення для тварини.</p>
+    </div>
+    <form class="modal-form">
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>Пацієнт (Тварина)</label>
+        <select class="form-control" [(ngModel)]="editVaccineData.animalId" name="editAnimalId">
+          <option [ngValue]="null" disabled>Оберіть тварину...</option>
+          @for (animal of animals(); track animal.id) {
+            <option [ngValue]="animal.id">{{ animal.name }}</option>
+          }
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>Назва вакцини</label>
+        <input type="text" [(ngModel)]="editVaccineData.vaccineName" name="editVaccineName">
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Дата щеплення</label>
+          <input type="date" [(ngModel)]="editVaccineData.dateAdministered" name="editDateAdministered">
+        </div>
+        <div class="form-group">
+          <label>Наступне щеплення</label>
+          <input type="date" [(ngModel)]="editVaccineData.nextDueDate" name="editNextDueDate">
+        </div>
+      </div>
+      <div class="form-actions" style="margin-top: 32px;">
+        <button type="button" class="btn-secondary" (click)="isEditVaccineModalOpen.set(false)">Скасувати</button>
+        <button type="button" class="btn-pink" (click)="onSaveEditVaccination()">Зберегти зміни</button>
+      </div>
+    </form>
+  </app-modal>
+}

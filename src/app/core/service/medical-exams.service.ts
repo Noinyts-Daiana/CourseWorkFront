@@ -2,7 +2,7 @@
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({providedIn: 'root'})
-export class MedicalExamService {
+export class MedicalExamsService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:5036/api/medical-exams';
 

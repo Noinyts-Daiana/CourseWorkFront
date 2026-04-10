@@ -13,8 +13,8 @@
   </header>
 
   <div class="cards-grid">
-    @for (animal of animals; track animal.name) {
-      <div (click)="selectedAnimal = animal"
+    @for (animal of animals(); track animal.id) {
+      <div (click)="openDetailModal(animal)"
            style="cursor: pointer; transition: transform 0.2s;"
            onmouseover="this.style.transform='scale(1.02)'"
            onmouseout="this.style.transform='scale(1)'">
@@ -32,6 +32,15 @@
     }
   </div>
 
+  <app-pagination
+    [currentPage]="currentPage()"
+    [pageSize]="pageSize()"
+    [totalCount]="totalCount()"
+    [totalPages]="totalPages()"
+    itemName="тварин"
+    (pageChange)="onPageChange($event)">
+  </app-pagination>
+
   @if (isAddModalOpen) {
     <app-modal (close)="isAddModalOpen = false">
       <div class="modal-header">
@@ -43,37 +52,55 @@
         <div class="form-grid">
           <div class="form-group">
             <label>Ім'я</label>
-            <input type="text" placeholder="Введіть ім'я">
+            <input type="text" placeholder="Введіть ім'я" [(ngModel)]="newAnimalData.name" name="newName">
           </div>
+
           <div class="form-group">
             <label>Вид</label>
-            <select><option>Собака</option><option>Кіт</option></select>
+            <select class="form-control" [(ngModel)]="newAnimalData.speciesId" name="newSpecies">
+              <option [ngValue]="null" disabled>Оберіть вид...</option>
+              @for (specie of speciesList(); track specie.id) {
+                <option [ngValue]="specie.id">{{ specie.name }}</option>
+              }
+            </select>
           </div>
+
           <div class="form-group">
             <label>Порода</label>
-            <input type="text" placeholder="Введіть породу">
+            <select class="form-control" [(ngModel)]="newAnimalData.breedId" name="newBreed">
+              <option [ngValue]="null" disabled>Оберіть породу...</option>
+              @for (breed of breedsList(); track breed.id) {
+                <option [ngValue]="breed.id">{{ breed.name }}</option>
+              }
+            </select>
           </div>
+
           <div class="form-group">
             <label>Стать</label>
-            <select><option>Хлопчик</option><option>Дівчинка</option></select>
+            <select class="form-control" [(ngModel)]="newAnimalData.sex" name="newSex">
+              <option [ngValue]="0">Хлопчик</option>
+              <option [ngValue]="1">Дівчинка</option>
+            </select>
           </div>
+
           <div class="form-group">
             <label>Вага (кг)</label>
-            <input type="number" placeholder="Наприклад: 5.5" step="0.1">
+            <input type="number" placeholder="Наприклад: 5.5" step="0.1" [(ngModel)]="newAnimalData.weight" name="newWeight">
           </div>
+
           <div class="form-group">
             <label>Дата народження</label>
-            <input type="date">
+            <input type="date" [(ngModel)]="newAnimalData.birthday" name="newDob">
           </div>
         </div>
 
         <div class="form-checkbox">
-          <label><input type="checkbox"> Тварина стерилізована</label>
+          <label><input type="checkbox" [(ngModel)]="newAnimalData.isSterilized" name="newSterilized"> Тварина стерилізована</label>
         </div>
 
         <div class="form-actions">
           <button type="button" class="btn-secondary" (click)="isAddModalOpen = false">Скасувати</button>
-          <button type="button" class="btn-primary">
+          <button type="button" class="btn-primary" (click)="saveNewAnimal()">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
               <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
             </svg>
@@ -96,25 +123,51 @@
           <div class="form-grid">
             <div class="form-group">
               <label>Ім'я</label>
-              <input type="text" [value]="selectedAnimal.name">
+              <input type="text" [(ngModel)]="editAnimalData.name" name="editName">
             </div>
+
+            <div class="form-group">
+              <label>Вид</label>
+              <select class="form-control" [(ngModel)]="editAnimalData.speciesId" name="editSpecies">
+                <option [ngValue]="null" disabled>Оберіть вид...</option>
+                @for (specie of speciesList(); track specie.id) {
+                  <option [ngValue]="specie.id">{{ specie.name }}</option>
+                }
+              </select>
+            </div>
+
             <div class="form-group">
               <label>Порода</label>
-              <input type="text" [value]="selectedAnimal.breed">
+              <select class="form-control" [(ngModel)]="editAnimalData.breedId" name="editBreed">
+                <option [ngValue]="null" disabled>Оберіть породу...</option>
+                @for (breed of breedsList(); track breed.id) {
+                  <option [ngValue]="breed.id">{{ breed.name }}</option>
+                }
+              </select>
             </div>
+
+            <div class="form-group">
+              <label>Стать</label>
+              <select class="form-control" [(ngModel)]="editAnimalData.sex" name="editSex">
+                <option [ngValue]="0">Хлопчик</option>
+                <option [ngValue]="1">Дівчинка</option>
+              </select>
+            </div>
+
             <div class="form-group">
               <label>Вага (кг)</label>
-              <input type="number" [value]="selectedAnimal.weight">
+              <input type="number" step="0.1" [(ngModel)]="editAnimalData.weight" name="editWeight">
             </div>
+
             <div class="form-group">
               <label>Дата народження</label>
-              <input type="text" [value]="selectedAnimal.dob">
+              <input type="date" [(ngModel)]="editAnimalData.birthDate" name="editDob">
             </div>
           </div>
 
           <div class="form-checkbox">
             <label>
-              <input type="checkbox" [checked]="selectedAnimal.isSterilized">
+              <input type="checkbox" [(ngModel)]="editAnimalData.isSterilized" name="editSterilized">
               Тварина стерилізована
             </label>
           </div>
@@ -145,7 +198,7 @@
 
         <div class="form-actions" style="margin-top: 32px;">
           <button type="button" class="btn-secondary" (click)="closeDetailModal()">Закрити</button>
-          <button type="button" class="btn-primary" (click)="isEditMode = true">
+          <button type="button" class="btn-primary" (click)="startEditing()">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
             </svg>
@@ -153,7 +206,6 @@
           </button>
         </div>
       }
-
     </app-modal>
   }
 </div>

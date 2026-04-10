@@ -1,8 +1,8 @@
 ﻿import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { AuthService } from '../../service/AuthService';
-import {UserService } from '../../service/UserService';
+import { AuthService } from '../../service/auth.service';
+import {UserService } from '../../service/user.service';
 
 @Component({
   selector: 'app-sidebar',

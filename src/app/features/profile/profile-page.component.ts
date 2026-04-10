@@ -1,6 +1,6 @@
 ﻿import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UserService } from '../../core/service/UserService';
+import { UserService } from '../../core/service/user.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 

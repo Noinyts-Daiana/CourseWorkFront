@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../core/service/AuthService';
+import { AuthService } from '../../core/service/auth.service';
 import { ModalComponent } from '../../shared/components/modal/modal.component';
 
 @Component({

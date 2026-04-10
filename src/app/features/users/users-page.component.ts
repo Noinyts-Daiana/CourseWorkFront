@@ -2,7 +2,7 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../../shared/components/modal/modal.component';
-import { UserService } from '../../core/service/UserService';
+import { UserService } from '../../core/service/user.service';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 
 @Component({
