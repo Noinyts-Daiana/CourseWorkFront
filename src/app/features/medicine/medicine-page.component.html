@@ -1,44 +1,64 @@
 ﻿<div class="page-container">
   <header class="page-header">
     <div>
-      <h1>Медичні записи</h1>
-      <p>Історія оглядів та вакцинацій</p>
+      <h1>Медичний журнал</h1>
+      <p>Історія оглядів та вакцинацій підопічних</p>
     </div>
 
     <div class="header-actions" style="display: flex; gap: 12px;">
-      <button class="btn-outline-pink" (click)="openAddVaccine()">
+      <button class="btn-outline-pink" (click)="openAddVaccine()" style="display: flex; align-items: center; border: 1.5px solid #E11D48; color: #E11D48; background: transparent; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer;">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-
-          <path d="m18 2 4 4"/><path d="m17 7 3-3"/><path d="M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5"/><path d="m9 11 4 4"/><path d="m5 19-3 3"/><path d="m14 4 6 6"/>
-
+          <path d="m18 2 4 4"/><path d="m17 7 3-3"/><path d="M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5"/><path d="m9 11 4 4"/><path d="m5 19-3 3"/>
         </svg>
-        Вакцина</button>
-      <button class="btn-pink" (click)="openAddExam()">Новий огляд</button>
+        Вакцина
+      </button>
+
+      <button class="btn-pink" (click)="openAddExam()" style="background: #E11D48; color: white; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+        Новий огляд
+      </button>
     </div>
   </header>
 
-  <div class="filter-bar">
-    <div class="search-box">
-      <span class="search-icon">
+  <div class="controls-card" style="background: white; border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #F3F4F6;">
+
+    <div class="search-wrapper" style="position: relative; flex-grow: 1; max-width: 500px;">
+      <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; pointer-events: none;">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
         </svg>
       </span>
-      <input type="text" placeholder="Пошук пацієнта..." [(ngModel)]="searchQuery" (keyup.enter)="onSearch()">
+      <input type="text"
+             class="search-input"
+             style="padding-left: 40px; width: 100%; height: 40px; border-radius: 10px; border: 1px solid #E5E7EB; outline-color: #E11D48; transition: all 0.2s;"
+             placeholder="Пошук за ім'ям тварини..."
+             [value]="searchTerm()"
+             (input)="onMainSearch($event)">
     </div>
 
-    <div class="filter-toggles">
-      <button class="toggle-btn" [class.active]="activeTab === 'vaccines'" (click)="activeTab = 'vaccines'">Вакцинації</button>
-      <button class="toggle-btn" [class.active]="activeTab === 'exams'" (click)="activeTab = 'exams'">Огляди</button>
+    <div class="tab-switcher" style="display: flex; background: #F3F4F6; padding: 4px; border-radius: 10px; margin-left: 16px;">
+      <button
+        (click)="setTab('exams')"
+        [style.background]="activeTab() === 'exams' ? 'white' : 'transparent'"
+        [style.boxShadow]="activeTab() === 'exams' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none'"
+        style="border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: all 0.2s; color: #374151;">
+        Огляди
+      </button>
+      <button
+        (click)="setTab('vaccines')"
+        [style.background]="activeTab() === 'vaccines' ? 'white' : 'transparent'"
+        [style.boxShadow]="activeTab() === 'vaccines' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none'"
+        style="border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: all 0.2s; color: #374151;">
+        Вакцини
+      </button>
     </div>
   </div>
 
   <div class="records-list">
-    @if (activeTab === 'exams') {
-      <app-medical-exams-tab [searchQuery]="searchQuery"></app-medical-exams-tab>
+    @if (activeTab() === 'exams') {
+      <app-medical-exams-tab [searchQuery]="searchTerm()"></app-medical-exams-tab>
     }
     @else {
-      <app-vaccinations-tab [searchQuery]="searchQuery"></app-vaccinations-tab>
+      <app-vaccinations-tab [searchQuery]="searchTerm()"></app-vaccinations-tab>
     }
   </div>
 </div>

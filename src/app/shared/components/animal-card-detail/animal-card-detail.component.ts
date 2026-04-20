@@ -29,6 +29,7 @@ export class AnimalCardDetailComponent implements OnInit {
   private medicalExamsService = inject(MedicalExamsService);
   private vaccinationsService = inject(VaccinationsService);
 
+
   ngOnInit() {
     this.vaccinationsService.getVaccines(1, 100, this.name).subscribe({
       next: (res: any) => this.vaccines.set(res.items || []),

@@ -1,16 +1,24 @@
-﻿.inventory-card {
+﻿:host {
+  display: block;
+  height: 100%;
+}
+
+.inventory-card {
   background: #FFFFFF;
   border: 1px solid #F3F4F6;
   border-radius: 16px;
   padding: 20px;
-  position: relative;
-  transition: all 0.2s;
-  height: 100%;
+
+
   display: flex;
   flex-direction: column;
+  height: 100%;
+  min-height: 280px;
+  box-sizing: border-box;
+
 
   &.warning-card {
-    border-color: #FDE047; /* Жовта рамка */
+    border-color: #FDE047;
     box-shadow: 0 4px 12px rgba(253, 224, 71, 0.1);
   }
 
@@ -49,8 +57,8 @@
     .progress-bg {
       height: 8px; background: #F3F4F6; border-radius: 4px; overflow: hidden; margin-bottom: 8px;
       .progress-fill { height: 100%; border-radius: 4px; transition: width 0.3s ease; }
-      .fill-success { background: #10B981; } /* Зелений */
-      .fill-warning { background: #FACC15; } /* Жовтий */
+      .fill-success { background: #10B981; }
+      .fill-warning { background: #FACC15; }
     }
     .min-label { font-size: 12px; color: #9CA3AF; }
   }

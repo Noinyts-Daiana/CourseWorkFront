@@ -8,7 +8,6 @@ import { AnimalCardDetailComponent } from '../../shared/components/animal-card-d
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 import { SpeciesService } from '../../core/service/species.service';
 import { BreedService } from '../../core/service/breed.service';
-import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-animals-page',
@@ -30,21 +29,27 @@ export class AnimalsPageComponent implements OnInit {
   private breedService = inject(BreedService);
 
   speciesList = signal<any[]>([]);
-  breedsList = signal<any[]>([]);
   animals = signal<any[]>([]);
   currentPage = signal(1);
   pageSize = signal(9);
   totalCount = signal(0);
   totalPages = computed(() => Math.ceil(this.totalCount() / this.pageSize()) || 1);
+  searchTerm = signal('');
 
   isAddModalOpen = false;
   selectedAnimal: any = null;
   isEditMode = false;
 
+  filteredBreedsList = signal<string[]>([]);
+  breedsCurrentPage = signal(1);
+  breedsTotalPages = signal(1);
+  isBreedsDropdownOpen = signal(false);
+  breedSearchTerm = signal('');
+
   newAnimalData = {
     name: '',
-    speciesId: 1,
-    breedId: 1,
+    speciesId: null as number | null,
+    breed: '',
     sex: 0,
     weight: null as number | null,
     birthday: '',
@@ -55,54 +60,46 @@ export class AnimalsPageComponent implements OnInit {
   editAnimalData = {
     id: 0,
     name: '',
-    speciesId: 1,
-    breedId: 1,
+    speciesId: null as number | null,
+    breed: '',
     sex: 0,
     weight: null as number | null,
-    birthDate: '',
+    birthday: '',
     isSterilized: false,
     description: '',
   };
 
   ngOnInit() {
-    forkJoin({
-      species: this.speciesService.getAllSpecies(),
-      breeds: this.breedService.getAllBreeds(),
-    }).subscribe({
-      next: (data: any) => {
-        this.speciesList.set(data.species);
-        this.breedsList.set(data.breeds);
+    this.speciesService.getAllSpecies().subscribe({
+      next: (species: any) => {
+        this.speciesList.set(species);
         this.loadAnimals();
       },
-      error: (err) => console.error('Помилка завантаження довідників', err),
+      error: (err) => console.error('Помилка завантаження видів', err),
     });
   }
 
   loadAnimals() {
-    this.animalService.getAnimals(this.currentPage(), this.pageSize(), '').subscribe({
-      next: (response: any) => {
-        const mappedAnimals = (response.items || []).map((a: any) => {
-          console.log(`Тваринка: ${a.name} | breedId:`, a.breedId);
-          console.log('Перша порода зі списку:', this.breedsList()[0]);
+    this.animalService
+      .getAnimals(this.currentPage(), this.pageSize(), this.searchTerm())
+      .subscribe({
+        next: (response: any) => {
+          const mappedAnimals = (response.items || []).map((a: any) => {
+            return {
+              ...a,
+              type: a.speciesId === 2 ? 'cat' : 'dog',
+              gender: a.sex === 1 ? 'Дівчинка' : 'Хлопчик',
+              dob: a.birthday ? a.birthday.split('T')[0] : 'Невідомо',
+              // Беремо породу безпосередньо як рядок
+              breed: a.breed || 'Невідома порода',
+            };
+          });
 
-          const breedObj = this.breedsList().find((b) => b.id == a.breedId);
-          const breedName = breedObj ? breedObj.name : 'Невідома порода';
-
-          return {
-            ...a,
-            type: a.speciesId === 2 ? 'cat' : 'dog',
-            gender: a.sex === 1 ? 'Дівчинка' : 'Хлопчик',
-            dob: a.birthday ? a.birthday.split('T')[0] : 'Невідомо',
-            breed: breedName,
-          };
-        });
-
-        this.animals.set(mappedAnimals);
-        this.totalCount.set(response.totalCount || 0);
-        this.currentPage.set(response.pageNumber || 1);
-      },
-      error: (err) => console.error('Помилка завантаження тварин', err),
-    });
+          this.animals.set(mappedAnimals);
+          this.totalCount.set(response.totalCount || 0);
+        },
+        error: (err) => console.error('Помилка завантаження тварин', err),
+      });
   }
 
   onPageChange(newPage: number) {
@@ -110,21 +107,34 @@ export class AnimalsPageComponent implements OnInit {
     this.loadAnimals();
   }
 
+  onMainSearch(event: Event) {
+    const term = (event.target as HTMLInputElement).value;
+    this.searchTerm.set(term);
+    this.currentPage.set(1);
+    this.loadAnimals();
+  }
+
+  openAddModal() {
+    this.newAnimalData = {
+      name: '',
+      speciesId: null,
+      breed: '',
+      sex: 0,
+      weight: null,
+      birthday: '',
+      isSterilized: false,
+      description: '',
+    };
+    this.breedSearchTerm.set('');
+    this.loadBreeds(1, '');
+    this.isAddModalOpen = true;
+  }
+
   saveNewAnimal() {
     this.animalService.addAnimal(this.newAnimalData).subscribe({
       next: () => {
         this.isAddModalOpen = false;
         this.loadAnimals();
-        this.newAnimalData = {
-          name: '',
-          speciesId: 1,
-          breedId: 1,
-          sex: 0,
-          weight: null,
-          birthday: '',
-          isSterilized: false,
-          description: '',
-        };
       },
     });
   }
@@ -144,13 +154,18 @@ export class AnimalsPageComponent implements OnInit {
       id: this.selectedAnimal.id,
       name: this.selectedAnimal.name,
       speciesId: this.selectedAnimal.speciesId,
-      breedId: this.selectedAnimal.breedId || 1,
+      breed: this.selectedAnimal.breed,
       sex: this.selectedAnimal.sex,
       weight: this.selectedAnimal.weight,
-      birthDate: this.selectedAnimal.birthDate ? this.selectedAnimal.birthDate.split('T')[0] : '',
+      birthday: this.selectedAnimal.birthday
+        ? this.selectedAnimal.birthday.split('T')[0]
+        : this.selectedAnimal.dob !== 'Невідомо'
+          ? this.selectedAnimal.dob
+          : '',
       isSterilized: this.selectedAnimal.isSterilized,
       description: this.selectedAnimal.description || '',
     };
+    this.breedSearchTerm.set(this.selectedAnimal.breed);
     this.isEditMode = true;
   }
 
@@ -162,5 +177,52 @@ export class AnimalsPageComponent implements OnInit {
         this.loadAnimals();
       },
     });
+  }
+
+
+  loadBreeds(page: number = 1, search: string = '') {
+    this.breedService.getUniqueBreeds(search, page, 10).subscribe({
+      next: (res: any) => {
+        if (page === 1) {
+          this.filteredBreedsList.set(res.items || []);
+        } else {
+          this.filteredBreedsList.set([...this.filteredBreedsList(), ...(res.items || [])]);
+        }
+        this.breedsCurrentPage.set(res.pageNumber);
+        this.breedsTotalPages.set(Math.ceil(res.totalCount / res.pageSize));
+      },
+    });
+  }
+
+  onBreedInput(event: Event, isAdding: boolean) {
+    const value = (event.target as HTMLInputElement).value;
+    if (isAdding) {
+      this.newAnimalData.breed = value;
+    } else {
+      this.editAnimalData.breed = value;
+    }
+    this.breedSearchTerm.set(value);
+    this.isBreedsDropdownOpen.set(true);
+    this.loadBreeds(1, value);
+  }
+
+  selectBreed(breedName: string, isAdding: boolean) {
+    if (isAdding) {
+      this.newAnimalData.breed = breedName;
+    } else {
+      this.editAnimalData.breed = breedName;
+    }
+    this.breedSearchTerm.set(breedName);
+    this.isBreedsDropdownOpen.set(false);
+  }
+
+  loadMoreBreeds() {
+    if (this.breedsCurrentPage() < this.breedsTotalPages()) {
+      this.loadBreeds(this.breedsCurrentPage() + 1, this.breedSearchTerm());
+    }
+  }
+
+  closeBreedsDropdown() {
+    setTimeout(() => this.isBreedsDropdownOpen.set(false), 200);
   }
 }

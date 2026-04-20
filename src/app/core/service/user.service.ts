@@ -1,5 +1,6 @@
 ﻿import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 
 
@@ -55,5 +56,13 @@ export class UserService {
     };
 
     return this.http.post(`${this.apiUrl}`, dataToSend, { withCredentials: true });
+  }
+
+  getUserById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
+
+  getUsersByRole(roleId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/role/${roleId}`);
   }
 }
