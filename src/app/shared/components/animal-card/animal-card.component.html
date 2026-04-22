@@ -1,67 +1,57 @@
 ﻿<div class="animal-card">
-  <div class="card-header">
-    <div class="avatar" [ngClass]="animalType === 'cat' ? 'cat-bg' : 'dog-bg'">
-      @if (animalType === 'cat') {
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/>
-          <path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z"/>
-        </svg>
+  <div class="card-media">
+
+    <div class="carousel-wrapper">
+      @if (photos && photos.length > 0) {
+        <div class="slides-container">
+          <img [src]="'http://localhost:5036' + photos[currentIndex].fileUrl"
+               [alt]="name"
+               class="carousel-img">
+        </div>
+
+        @if (photos.length > 1) {
+          <button class="nav-btn prev" (click)="prevSlide($event)">‹</button>
+          <button class="nav-btn next" (click)="nextSlide($event)">›</button>
+
+          <div class="indicators">
+            @for (p of photos; track p.id; let i = $index) {
+              <span class="dot"
+                    [class.active]="i === currentIndex"
+                    (click)="setSlide($event, i)">
+              </span>
+            }
+          </div>
+        }
       } @else {
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/>
-          <path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z"/>
-        </svg>
+        <div class="placeholder-container" [ngClass]="animalType === 'cat' ? 'cat-bg' : 'dog-bg'">
+          @if (animalType === 'cat') {
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z"/></svg>
+          } @else {
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5.172C10 3.782 8.423 2.679 6.5 3c-2.823.47-4.113 6.006-4 7 .08.703 1.725 1.722 3.656 1 1.261-.472 1.96-1.45 2.344-2.5"/><path d="M14.267 5.172c0-1.39 1.577-2.493 3.5-2.172 2.823.47 4.113 6.006 4 7-.08.703-1.725 1.722-3.656 1-1.261-.472-1.855-1.45-2.239-2.5"/><path d="M12 21s8-2.272 8-6.444c0-1.061-.162-2.2-.493-3.309m-9.243-6.082A8.801 8.801 0 0 1 12 5"/></svg>
+          }
+        </div>
       }
-    </div>
-    <div class="info">
-      <div class="name-row">
-        <h3>{{ name }}</h3>
-        <span class="gender-badge" [ngClass]="gender === 'Хлопчик' ? 'boy' : 'girl'">
-          {{ gender }}
-        </span>
+      <div class="gender-badge" [class.girl]="gender === 'Дівчинка'" [class.boy]="gender === 'Хлопчик'">
+        {{ gender | uppercase }}
       </div>
-      <p class="breed">{{ breed }}</p>
     </div>
   </div>
 
-  <div class="card-body">
-    <div class="stat-row">
-      <span class="label">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; opacity: 0.7;">
-          <path d="M16 16 20 22"/><path d="M8 16 4 22"/><path d="M12 3v3"/><path d="M3 6h18"/><path d="M3 10c0 4.4 3.6 8 8 8s8-3.6 8-8V6H3Z"/><path d="M12 18v3"/>
-        </svg>
-        Вага:
-      </span>
-      <span class="value">{{ weight }} кг</span>
+  <div class="card-content">
+    <div class="header-row">
+      <h3>{{ name }}</h3>
     </div>
+    <p class="breed-text">{{ breed }}</p>
 
-    <div class="stat-row">
-      <span class="label">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; opacity: 0.7;">
-          <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-        </svg>
-        Народження:
-      </span>
-      <span class="value">{{ dob }}</span>
+    <div class="stats-grid">
+      <div class="stat">
+        <span class="label">Вага:</span>
+        <span class="value">{{ weight }} кг</span>
+      </div>
+      <div class="stat">
+        <span class="label">Стерилізація:</span>
+        <span class="value">{{ isSterilized ? 'Так' : 'Ні' }}</span>
+      </div>
     </div>
-
-    <div class="stat-row">
-      <span class="label">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; opacity: 0.7;">
-          <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/>
-        </svg>
-        Стерилізація:
-      </span>
-      <span class="value" [class.success]="isSterilized" [class.neutral]="!isSterilized">
-        {{ isSterilized ? 'Так' : 'Ні' }}
-      </span>
-    </div>
-
-    <button class="btn-outline" style="margin-top: 16px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
-      Деталі
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M5 12h14m-7-7 7 7-7 7"/>
-      </svg>
-    </button>
   </div>
 </div>

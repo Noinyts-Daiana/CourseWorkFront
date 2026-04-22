@@ -1,37 +1,67 @@
 ﻿<div class="page-container">
   <header class="page-header">
-    <div>
+    <div class="header-text">
       <h1>Користувачі</h1>
       <p>Управління персоналом та волонтерами</p>
     </div>
-    <div class="header-actions" style="display: flex; gap: 16px; align-items: center;">
-      <div class="search-container" style="width: 300px;">
-      </div>
-
-    <button class="btn-primary" (click)="isAddModalOpen = true">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+    <button class="btn-primary" (click)="isAddModalOpen.set(true)">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M5 12h14m-7-7v14"/>
       </svg>
       Додати
     </button>
-      </div>
   </header>
 
-  <div class="search-container">
-    <span class="search-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-      </svg>
-    </span>
-    <input type="text"
-           class="search-input"
-           placeholder="Пошук за ім'ям або email..."
-           [(ngModel)]="searchQuery"       (keyup.enter)="onSearch()">
+  <div class="filter-bar">
+    <div class="search-wrapper">
+      <span class="search-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+        </svg>
+      </span>
+      <input type="text"
+             class="search-input"
+             placeholder="Пошук за ім'ям або email..."
+             [(ngModel)]="searchQuery"
+             (keyup.enter)="onSearch()">
+    </div>
+
   </div>
 
+  @if (selectedRoleFilter() !== 0 || selectedStatusFilter() !== null || searchQuery) {
+    <div style="display: flex; gap: 10px; margin: 0 0 20px 0; padding: 12px 16px; background: #F5F3FF; border: 1px solid #E0E7FF; border-radius: 12px; align-items: center; flex-wrap: wrap;">
+      <span style="font-size: 13px; color: #4B5563; font-weight: 600;">Активні фільтри:</span>
+
+      @if (searchQuery) {
+        <span style="background: white; width: 100%; border: 1px solid #C4B5FD; color: #4338CA; padding: 4px 10px; border-radius: 9999px; font-size: 13px; display: flex; align-items: center; gap: 6px;">
+          Пошук: "{{ searchQuery }}"
+          <button (click)="clearSearch()" style="background: none; border: none; color: #6B7280; cursor: pointer; padding: 0; font-size: 16px; line-height: 1;">&times;</button>
+        </span>
+      }
+
+      @if (selectedRoleFilter() !== 0) {
+        <span style="background: white; border: 1px solid #C4B5FD; color: #4338CA; padding: 4px 10px; border-radius: 9999px; font-size: 13px; display: flex; align-items: center; gap: 6px;">
+          Роль: {{ getRoleName(selectedRoleFilter()) }}
+          <button (click)="clearRoleFilter()" style="background: none; border: none; color: #6B7280; cursor: pointer; padding: 0; font-size: 16px; line-height: 1;">&times;</button>
+        </span>
+      }
+
+      @if (selectedStatusFilter() !== null) {
+        <span style="background: white; border: 1px solid #C4B5FD; color: #4338CA; padding: 4px 10px; border-radius: 9999px; font-size: 13px; display: flex; align-items: center; gap: 6px;">
+          Статус: {{ selectedStatusFilter() ? 'Активні' : 'Неактивні' }}
+          <button (click)="clearStatusFilter()" style="background: none; border: none; color: #6B7280; cursor: pointer; padding: 0; font-size: 16px; line-height: 1;">&times;</button>
+        </span>
+      }
+
+      <button (click)="clearAllFilters()" style="margin-left: auto; background: none; border: none; color: #6B7280; font-size: 13px; cursor: pointer; text-decoration: underline;">
+        Скинути всі
+      </button>
+    </div>
+  }
+
   <div class="cards-grid">
-    @for (user of users(); track user.email) {
-      <div class="user-card" (click)="selectedUser = user">
+    @for (user of users(); track user.userId) {
+      <div class="user-card" (click)="onSelectUser(user)">
         <div class="card-header">
           <div class="avatar-blue">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -40,27 +70,28 @@
           </div>
           <div class="info">
             <h3>{{ user.fullName }}</h3>
-            <p>
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: middle;">
-                <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-              </svg>
-              {{ user.email }}
-            </p>
+            <p>{{ user.email }}</p>
           </div>
         </div>
 
         <div class="card-body">
           <div class="stat-row">
             <span class="label">РОЛЬ</span>
-            <span [ngClass]="user.roleName === 'admin' ? 'badge-purple-light' : 'badge-blue-light'">
+            <span [ngClass]="user.roleName === 'admin' ? 'badge-purple-light' : 'badge-blue-light'"
+                  (click)="$event.stopPropagation(); selectedRoleFilter.set(user.roleId); onRoleFilterChange()"
+                  style="cursor: pointer;" title="Показати всіх з цією роллю">
               {{ user.roleName | titlecase }}
             </span>
           </div>
           <div class="stat-row">
             <span class="label">СТАТУС</span>
-            <span class="status-text" [style.color]="user.isActive ? '#10B981' : '#9CA3AF'">
-              <span class="status-dot" [ngClass]="user.isActive ? 'active' : 'inactive'"></span>
-              {{ user.isActive ? 'Активний' : 'Неактивний' }}
+            <span class="status-text"
+                  (click)="$event.stopPropagation(); setStatusFilter(user.isActive)"
+                  style="cursor: pointer; display: flex; align-items: center; gap: 6px;"
+                  [style.color]="user?.isActive ? '#10B981' : '#9CA3AF'"
+                  title="Відфільтрувати за цим статусом">
+              <span class="status-dot" [ngClass]="user?.isActive ? 'active' : 'inactive'"></span>
+              {{ user?.isActive ? 'Активний' : 'Неактивний' }}
             </span>
           </div>
         </div>
@@ -68,79 +99,13 @@
     }
   </div>
 
-  <app-pagination
-    [currentPage]="currentPage()"
-    [pageSize]="pageSize()"
-    [totalCount]="totalCount()"
-    [totalPages]="totalPages()"
-    itemName="користувачів"
-    (pageChange)="onPageChange($event)">
-  </app-pagination>
-
-  @if (isAddModalOpen) {
-    <app-modal (close)="isAddModalOpen = false; errorMessage.set('')">
-      <div class="modal-header">
-        <h2>Додати користувача</h2>
-        <p>Створіть новий обліковий запис для співробітника або волонтера.</p>
-      </div>
-
-      <form class="modal-form">
-        <div class="form-group">
-          <label>ПІБ</label>
-          <input type="text" [(ngModel)]="regData.fullName" name="regFullName" placeholder="Введіть повне ім'я" required>
-        </div>
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" [(ngModel)]="regData.email" name="regEmail" placeholder="name@shelter.com" required>
-        </div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Роль</label>
-            <select [(ngModel)]="regData.roleId" name="regRole" class="search-input">
-              <option [value]="1">Адміністратор</option>
-              <option [value]="2">Працівник</option>
-              <option [value]="3">Користувач</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Пароль (тимчасовий)</label>
-            <input type="password" [(ngModel)]="regData.password" name="regPassword" placeholder="********" required>
-          </div>
-        </div>
-
-        @if (errorMessage()) {
-          <div class="error-banner">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-            <span>{{ errorMessage() }}</span>
-          </div>
-        }
-        <div class="form-actions" style="margin-top: 32px;">
-          <button type="button" class="btn-secondary" (click)="isAddModalOpen = false; errorMessage.set('')" >Скасувати</button>
-          <button type="button" class="btn-primary" (click)="onAddUser()">
-            Створити
-          </button>
-        </div>
-      </form>
-    </app-modal>
-
-
-  }
-
+  <app-pagination [currentPage]="currentPage()" [pageSize]="pageSize()" [totalCount]="totalCount()" [totalPages]="totalPages()" itemName="користувачів" (pageChange)="onPageChange($event)"></app-pagination>
 
   @if (selectedUser) {
     <app-modal (close)="selectedUser = null">
-      <div class="modal-header" style="margin-bottom: 24px;">
-        <h2>Профіль користувача</h2>
-      </div>
-
+      <div class="modal-header"><h2>Профіль користувача</h2></div>
       <div class="profile-main-card">
-        <div class="avatar-blue large">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-          </svg>
-        </div>
+        <div class="avatar-blue large"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
         <div class="info">
           <h3>{{ selectedUser.fullName }}</h3>
           <p>{{ selectedUser.email }}</p>
@@ -149,73 +114,135 @@
 
       <div class="profile-stats-grid">
         <div class="stat-box">
-          <div>
-            <span class="label">ПРАВА ДОСТУПУ</span>
-            <span [ngClass]="selectedUser.roleName === 'admin' ? 'badge-purple-light' : 'badge-blue-light'" style="display: inline-block; margin-top: 4px;">
-              {{ selectedUser.roleName | titlecase }}
-            </span>
-          </div>
+          <span class="label">РОЛЬ</span>
+          <span [ngClass]="selectedUser.roleName === 'admin' ? 'badge-purple-light' : 'badge-blue-light'">{{ selectedUser.roleName | titlecase }}</span>
         </div>
         <div class="stat-box">
-          <div>
-            <span class="label">СТАТУС</span>
-            <div class="status-text" style="margin-top: 4px; font-weight: 600;" [style.color]="selectedUser.isActive ? '#10B981' : '#9CA3AF'">
-              <span class="status-dot" [ngClass]="selectedUser.isActive ? 'active' : 'inactive'"></span>
-              {{ selectedUser.isActive ? 'Активний' : 'Неактивний' }}
-            </div>
+          <span class="label">СТАТУС</span>
+          <div class="status-text" [style.color]="selectedUser.isActive ? '#10B981' : '#9CA3AF'">
+            <span class="status-dot" [ngClass]="selectedUser.isActive ? 'active' : 'inactive'"></span>
+            {{ selectedUser.isActive ? 'Активний' : 'Неактивний' }}
           </div>
         </div>
       </div>
 
-      <div class="form-actions" style="margin-top: 32px; justify-content: space-between;">
-        <button type="button" class="btn-text-danger">Деактивувати</button>
-        <button type="button" class="btn-secondary" (click)="onEdit()">Редагувати профіль</button>
+      <div class="profile-section" style="border-top: 1px solid #F3F4F6; padding-top: 20px; margin-top: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="label" style="font-weight: 700;">ІСТОРІЯ ТВАРИН</span>
+            <span style="font-size: 12px; background: #EEF2FF; color: #4F46E5; padding: 2px 10px; border-radius: 20px; font-weight: 600;">
+      {{ userAnimals().length }}
+    </span>
+          </div>
+          @if (selectedUser?.isActive) {
+            <button class="btn-primary-small" (click)="toggleAssignMode()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-7-7v14"/></svg>
+              Призначити
+            </button>
+          }
+        </div>
+
+        @if (isAssignMode()) {
+          <div style="background: #F8FAFC; padding: 16px; border-radius: 16px; border: 1.5px solid #E0E7FF; margin-bottom: 20px;">
+            <label style="font-size: 11px; font-weight: 800; color: #4F46E5; text-transform: uppercase; display: block; margin-bottom: 10px;">Швидкий пошук тварини</label>
+            <div style="position: relative;">
+              <input type="text" placeholder="Ім'я або порода..." [(ngModel)]="animalSearchQuery" (focus)="isDropdownVisible.set(true)" (input)="isDropdownVisible.set(true)"
+                     style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid #D1D5DB; outline: none;">
+              @if (isDropdownVisible() && animalSearchQuery() && filteredAnimals().length > 0) {
+                <div style="position: absolute; top: 50px; left: 0; right: 0; background: white; border-radius: 12px; border: 1px solid #E5E7EB; z-index: 100; max-height: 200px; overflow-y: auto; box-shadow: 0 10px 15px rgba(0,0,0,0.1);">
+                  @for (animal of filteredAnimals(); track animal.animalId) {
+                    <div #row (click)="onAnimalSelect(animal)" style="padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #F3F4F6;"
+                         (mouseenter)="row.style.background = '#F9FAFB'" (mouseleave)="row.style.background = 'transparent'">
+                      <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                          <div style="font-weight: 600;">{{ animal.animalName }}</div>
+                          <div style="font-size: 12px; color: #6B7280;">{{ animal.animalBreed || 'Мейн-кун' }}</div>
+                        </div>
+                        @if (selectedAnimalIdForAssign === animal.animalId) { <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> }
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+              <button class="btn-primary" style="flex: 1" (click)="onConfirmAssign()" [disabled]="!selectedAnimalIdForAssign">Підтвердити</button>
+              <button (click)="toggleAssignMode()" style="background: #F1F5F9; border: none; padding: 0 15px; border-radius: 10px; cursor: pointer;">✕</button>
+            </div>
+          </div>
+        }
+
+        <div class="animal-scroll-container" style="max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 4px;">
+          @for (item of userAnimals(); track item.id) {
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-radius: 14px; border: 1px solid #E5E7EB; background: #fff;">
+              <div>
+                <div style="font-weight: 700; font-size: 14px;">{{ item.animalName }}</div>
+                <div style="font-size: 12px; color: #6B7280;">{{ (item.adoptDate || item.arrivalDate) | date:'dd.MM.yyyy' }}</div>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 4px 10px; border-radius: 8px;"
+                      [style.background]="item.status === 0 ? '#DCFCE7' : '#F3F4F6'"
+                      [style.color]="item.status === 0 ? '#059669' : '#6B7280'">{{ item.status === 0 ? 'На руках' : 'Повернуто' }}</span>
+                @if (item.status === 0) { <button class="btn-return-small" (click)="onReturnAnimal(item.animalId)" style="background: #FEE2E2; color: #DC2626; border: none; padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer;">Повернути</button> }
+              </div>
+            </div>
+          } @empty {
+            <div style="text-align: center; padding: 32px; background: #F9FAFB; border-radius: 16px; border: 2px dashed #E5E7EB;">
+              <p style="color: #9CA3AF; font-size: 14px;">Історія тварин порожня</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="form-actions" style="margin-top: 32px; border-top: 1px solid #F3F4F6; padding-top: 20px; display: flex; justify-content: space-between;">
+        <button type="button" class="btn-text-danger" (click)="onToggleActive()">{{ selectedUser.isActive ? 'Деактивувати аккаунт' : 'Активувати аккаунт' }}</button>
+        <button type="button" class="btn-secondary" (click)="onEdit()" style="padding: 10px 20px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer;">Редагувати профіль</button>
       </div>
     </app-modal>
   }
 
   @if (isEditModalOpen()) {
     <app-modal (close)="isEditModalOpen.set(false); errorMessage.set('')">
-      <div class="modal-header">
-        <h2>Редагувати профіль</h2>
-        <p>Змініть дані користувача <strong>{{ editData.fullName }}</strong></p>
-      </div>
-
+      <div class="modal-header"><h2>Редагувати профіль</h2></div>
       <form class="modal-form">
-        <div class="form-group">
-          <label>ПІБ</label>
-          <input type="text" [(ngModel)]="editData.fullName" name="editFullName" placeholder="Введіть повне ім'я" required>
-        </div>
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" [(ngModel)]="editData.email" name="editEmail" placeholder="name@shelter.com" required>
-        </div>
+        <div class="form-group"><label>ПІБ</label><input type="text" [(ngModel)]="editData.fullName" name="editFullName" required></div>
+        <div class="form-group"><label>Email</label><input type="email" [(ngModel)]="editData.email" name="editEmail" required></div>
         <div class="form-group">
           <label>Роль</label>
-          <select [(ngModel)]="editData.roleId" name="editRole" class="search-input">
+          <select [(ngModel)]="editData.roleId" name="editRole" class="search-input" style="width: 100%; box-sizing: border-box;">
             <option [value]="1">Адміністратор</option>
             <option [value]="2">Працівник</option>
             <option [value]="3">Користувач</option>
           </select>
         </div>
+        <div class="form-actions" style="margin-top: 32px; display: flex; gap: 12px; justify-content: flex-end;">
+          <button type="button" class="btn-secondary" (click)="isEditModalOpen.set(false)">Скасувати</button>
+          <button type="button" class="btn-primary" (click)="onSaveEdit()">Зберегти зміни</button>
+        </div>
+      </form>
+    </app-modal>
+  }
 
-        @if (errorMessage()) {
-          <div class="error-banner">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-            <span>{{ errorMessage() }}</span>
+  @if (isAddModalOpen()) {
+    <app-modal (close)="isAddModalOpen.set(false); errorMessage.set('')">
+      <div class="modal-header"><h2>Додати користувача</h2></div>
+      <form class="modal-form">
+        <div class="form-group"><label>ПІБ</label><input type="text" [(ngModel)]="regData.fullName" name="regFullName" required></div>
+        <div class="form-group"><label>Email</label><input type="email" [(ngModel)]="regData.email" name="regEmail" required></div>
+        <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label>Роль</label>
+            <select [(ngModel)]="regData.roleId" name="regRole" class="filter-select" style="width: 100%; box-sizing: border-box;">
+              <option [value]="1">Адміністратор</option>
+              <option [value]="2">Працівник</option>
+              <option [value]="3">Користувач</option>
+            </select>
           </div>
-        }
-
-        <div class="form-actions" style="margin-top: 32px;">
-          <button type="button" class="btn-secondary" (click)="isEditModalOpen.set(false); errorMessage.set('')">Скасувати</button>
-          <button type="button" class="btn-primary" (click)="onSaveEdit()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
-            </svg>
-            Зберегти зміни
-          </button>
+          <div class="form-group"><label>Пароль</label><input type="password" [(ngModel)]="regData.password" name="regPassword" required></div>
+        </div>
+        <div class="form-actions" style="margin-top: 32px; display: flex; gap: 12px; justify-content: flex-end;">
+          <button type="button" class="btn-secondary" (click)="isAddModalOpen.set(false)">Скасувати</button>
+          <button type="button" class="btn-primary" (click)="onAddUser()">Створити</button>
         </div>
       </form>
     </app-modal>

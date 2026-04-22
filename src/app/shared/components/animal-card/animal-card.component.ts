@@ -17,5 +17,34 @@ export class AnimalCardComponent {
   @Input() isSterilized: boolean = false;
   @Input() animalType: string = 'dog';
 
-  iconPath = '';
+  // Приймаємо масив усіх фотографій з бекенду
+  @Input() photos: any[] = [];
+
+  currentIndex = 0;
+
+  // Перейти до наступного фото
+  nextSlide(event: Event) {
+    event.stopPropagation(); // Щоб не відкрилася модалка деталізації
+    if (this.currentIndex < this.photos.length - 1) {
+      this.currentIndex++;
+    } else {
+      this.currentIndex = 0;
+    }
+  }
+
+  // Перейти до попереднього фото
+  prevSlide(event: Event) {
+    event.stopPropagation(); // Щоб не відкрилася модалка деталізації
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
+    } else {
+      this.currentIndex = this.photos.length - 1;
+    }
+  }
+
+  // Вибір фото через крапочки
+  setSlide(event: Event, index: number) {
+    event.stopPropagation();
+    this.currentIndex = index;
+  }
 }

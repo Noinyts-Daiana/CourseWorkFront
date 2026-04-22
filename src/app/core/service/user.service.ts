@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 export class UserService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:5036/api/users';
+  private adoptUrl = 'http://localhost:5036/api/AdoptAnimal';
 
   getProfile() {
     return this.http.get(`${this.apiUrl}/me`, { withCredentials: true });
@@ -30,12 +31,6 @@ export class UserService {
     };
 
     return this.http.put(`${this.apiUrl}/me/password`, dataToSend, { withCredentials: true });
-  }
-
-  getUsers(page: number, size: number, searchTerm: string = '') {
-    return this.http.get(
-      `${this.apiUrl}/?pageNumber=${page}&pageSize=${size}&searchTerm=${searchTerm}`,
-    );
   }
 
   editUser(id: number, regData: any) {
@@ -64,5 +59,46 @@ export class UserService {
 
   getUsersByRole(roleId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/role/${roleId}`);
+  }
+
+  getUsers(
+    page: number,
+    size: number,
+    searchTerm: string = '',
+    roleId: number = 0,
+    isActive: boolean | null = null,
+  ) {
+    let params = new HttpParams()
+      .set('pageNumber', page.toString())
+      .set('pageSize', size.toString());
+
+    if (searchTerm) params = params.set('searchTerm', searchTerm);
+    if (roleId > 0) params = params.set('roleId', roleId.toString());
+
+    // Додаємо статус, якщо він вибраний
+    if (isActive !== null) {
+      params = params.set('isActive', isActive.toString());
+    }
+
+    return this.http.get(`${this.apiUrl}`, { params });
+  }
+
+  toggleStatus(id: number): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${id}/toggle-status`, {}, { withCredentials: true });
+  }
+
+  getUserAnimals(ownerId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.adoptUrl}/user/${ownerId}`);
+  }
+
+  returnAnimal(animalId: number, ownerId: number): Observable<any> {
+    return this.http.post(`${this.adoptUrl}/return`, { animalId, ownerId });
+  }
+  getAvailableAnimals(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.adoptUrl}/available`);
+  }
+
+  adoptAnimal(animalId: number, ownerId: number): Observable<any> {
+    return this.http.post(`${this.adoptUrl}/adopt`, { animalId, ownerId });
   }
 }

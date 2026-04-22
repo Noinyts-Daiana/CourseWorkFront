@@ -1,71 +1,125 @@
 ﻿.animal-card {
+
   background: white;
-  border: 1px solid #F3F4F6;
   border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative; // Важливо
 
-  .card-header {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-    margin-bottom: 24px;
-
-    .avatar {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      &.dog-bg { background: #FEF9C3; color: #CA8A04; }
-      &.cat-bg { background: #EFF6FF; color: #1C5BFF; }
-
-      img { width: 32px; height: 32px; }
-    }
-
-    .info {
-      flex: 1;
-      .name-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 4px;
-
-        h3 { margin: 0; font-size: 18px; font-weight: 700; color: #111827; }
-
-        .gender-badge {
-          padding: 4px 10px;
-          border-radius: 8px;
-          font-size: 12px;
-          font-weight: 600;
-
-          &.boy { background: #EFF6FF; color: #1C5BFF; }
-          &.girl { background: #FDF2F8; color: #DB2777; }
-        }
-      }
-      .breed { margin: 0; font-size: 14px; color: #6B7280; }
-    }
+  &:hover {
+    transform: translateY(-5px);
   }
 
-  .card-body {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
 
-    .stat-row {
-      display: flex;
-      justify-content: space-between;
+  .card-media {
+    position: relative;
+    height: 220px;
+    z-index: 1;
+
+    .carousel-wrapper {
+      height: 100%;
+      position: relative;
+
+      .carousel-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+  .gender-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    z-index: 5;
+    background: rgba(255, 255, 255, 0.9);
+
+    &.girl { color: #EC4899; border: 1px solid #F9A8D4; }
+    &.boy { color: #2563EB; border: 1px solid #93C5FD; }
+  }
+  .card-content {
+    padding: 24px 16px 16px; // Додав більше padding зверху
+    background: white;
+    position: relative;
+    z-index: 2;
+    margin-top: -15px;
+    border-radius: 20px 20px 0 0;
+    flex-grow: 1;
+
+    h3 {
+      margin: 0;
+      font-size: 20px;
+      color: #111827;
+      font-weight: 700;
+    }
+
+    .breed-text {
+      color: #6B7280;
       font-size: 14px;
+      margin: 4px 0 16px;
+    }
 
-      .label { color: #6B7280; }
-      .value {
-        font-weight: 600; color: #111827;
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding-top: 14px;
+      border-top: 1px solid #F3F4F6;
 
-        &.success { color: #10B981; } /* Зелений "Так" */
-        &.neutral { color: #6B7280; } /* Сірий "Ні" */
+      .stat {
+        display: flex;
+        flex-direction: column;
+        .label { font-size: 10px; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.5px; }
+        .value { font-size: 14px; font-weight: 600; color: #374151; margin-top: 2px; }
       }
     }
   }
+
+  // Стрілочки
+  .nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    z-index: 10;
+    opacity: 0;
+    transition: all 0.3s;
+
+    &:hover { background: white; scale: 1.1; }
+    &.prev { left: 10px; }
+    &.next { right: 10px; }
+  }
+
+  &:hover .nav-btn { opacity: 1; }
+}
+
+.placeholder-container {
+  height: 100%;
+  width: 100%;
+  display: flex;         // Робимо флекс
+  align-items: center;    // Центруємо по вертикалі
+  justify-content: center; // Центруємо по горизонталі
+  transition: background-color 0.3s ease;
+
+  svg {
+    opacity: 0.4;        // Робимо іконку м'якою
+    color: #4B5563;      // Темно-сірий колір для іконки
+  }
+
+  &.cat-bg { background-color: #FCE7F3; } // Ніжно-рожевий для котів
+  &.dog-bg { background-color: #DBEAFE; } // Ніжно-блакитний для собак
 }

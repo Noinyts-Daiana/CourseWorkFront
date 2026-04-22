@@ -1,12 +1,28 @@
 ﻿import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root',
+})
 export class SpeciesService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:5036/api/species';
 
-  getAllSpecies() {
-    return this.http.get(this.apiUrl);
+  getSpeciesPaged(page: number, size: number, search?: string): Observable<any> {
+    let params = new HttpParams()
+      .set('pageNumber', page.toString())
+      .set('pageSize', size.toString());
+
+    if (search) params = params.set('searchTerm', search);
+
+    return this.http.get<any>(`${this.apiUrl}/paged`, { params });
+  }
+
+  getAllSpecies(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
+  }
+  addSpecie(specieData: { name: string }): Observable<any> {
+    return this.http.post<any>(this.apiUrl, specieData);
   }
 }
