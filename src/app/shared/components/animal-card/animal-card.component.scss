@@ -7,8 +7,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  position: relative; // Важливо
-
+  position: relative;
   &:hover {
     transform: translateY(-5px);
   }
@@ -46,7 +45,7 @@
     &.boy { color: #2563EB; border: 1px solid #93C5FD; }
   }
   .card-content {
-    padding: 24px 16px 16px; // Додав більше padding зверху
+    padding: 24px 16px 16px;
     background: white;
     position: relative;
     z-index: 2;
@@ -83,7 +82,6 @@
     }
   }
 
-  // Стрілочки
   .nav-btn {
     position: absolute;
     top: 50%;
@@ -110,16 +108,16 @@
 .placeholder-container {
   height: 100%;
   width: 100%;
-  display: flex;         // Робимо флекс
-  align-items: center;    // Центруємо по вертикалі
-  justify-content: center; // Центруємо по горизонталі
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: background-color 0.3s ease;
 
   svg {
-    opacity: 0.4;        // Робимо іконку м'якою
-    color: #4B5563;      // Темно-сірий колір для іконки
+    opacity: 0.4;
+    color: #4B5563;
   }
 
-  &.cat-bg { background-color: #FCE7F3; } // Ніжно-рожевий для котів
-  &.dog-bg { background-color: #DBEAFE; } // Ніжно-блакитний для собак
+  &.cat-bg { background-color: #FCE7F3; }
+  &.dog-bg { background-color: #DBEAFE; }
 }

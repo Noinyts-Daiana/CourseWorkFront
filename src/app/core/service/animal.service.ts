@@ -1,5 +1,5 @@
 ﻿import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -7,10 +7,32 @@ export class AnimalService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:5036/api/animals'; // Перевір свій порт
 
-  getAnimals(pageNumber: number = 1, pageSize: number = 9, searchTerm: string = '') {
-    return this.http.get(
-      `${this.apiUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}&searchTerm=${searchTerm}`,
-    );
+  getAnimals(
+    pageNumber: number = 1,
+    pageSize: number = 8,
+    searchTerm: string = '',
+    charIds: number[] = [],
+    speciesId: number | null = null,
+    breedId: number | null = null,
+    sex: number | null = null,
+  ) {
+    let params = new HttpParams().set('pageNumber', pageNumber).set('pageSize', pageSize);
+
+    if (searchTerm) {
+      params = params.set('searchTerm', searchTerm);
+    }
+
+    if (charIds && charIds.length > 0) {
+      charIds.forEach((id) => {
+        params = params.append('charIds', id.toString());
+      });
+    }
+
+    if (speciesId !== null) params = params.set('speciesId', speciesId.toString());
+    if (breedId !== null) params = params.set('breedId', breedId.toString());
+    if (sex !== null) params = params.set('sex', sex.toString());
+
+    return this.http.get(`${this.apiUrl}`, { params });
   }
 
   getAnimalById(id: number) {
@@ -28,5 +50,4 @@ export class AnimalService {
   deleteAnimal(id: number) {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
-
 }

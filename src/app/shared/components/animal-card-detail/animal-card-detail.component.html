@@ -45,6 +45,26 @@
           <span class="value" [class.text-success]="isSterilized" [class.text-muted]="!isSterilized">{{ isSterilized ? 'Так' : 'Ні' }}</span>
         </div>
       </div>
+
+      <div class="detail-characteristics-section" style="margin-top: 24px;">
+        <h4 style="font-size: 12px; color: #6B7280; letter-spacing: 0.05em; margin-bottom: 12px; text-transform: uppercase;">Особливості характеру</h4>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+          @for (char of characteristics; track char) {
+            <span style="background: #FEF3C7; color: #B45309; border: 1px solid #FBBF24; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 500;">
+              {{ char }}
+            </span>
+          } @empty {
+            <p style="color: #9CA3AF; font-size: 14px; font-style: italic;">Особливості ще не вказані.</p>
+          }
+        </div>
+      </div>
+
+      @if (description) {
+        <div class="description-section" style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #F3F4F6;">
+          <h4 style="font-size: 12px; color: #6B7280; letter-spacing: 0.05em; margin-bottom: 8px; text-transform: uppercase;">Про тваринку</h4>
+          <p style="color: #4B5563; line-height: 1.6; font-size: 15px;">{{ description }}</p>
+        </div>
+      }
     }
 
     @if (activeTab === 'medical') {

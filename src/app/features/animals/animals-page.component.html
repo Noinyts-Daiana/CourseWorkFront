@@ -5,182 +5,158 @@
       <p>Керування профілями підопічних</p>
     </div>
     <button class="btn-primary" (click)="openAddModal()">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-        <path d="M5 12h14m-7-7v14"/>
-      </svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M5 12h14m-7-7v14"/></svg>
       Додати
     </button>
   </header>
 
-  <div>
-    <div class="search-section" style="margin-bottom: 32px; width: 100%;">
-      <div style="position: relative; width: 100%;">
-        <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; pointer-events: none; color: #9CA3AF;">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-          </svg>
+  <div class="search-section" style="margin-bottom: 16px; width: 100%;">
+    <div style="position: relative; width: 100%;">
+      <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #9CA3AF;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+      <input type="text" class="search-input" style="padding: 12px 16px 12px 48px; width: 100%; border-radius: 10px; border: 1px solid #E5E7EB; height: 48px;" placeholder="Пошук за ім'ям або породою..." [value]="searchTerm()" (input)="onMainSearch($event)">
+    </div>
+  </div>
+
+  @if (selectedFilterCharIds().length > 0 || selectedFilterSex() !== null || selectedFilterSpeciesId() !== null || selectedFilterBreedId() !== null) {
+    <div style="display: flex; gap: 12px; margin: 16px 0; padding: 12px 16px; background: #F5F3FF; border: 1px solid #E0E7FF; border-radius: 8px; align-items: center; flex-wrap: wrap;">
+      <span style="font-size: 14px; color: #4B5563; font-weight: 500;">Активні фільтри:</span>
+
+      @for (charId of selectedFilterCharIds(); track charId) {
+        <span style="background: white; border: 1px solid #C4B5FD; color: #4338CA; padding: 4px 10px; border-radius: 9999px; font-size: 13px; display: flex; align-items: center; gap: 6px;">
+          Характер: {{ getFilterCharName(charId) }}
+          <button (click)="removeCharFilter(charId)" style="background: none; border: none; color: #6B7280; cursor: pointer; padding: 0; font-size: 16px; line-height: 1;">&times;</button>
         </span>
-        <input
-          type="text"
-          class="search-input"
-          autocomplete="off"
-          style="padding: 12px 16px 12px 48px; width: 100%; box-sizing: border-box; border-radius: 10px; border: 1px solid #E5E7EB; height: 48px; outline-color: #FBBF24; font-size: 15px; background: white;"
-          placeholder="Пошук за ім'ям або породою..."
-          [value]="searchTerm()"
-          (input)="onMainSearch($event)">
-      </div>
-    </div>
-
-    <div class="cards-grid">
-      @for (animal of animals(); track animal.id) {
-        <div (click)="openDetailModal(animal)"
-             style="cursor: pointer; transition: transform 0.2s;"
-             onmouseover="this.style.transform='scale(1.02)'"
-             onmouseout="this.style.transform='scale(1)'">
-
-          <app-animal-card
-            [name]="animal.name"
-            [breed]="animal.breed"
-            [photos]="animal.photos"
-            [gender]="animal.gender"
-            [weight]="animal.weight"
-            [dob]="animal.dob"
-            [isSterilized]="animal.isSterilized"
-            [animalType]="animal.type">
-          </app-animal-card>
-        </div>
       }
 
-      @if (animals().length === 0) {
-        <p style="grid-column: 1 / -1; text-align: center; color: #6B7280; padding: 40px 0;">За вашим запитом нічого не знайдено 😿</p>
+      @if (selectedFilterSpeciesId() !== null) {
+        <span style="background: white; border: 1px solid #C4B5FD; color: #4338CA; padding: 4px 10px; border-radius: 9999px; font-size: 13px; display: flex; align-items: center; gap: 6px;">
+          Вид: {{ getFilterSpeciesName(selectedFilterSpeciesId()!) }}
+          <button (click)="clearSpeciesFilter()" style="background: none; border: none; color: #6B7280; cursor: pointer; padding: 0; font-size: 16px; line-height: 1;">&times;</button>
+        </span>
       }
-    </div>
 
-    @if (totalCount() > 0) {
-      <div style="margin-top: 32px; padding-top: 16px; border-top: 1px solid #E5E7EB;">
-        <app-pagination
-          [currentPage]="currentPage()"
-          [pageSize]="pageSize()"
-          [totalCount]="totalCount()"
-          [totalPages]="totalPages()"
-          itemName="тварин"
-          (pageChange)="onPageChange($event)">
-        </app-pagination>
+      @if (selectedFilterBreedId() !== null) {
+        <span style="background: white; border: 1px solid #C4B5FD; color: #4338CA; padding: 4px 10px; border-radius: 9999px; font-size: 13px; display: flex; align-items: center; gap: 6px;">
+          Порода: {{ selectedFilterBreedName() }} <button (click)="clearBreedFilter()" style="background: none; border: none; color: #6B7280; cursor: pointer; padding: 0; font-size: 16px; line-height: 1;">&times;</button>
+        </span>
+      }
+
+      @if (selectedFilterSex() !== null) {
+        <span style="background: white; border: 1px solid #C4B5FD; color: #4338CA; padding: 4px 10px; border-radius: 9999px; font-size: 13px; display: flex; align-items: center; gap: 6px;">
+          Стать: {{ selectedFilterSex() === 0 ? 'Хлопчик' : 'Дівчинка' }}
+          <button (click)="clearSexFilter()" style="background: none; border: none; color: #6B7280; cursor: pointer; padding: 0; font-size: 16px; line-height: 1;">&times;</button>
+        </span>
+      }
+
+      <button (click)="clearAllFilters()" style="margin-left: auto; background: none; border: none; color: #6B7280; font-size: 13px; cursor: pointer; text-decoration: underline;">
+        Скинути всі
+      </button>
+    </div>
+  }
+
+  <div class="cards-grid">
+    @for (animal of animals(); track animal.id) {
+      <div (click)="openDetailModal(animal)" style="cursor: pointer; transition: 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+        <app-animal-card
+          [name]="animal.name"
+          [breed]="animal.breed"
+          [speciesName]="animal.speciesName"
+          [photos]="animal.photos"
+          [gender]="animal.gender"
+          [weight]="animal.weight"
+          [dob]="animal.dob"
+          [isSterilized]="animal.isSterilized"
+          [animalType]="animal.type"
+          [characteristics]="animal.characteristics"
+          (charClick)="addCharFilterByName($event)"
+          (breedClick)="setBreedFilter(animal.breedId, animal.breed)"
+          (speciesClick)="setSpeciesFilter(animal.speciesId)"
+          (sexClick)="setSexFilter(animal.sex)">
+        </app-animal-card>
       </div>
     }
   </div>
+
+  @if (totalCount() > 0) {
+    <app-pagination [currentPage]="currentPage()" [pageSize]="pageSize()" [totalCount]="totalCount()" [totalPages]="totalPages()" itemName="тварин" (pageChange)="onPageChange($event)"></app-pagination>
+  }
 </div>
 
 @if (isAddModalOpen) {
   <app-modal (close)="isAddModalOpen = false">
-    <div class="modal-header">
-      <h2>Додати нову тварину</h2>
-      <p>Заповніть інформацію про нового мешканця притулку.</p>
-    </div>
+    <div class="modal-header"><h2>Додати нову тварину</h2></div>
     <form class="modal-form">
       <div class="form-grid">
-        <div class="form-group">
-          <label>Ім'я</label>
-          <input type="text" placeholder="Введіть ім'я" [(ngModel)]="newAnimalData.name" name="newName">
-        </div>
+        <div class="form-group"><label>Ім'я</label><input type="text" [(ngModel)]="newAnimalData.name" name="newName" class="form-control"></div>
 
         <div class="form-group" style="position: relative;">
           <label>Вид</label>
-          <div class="input-with-dropdown" style="position: relative;">
-            <input
-              type="text"
-              placeholder="Оберіть або введіть вид..."
-              [value]="speciesSearchTerm()"
-              (input)="onSpeciesInput($event, true)"
-              (focus)="isSpeciesDropdownOpen.set(true)"
-              (blur)="closeSpeciesDropdown()"
-              class="form-control"
-              autocomplete="off"
-            >
-            <span class="dropdown-icon" (click)="isSpeciesDropdownOpen.set(!isSpeciesDropdownOpen())" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #9CA3AF; display: flex; align-items: center;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-            </span>
+          <div class="input-with-dropdown">
+            <input type="text" [value]="speciesSearchTerm()" (input)="onSpeciesInput($event, true)" (focus)="isSpeciesDropdownOpen.set(true)" (blur)="closeSpeciesDropdown()" class="form-control">
           </div>
-          @if (isSpeciesDropdownOpen() && speciesList().length > 0) {
-            <div class="custom-dropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #E5E7EB; border-radius: 8px; margin-top: 4px; max-height: 200px; overflow-y: auto; z-index: 1000; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
-              @for (specie of speciesList(); track specie.id) {
-                <div class="dropdown-item" (click)="selectSpecies(specie, true)" style="padding: 10px 14px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='white'">
-                  {{ specie.name }}
-                </div>
-              }
-              @if (speciesCurrentPage() < speciesTotalPages()) {
-                <div class="dropdown-item load-more" (click)="loadMoreSpecies()" style="padding: 10px 14px; cursor: pointer; color: #2563EB; text-align: center; font-size: 13px; border-top: 1px solid #E5E7EB; background: #EFF6FF;">
-                  Завантажити ще...
-                </div>
-              }
+          @if (isSpeciesDropdownOpen() && filteredSpeciesList().length > 0) {
+            <div class="custom-dropdown">
+              @for (s of filteredSpeciesList(); track (s.id || s.Id)) { <div class="dropdown-item" (click)="selectSpecies(s, true)">{{ s.name || s.Name }}</div> }
             </div>
           }
         </div>
 
         <div class="form-group" style="position: relative;">
           <label>Порода</label>
-          <div class="input-with-dropdown" style="position: relative;">
-            <input
-              type="text"
-              placeholder="Почніть вводити назву породи..."
-              [value]="breedSearchTerm()"
-              (input)="onBreedInput($event, true)"
-              (focus)="isBreedsDropdownOpen.set(true)"
-              (blur)="closeBreedsDropdown()"
-              class="form-control"
-              autocomplete="off"
-            >
-            <span class="dropdown-icon" (click)="isBreedsDropdownOpen.set(!isBreedsDropdownOpen())" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #9CA3AF; display: flex; align-items: center;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-            </span>
+          <div class="input-with-dropdown">
+            <input type="text" [value]="breedSearchTerm()" (input)="onBreedInput($event, true)" (focus)="isBreedsDropdownOpen.set(true)" (blur)="closeBreedsDropdown()" class="form-control">
           </div>
           @if (isBreedsDropdownOpen() && filteredBreedsList().length > 0) {
-            <div class="custom-dropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #E5E7EB; border-radius: 8px; margin-top: 4px; max-height: 200px; overflow-y: auto; z-index: 1000; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
-              @for (breed of filteredBreedsList(); track breed.id) {
-                <div class="dropdown-item" (click)="selectBreed(breed, true)" style="padding: 10px 14px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='white'">
-                  {{ breed.name }}
-                </div>
-              }
-              @if (breedsCurrentPage() < breedsTotalPages()) {
-                <div class="dropdown-item load-more" (click)="loadMoreBreeds()" style="padding: 10px 14px; cursor: pointer; color: #2563EB; text-align: center; font-size: 13px; border-top: 1px solid #E5E7EB; background: #EFF6FF;">
-                  Завантажити ще...
-                </div>
-              }
+            <div class="custom-dropdown">
+              @for (b of filteredBreedsList(); track (b.id || b.Id)) { <div class="dropdown-item" (click)="selectBreed(b, true)">{{ b.name || b.Name }}</div> }
             </div>
           }
         </div>
 
-        <div class="form-group">
-          <label>Стать</label>
-          <select class="form-control" [(ngModel)]="newAnimalData.sex" name="newSex">
-            <option [ngValue]="0">Хлопчик</option>
-            <option [ngValue]="1">Дівчинка</option>
-          </select>
-        </div>
+        <div class="form-group"><label>Стать</label><select [(ngModel)]="newAnimalData.sex" name="newSex" class="form-control"><option [ngValue]="0">Хлопчик</option><option [ngValue]="1">Дівчинка</option></select></div>
+        <div class="form-group"><label>Вага (кг)</label><input type="number" step="0.1" [(ngModel)]="newAnimalData.weight" name="newWeight" class="form-control"></div>
+        <div class="form-group"><label>Дата народження</label><input type="date" [(ngModel)]="newAnimalData.birthday" name="newDob" class="form-control"></div>
+      </div>
 
-        <div class="form-group">
-          <label>Вага (кг)</label>
-          <input type="number" placeholder="Наприклад: 5.5" step="0.1" [(ngModel)]="newAnimalData.weight" name="newWeight">
-        </div>
+      <div class="form-group" style="margin-top: 16px;">
+        <label>Опис тварини</label>
+        <textarea
+          class="form-control"
+          [(ngModel)]="newAnimalData.description"
+          name="newDescription"
+          rows="3"
+          placeholder="Розкажіть трохи про підопічного..."
+          style="resize: vertical; width: 100%;">
+        </textarea>
+      </div>
 
-        <div class="form-group">
-          <label>Дата народження</label>
-          <input type="date" [(ngModel)]="newAnimalData.birthday" name="newDob">
+      <div class="form-group" style="margin-top: 16px;">
+        <label>Характер</label>
+        <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+          <input type="text" class="form-control" placeholder="Нова риса..." [value]="charSearchTerm()" (input)="charSearchTerm.set($any($event.target).value)" (keyup.enter)="addNewCharacteristic(charSearchTerm(), true)">
+          <button type="button" class="btn-primary" (click)="addNewCharacteristic(charSearchTerm(), true)">+</button>
+        </div>
+        <div class="chips-container" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; border: 1px dashed #E5E7EB; border-radius: 8px;">
+          @for (n of newAnimalData.newCharacteristicNames; track n) {
+            <div (click)="removeNewChar(n, true)" style="background: #D1FAE5; color: #065F46; padding: 4px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; user-select: none;">{{ n }} ✕</div>
+          }
+          @for (char of filteredCharacteristics(); track (char.id || char.Id)) {
+            <div (click)="toggleCharacteristic(char, true)"
+                 [style.background]="newAnimalData.characteristicIds.includes(char.id || char.Id) ? '#FEF3C7' : '#F3F4F6'"
+                 [style.color]="newAnimalData.characteristicIds.includes(char.id || char.Id) ? '#B45309' : '#4B5563'"
+                 [style.border-color]="newAnimalData.characteristicIds.includes(char.id || char.Id) ? '#FBBF24' : 'transparent'"
+                 style="padding: 4px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid transparent; transition: 0.2s; user-select: none;">
+              {{ char.name || char.Name }}
+            </div>
+          }
         </div>
       </div>
 
-      <div class="form-checkbox">
-        <label><input type="checkbox" [(ngModel)]="newAnimalData.isSterilized" name="newSterilized"> Тварина стерилізована</label>
-      </div>
+      <div class="form-checkbox" style="margin-top: 16px;"><label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" [(ngModel)]="newAnimalData.isSterilized" name="newSterilized" style="width: 18px; height: 18px;"> Стерилізована</label></div>
 
-      <div class="form-actions" style="margin-top: 32px; display: flex; justify-content: flex-end; gap: 12px;">
+      <div class="form-actions" style="margin-top: 24px;">
         <button type="button" class="btn-secondary" (click)="isAddModalOpen = false">Скасувати</button>
-        <button type="button" class="btn-primary" (click)="saveNewAnimal()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
-          </svg>
-          Зберегти
-        </button>
+        <button type="button" class="btn-primary" (click)="saveNewAnimal()">Зберегти</button>
       </div>
     </form>
   </app-modal>
@@ -189,116 +165,79 @@
 @if (selectedAnimal) {
   <app-modal (close)="closeDetailModal()">
     @if (isEditMode) {
-      <div class="modal-header" style="margin-bottom: 24px;">
-        <h2>Редагувати профіль</h2>
-      </div>
+      <div class="modal-header"><h2>Редагувати профіль</h2></div>
       <form class="modal-form">
         <div class="form-grid">
-          <div class="form-group">
-            <label>Ім'я</label>
-            <input type="text" [(ngModel)]="editAnimalData.name" name="editName">
-          </div>
+          <div class="form-group"><label>Ім'я</label><input type="text" [(ngModel)]="editAnimalData.name" name="editName" class="form-control"></div>
 
           <div class="form-group" style="position: relative;">
             <label>Вид</label>
-            <div class="input-with-dropdown" style="position: relative;">
-              <input
-                type="text"
-                placeholder="Оберіть або введіть вид..."
-                [value]="speciesSearchTerm()"
-                (input)="onSpeciesInput($event, false)"
-                (focus)="isSpeciesDropdownOpen.set(true)"
-                (blur)="closeSpeciesDropdown()"
-                class="form-control"
-                autocomplete="off"
-              >
-              <span class="dropdown-icon" (click)="isSpeciesDropdownOpen.set(!isSpeciesDropdownOpen())" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #9CA3AF; display: flex; align-items: center;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-              </span>
+            <div class="input-with-dropdown">
+              <input type="text" [value]="speciesSearchTerm()" (input)="onSpeciesInput($event, false)" (focus)="isSpeciesDropdownOpen.set(true)" (blur)="closeSpeciesDropdown()" class="form-control">
             </div>
-            @if (isSpeciesDropdownOpen() && speciesList().length > 0) {
-              <div class="custom-dropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #E5E7EB; border-radius: 8px; margin-top: 4px; max-height: 200px; overflow-y: auto; z-index: 1000; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
-                @for (specie of speciesList(); track specie.id) {
-                  <div class="dropdown-item" (click)="selectSpecies(specie, false)" style="padding: 10px 14px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='white'">
-                    {{ specie.name }}
-                  </div>
-                }
-                @if (speciesCurrentPage() < speciesTotalPages()) {
-                  <div class="dropdown-item load-more" (click)="loadMoreSpecies()" style="padding: 10px 14px; cursor: pointer; color: #2563EB; text-align: center; font-size: 13px; border-top: 1px solid #E5E7EB; background: #EFF6FF;">
-                    Завантажити ще...
-                  </div>
-                }
+            @if (isSpeciesDropdownOpen() && filteredSpeciesList().length > 0) {
+              <div class="custom-dropdown">
+                @for (s of filteredSpeciesList(); track (s.id || s.Id)) { <div class="dropdown-item" (click)="selectSpecies(s, false)">{{ s.name || s.Name }}</div> }
               </div>
             }
           </div>
 
           <div class="form-group" style="position: relative;">
             <label>Порода</label>
-            <div class="input-with-dropdown" style="position: relative;">
-              <input
-                type="text"
-                placeholder="Почніть вводити назву породи..."
-                [value]="breedSearchTerm()"
-                (input)="onBreedInput($event, false)"
-                (focus)="isBreedsDropdownOpen.set(true)"
-                (blur)="closeBreedsDropdown()"
-                class="form-control"
-                autocomplete="off"
-              >
-              <span class="dropdown-icon" (click)="isBreedsDropdownOpen.set(!isBreedsDropdownOpen())" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #9CA3AF; display: flex; align-items: center;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-              </span>
+            <div class="input-with-dropdown">
+              <input type="text" [value]="breedSearchTerm()" (input)="onBreedInput($event, false)" (focus)="isBreedsDropdownOpen.set(true)" (blur)="closeBreedsDropdown()" class="form-control">
             </div>
             @if (isBreedsDropdownOpen() && filteredBreedsList().length > 0) {
-              <div class="custom-dropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #E5E7EB; border-radius: 8px; margin-top: 4px; max-height: 200px; overflow-y: auto; z-index: 1000; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
-                @for (breed of filteredBreedsList(); track breed.id) {
-                  <div class="dropdown-item" (click)="selectBreed(breed, false)" style="padding: 10px 14px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='white'">
-                    {{ breed.name }}
-                  </div>
-                }
-                @if (breedsCurrentPage() < breedsTotalPages()) {
-                  <div class="dropdown-item load-more" (click)="loadMoreBreeds()" style="padding: 10px 14px; cursor: pointer; color: #2563EB; text-align: center; font-size: 13px; border-top: 1px solid #E5E7EB; background: #EFF6FF;">
-                    Завантажити ще...
-                  </div>
-                }
+              <div class="custom-dropdown">
+                @for (b of filteredBreedsList(); track (b.id || b.Id)) { <div class="dropdown-item" (click)="selectBreed(b, false)">{{ b.name || b.Name }}</div> }
               </div>
             }
           </div>
 
-          <div class="form-group">
-            <label>Стать</label>
-            <select class="form-control" [(ngModel)]="editAnimalData.sex" name="editSex">
-              <option [ngValue]="0">Хлопчик</option>
-              <option [ngValue]="1">Дівчинка</option>
-            </select>
-          </div>
+          <div class="form-group"><label>Стать</label><select [(ngModel)]="editAnimalData.sex" name="editSex" class="form-control"><option [ngValue]="0">Хлопчик</option><option [ngValue]="1">Дівчинка</option></select></div>
+          <div class="form-group"><label>Вага (кг)</label><input type="number" step="0.1" [(ngModel)]="editAnimalData.weight" name="editWeight" class="form-control"></div>
+          <div class="form-group"><label>Дата нар.</label><input type="date" [(ngModel)]="editAnimalData.birthday" name="editDob" class="form-control"></div>
+        </div>
 
-          <div class="form-group">
-            <label>Вага (кг)</label>
-            <input type="number" step="0.1" [(ngModel)]="editAnimalData.weight" name="editWeight">
-          </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Опис тварини</label>
+          <textarea
+            class="form-control"
+            [(ngModel)]="editAnimalData.description"
+            name="editDescription"
+            rows="3"
+            placeholder="Оновіть інформацію про тваринку..."
+            style="resize: vertical; width: 100%;">
+          </textarea>
+        </div>
 
-          <div class="form-group">
-            <label>Дата народження</label>
-            <input type="date" [(ngModel)]="editAnimalData.birthday" name="editDob">
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Характер</label>
+          <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+            <input type="text" class="form-control" placeholder="Нова риса..." [value]="charSearchTerm()" (input)="charSearchTerm.set($any($event.target).value)" (keyup.enter)="addNewCharacteristic(charSearchTerm(), false)">
+            <button type="button" class="btn-primary" (click)="addNewCharacteristic(charSearchTerm(), false)">+</button>
+          </div>
+          <div class="chips-container" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; border: 1px dashed #E5E7EB; border-radius: 8px;">
+            @for (n of editAnimalData.newCharacteristicNames; track n) {
+              <div (click)="removeNewChar(n, false)" style="background: #D1FAE5; color: #065F46; padding: 4px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; user-select: none;">{{ n }} ✕</div>
+            }
+            @for (char of filteredCharacteristics(); track (char.id || char.Id)) {
+              <div (click)="toggleCharacteristic(char, false)"
+                   [style.background]="editAnimalData.characteristicIds.includes(char.id || char.Id) ? '#FEF3C7' : '#F3F4F6'"
+                   [style.color]="editAnimalData.characteristicIds.includes(char.id || char.Id) ? '#B45309' : '#4B5563'"
+                   [style.border-color]="editAnimalData.characteristicIds.includes(char.id || char.Id) ? '#FBBF24' : 'transparent'"
+                   style="padding: 4px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid transparent; transition: 0.2s; user-select: none;">
+                {{ char.name || char.Name }}
+              </div>
+            }
           </div>
         </div>
 
-        <div class="form-checkbox">
-          <label>
-            <input type="checkbox" [(ngModel)]="editAnimalData.isSterilized" name="editSterilized">
-            Тварина стерилізована
-          </label>
-        </div>
+        <div class="form-checkbox" style="margin-top: 16px;"><label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" [(ngModel)]="editAnimalData.isSterilized" name="editSterilized" style="width: 18px; height: 18px;"> Стерилізована</label></div>
 
-        <div class="form-actions" style="margin-top: 32px; display: flex; justify-content: flex-end; gap: 12px;">
+        <div class="form-actions" style="margin-top: 24px;">
           <button type="button" class="btn-secondary" (click)="isEditMode = false">Скасувати</button>
-          <button type="button" class="btn-primary" (click)="saveChanges()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
-            </svg>
-            Зберегти зміни
-          </button>
+          <button type="button" class="btn-primary" (click)="saveChanges()">Зберегти зміни</button>
         </div>
       </form>
     } @else {
@@ -306,6 +245,8 @@
         (animalUpdated)="loadAnimals()"
         [id]="selectedAnimal.id"
         [mainPhotoUrl]="selectedAnimal.mainPhotoUrl"
+        [characteristics]="selectedAnimal.characteristics"
+        [description]="selectedAnimal.description"
         [name]="selectedAnimal.name"
         [breed]="selectedAnimal.breed"
         [animalType]="selectedAnimal.type"
@@ -315,15 +256,9 @@
         [isSterilized]="selectedAnimal.isSterilized"
         (closeModal)="closeDetailModal()">
       </app-animal-card-detail>
-
-      <div class="form-actions" style="margin-top: 32px; display: flex; justify-content: flex-end; gap: 12px;">
+      <div class="form-actions" style="margin-top: 24px;">
         <button type="button" class="btn-secondary" (click)="closeDetailModal()">Закрити</button>
-        <button type="button" class="btn-primary" (click)="startEditing()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-          </svg>
-          Редагувати
-        </button>
+        <button type="button" class="btn-primary" (click)="startEditing()">Редагувати</button>
       </div>
     }
   </app-modal>

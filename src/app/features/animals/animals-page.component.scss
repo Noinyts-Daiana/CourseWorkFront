@@ -76,7 +76,7 @@
     margin: 24px 0 32px 0;
 
     .search-wrapper {
-      width: 100%; // Тепер він на всю ширину контейнера
+      width: 100%;
 
       .search-input {
         width: 100%;
@@ -94,16 +94,14 @@
     }
   }
 
-  // Менші картки
   .cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); // Зменшили розмір
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 20px;
   }
 
-// СТИЛІ ДЛЯ КНОПОК (SOFT UI)
 .btn-primary {
-  background: #FBBF24; // Бурштиновий колір (Amber)
+  background: #FBBF24;
   color: #1F2937;
   border: none;
   padding: 12px 24px;
@@ -143,7 +141,6 @@
 }
 
 
-// Контейнер для кнопок у модалці
 .modal-footer-actions {
   display: flex;
   gap: 12px;

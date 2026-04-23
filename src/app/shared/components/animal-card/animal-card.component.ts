@@ -1,4 +1,4 @@
-﻿import { Component, Input } from '@angular/core';
+﻿import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -16,15 +16,30 @@ export class AnimalCardComponent {
   @Input() dob: string = '';
   @Input() isSterilized: boolean = false;
   @Input() animalType: string = 'dog';
-
-  // Приймаємо масив усіх фотографій з бекенду
+  @Input() speciesName: string = '';
   @Input() photos: any[] = [];
+  @Input() characteristics: string[] = [];
+
+  // Емітери для фільтрації
+  @Output() charClick = new EventEmitter<string>();
+  @Output() breedClick = new EventEmitter<void>();
+  @Output() speciesClick = new EventEmitter<void>();
+  @Output() sexClick = new EventEmitter<void>();
 
   currentIndex = 0;
 
-  // Перейти до наступного фото
+  // Безпечне отримання URL (щоб картинки не билися)
+  get currentPhotoUrl(): string {
+    if (!this.photos || this.photos.length === 0) return '';
+    const p = this.photos[this.currentIndex];
+    const url = p.fileUrl || p.url || p.photoUrl;
+    if (!url) return '';
+    if (url.startsWith('http')) return url;
+    return `http://localhost:5036${url.startsWith('/') ? '' : '/'}${url}`;
+  }
+
   nextSlide(event: Event) {
-    event.stopPropagation(); // Щоб не відкрилася модалка деталізації
+    event.stopPropagation();
     if (this.currentIndex < this.photos.length - 1) {
       this.currentIndex++;
     } else {
@@ -32,9 +47,8 @@ export class AnimalCardComponent {
     }
   }
 
-  // Перейти до попереднього фото
   prevSlide(event: Event) {
-    event.stopPropagation(); // Щоб не відкрилася модалка деталізації
+    event.stopPropagation();
     if (this.currentIndex > 0) {
       this.currentIndex--;
     } else {
@@ -42,7 +56,6 @@ export class AnimalCardComponent {
     }
   }
 
-  // Вибір фото через крапочки
   setSlide(event: Event, index: number) {
     event.stopPropagation();
     this.currentIndex = index;

@@ -20,7 +20,9 @@ export class AnimalCardDetailComponent implements OnInit {
   @Input() weight!: number;
   @Input() dob!: string;
   @Input() isSterilized!: boolean;
-  @Input() mainPhotoUrl: string | null = null; // Приходить від списку тварин
+  @Input() mainPhotoUrl: string | null = null;
+  @Input() characteristics: string[] = [];
+  @Input() description: string = '';
 
   @Output() closeModal = new EventEmitter<void>();
   @Output() animalUpdated = new EventEmitter<void>();
@@ -35,7 +37,6 @@ export class AnimalCardDetailComponent implements OnInit {
   private vaccinationsService = inject(VaccinationsService);
   private photoService = inject(AnimalPhotoService);
 
-  // Вантажимо все відразу при відкритті!
   ngOnInit() {
     if (this.id) this.loadAnimalPhotos();
     if (this.name) {
@@ -48,7 +49,6 @@ export class AnimalCardDetailComponent implements OnInit {
     this.photoService.getPhotos(this.id).subscribe({
       next: (photos) => {
         this.animalPhotos.set(photos);
-        // Якщо фото ще не було в mainPhotoUrl, оновлюємо
         const main = photos.find((p) => p.isMain) || photos[0];
         if (main) this.mainPhotoUrl = main.fileUrl;
       },
@@ -80,7 +80,7 @@ export class AnimalCardDetailComponent implements OnInit {
     this.photoService.setMainPhoto(photoId, this.id).subscribe({
       next: () => {
         this.loadAnimalPhotos();
-        this.animalUpdated.emit(); // Повідомляємо батька
+        this.animalUpdated.emit();
       },
     });
   }

@@ -1,12 +1,9 @@
 ﻿<div class="animal-card">
   <div class="card-media">
-
     <div class="carousel-wrapper">
       @if (photos && photos.length > 0) {
         <div class="slides-container">
-          <img [src]="'http://localhost:5036' + photos[currentIndex].fileUrl"
-               [alt]="name"
-               class="carousel-img">
+          <img [src]="currentPhotoUrl" [alt]="name" class="carousel-img">
         </div>
 
         @if (photos.length > 1) {
@@ -14,11 +11,8 @@
           <button class="nav-btn next" (click)="nextSlide($event)">›</button>
 
           <div class="indicators">
-            @for (p of photos; track p.id; let i = $index) {
-              <span class="dot"
-                    [class.active]="i === currentIndex"
-                    (click)="setSlide($event, i)">
-              </span>
+            @for (p of photos; track p.id || $index; let i = $index) {
+              <span class="dot" [class.active]="i === currentIndex" (click)="setSlide($event, i)"></span>
             }
           </div>
         }
@@ -31,7 +25,12 @@
           }
         </div>
       }
-      <div class="gender-badge" [class.girl]="gender === 'Дівчинка'" [class.boy]="gender === 'Хлопчик'">
+
+      <div class="gender-badge"
+           (click)="$event.stopPropagation(); sexClick.emit()"
+           style="cursor: pointer; transition: 0.2s;"
+           [class.girl]="gender === 'Дівчинка'"
+           [class.boy]="gender === 'Хлопчик'">
         {{ gender | uppercase }}
       </div>
     </div>
@@ -41,7 +40,12 @@
     <div class="header-row">
       <h3>{{ name }}</h3>
     </div>
-    <p class="breed-text">{{ breed }}</p>
+
+    <p class="breed-text" style="display: flex; gap: 4px;">
+      <span (click)="$event.stopPropagation(); speciesClick.emit()" style="cursor: pointer; text-decoration: underline dashed #D1D5DB;">{{ speciesName }}</span>
+      <span>•</span>
+      <span (click)="$event.stopPropagation(); breedClick.emit()" style="cursor: pointer; text-decoration: underline dashed #D1D5DB;">{{ breed }}</span>
+    </p>
 
     <div class="stats-grid">
       <div class="stat">
@@ -49,9 +53,23 @@
         <span class="value">{{ weight }} кг</span>
       </div>
       <div class="stat">
-        <span class="label">Стерилізація:</span>
-        <span class="value">{{ isSterilized ? 'Так' : 'Ні' }}</span>
+        <span class="label">Народження:</span>
+        <span class="value">{{ dob }}</span>
       </div>
     </div>
+
+    @if (characteristics && characteristics.length > 0) {
+      <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #F3F4F6;">
+        @for (char of characteristics; track char) {
+          <span
+            (click)="$event.stopPropagation(); charClick.emit(char)"
+            style="background: #FEF3C7; color: #B45309; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; cursor: pointer; transition: 0.2s;"
+            onmouseover="this.style.transform='scale(1.05)'"
+            onmouseout="this.style.transform='scale(1)'">
+            {{ char }}
+          </span>
+        }
+      </div>
+    }
   </div>
 </div>
