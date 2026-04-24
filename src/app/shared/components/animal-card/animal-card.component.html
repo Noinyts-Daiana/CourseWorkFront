@@ -60,7 +60,7 @@
 
     @if (characteristics && characteristics.length > 0) {
       <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #F3F4F6;">
-        @for (char of characteristics; track char) {
+        @for (char of characteristics; track $index) {
           <span
             (click)="$event.stopPropagation(); charClick.emit(char)"
             style="background: #FEF3C7; color: #B45309; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; cursor: pointer; transition: 0.2s;"

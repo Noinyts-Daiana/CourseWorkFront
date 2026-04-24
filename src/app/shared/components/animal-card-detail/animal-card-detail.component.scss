@@ -1,6 +1,4 @@
-/* ========================================== */
-/* ВЛАДКИ (TABS)                              */
-/* ========================================== */
+
 .detail-tabs {
   display: flex;
   gap: 24px;
@@ -25,9 +23,8 @@
       color: #374151;
     }
 
-    /* Стан активної вкладки */
     &.active {
-      color: #E11D48; /* Акцентний рожевий */
+      color: #E11D48;
 
       &::after {
         content: '';
@@ -43,12 +40,8 @@
   }
 }
 
-/* ========================================== */
-/* СЕКЦІЯ МЕДИЧНОЇ ІСТОРІЇ                    */
-/* ========================================== */
 .medical-section {
 
-  /* Заголовки над списками */
   .section-header {
     display: flex;
     justify-content: space-between;
@@ -68,7 +61,6 @@
       &.title-blue { color: #2563EB; }
     }
 
-    /* Кнопки "+ Додати" */
     .btn-text-pink {
       background: #FFF1F2;
       color: #E11D48;
@@ -96,9 +88,6 @@
     }
   }
 
-  /* ========================================== */
-  /* КАРТКИ ВАКЦИНАЦІЙ                          */
-  /* ========================================== */
   .vaccine-list {
     display: flex;
     flex-direction: column;
@@ -109,7 +98,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 16px;
-      border: 1px solid #FCE7F3; /* Ніжно-рожева рамка */
+      border: 1px solid #FCE7F3;
       border-radius: 12px;
       background: #FFFFFF;
 
@@ -134,12 +123,9 @@
     }
   }
 
-  /* ========================================== */
-  /* ЛІНІЯ ЧАСУ (TIMELINE)                      */
-  /* ========================================== */
   .timeline {
     position: relative;
-    padding-left: 28px; /* Місце для крапок і лінії зліва */
+    padding-left: 28px;
     margin-top: 16px;
 
     .timeline-item {
@@ -148,7 +134,7 @@
 
       &:last-child { margin-bottom: 0; }
 
-      /* Крапка на лінії */
+
       .dot {
         position: absolute;
         left: -28px;
@@ -156,22 +142,21 @@
         width: 12px;
         height: 12px;
         border-radius: 50%;
-        background: #3B82F6; /* Синій колір */
+        background: #3B82F6;
         border: 2px solid white;
-        box-shadow: 0 0 0 3px #DBEAFE; /* Світіння навколо крапки */
+        box-shadow: 0 0 0 3px #DBEAFE;
       }
 
-      /* Лінія, що з'єднує події */
       .line {
         position: absolute;
-        left: -23px; /* Центруємо під крапкою */
-        top: 24px; /* Починаємо під крапкою */
-        bottom: -28px; /* Тягнемо до наступної події */
+        left: -23px;
+        top: 24px;
+        bottom: -28px;
         width: 2px;
         background: #E5E7EB;
       }
 
-      /* Блок з текстом події */
+
       .timeline-content {
         background: #F8FAFC;
         border: 1px solid #F3F4F6;
@@ -260,7 +245,7 @@
 
   &:hover {
     background: #f3f4f6;
-    border-color: #fbbf24; // Твій фірмовий жовтий
+    border-color: #fbbf24;
     transform: translateY(-2px);
   }
 
@@ -360,5 +345,6 @@
     }
   }
 }
+
 
 

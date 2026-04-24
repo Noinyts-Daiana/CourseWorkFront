@@ -14,6 +14,13 @@ export class FeedingLogService {
   create(data: any): Observable<any> {
     return this.http.post(this.apiUrl, data);
   }
+  feedAnimal(dto: any) {
+    return this.http.post(this.apiUrl, dto, { withCredentials: true });
+  }
+
+  getAnimalLogs(animalId: number) {
+    return this.http.get(`${this.apiUrl}/animal/${animalId}`);
+  }
 
   update(id: number, data: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/${id}`, data);

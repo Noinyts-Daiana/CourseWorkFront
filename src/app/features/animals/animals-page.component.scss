@@ -1,149 +1,166 @@
-﻿
-.btn-warning {
-  background-color: #FACC15;
-  color: #854D0E;
-  padding: 10px 24px;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 15px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  &:hover { background-color: #EAB308; }
-}
+﻿@use "sass:color";
+// ==========================================
+// 1. УСІ ЗМІННІ (Більше ніяких Undefined)
+// ==========================================
+$primary: #FBBF24;
+$primary-hover: #F59E0B;
+$white: #ffffff;
+$bg-light: #F9FAFB;
+$gray-900: #111827;
+$gray-500: #6B7280;
+$gray-400: #9CA3AF;
+$gray-200: #E5E7EB;
+$gray-100: #F3F4F6;
 
-.btn-outline-yellow {
-  background-color: transparent;
-  color: #CA8A04;
-  padding: 10px 24px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 15px;
-  border: 1px solid #FDE047;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  &:hover { background-color: #FEF9C3; }
-}
+$green-soft: #DEF7EC;
+$green-dark: #03543F;
+$red-soft: #FEF2F2;
+$red-dark: #EF4444;
 
-.btn-action-green {
-  background-color: #ECFDF5;
-  color: #059669;
-  border: 1px solid #A7F3D0;
-  padding: 12px;
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
-  &:hover { background-color: #D1FAE5; }
-}
-
-.btn-action-red {
-  background-color: #FEF2F2;
-  color: #DC2626;
-  border: 1px solid #FECACA;
-  padding: 12px;
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
-  &:hover { background-color: #FEE2E2; }
-}
-.page-container {
-  padding: 24px;
-  max-width: 1200px;
-  margin: 0 auto;
-
-  .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 32px;
-
-    h1 {
-      margin: 0;
-      font-size: 28px;
-      color: #111827;
-    }
-
-    p {
-      margin: 4px 0 0;
-      color: #6B7280;
-    }
-  }
-}
-.search-section {
-    width: 100%;
-    margin: 24px 0 32px 0;
-
-    .search-wrapper {
-      width: 100%;
-
-      .search-input {
-        width: 100%;
-        height: 50px;
-        padding-left: 50px;
-        border-radius: 12px;
-        border: 1.5px solid #E5E7EB;
-        font-size: 16px;
-
-        &:focus {
-          border-color: #FBBF24;
-          box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.1);
-        }
-      }
-    }
-  }
-
-  .cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 20px;
-  }
-
-.btn-primary {
-  background: #FBBF24;
-  color: #1F2937;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 14px;
-  font-weight: 600;
-  cursor: pointer;
+// ==========================================
+// 2. БАЗОВІ СТИЛІ КНОПКИ (Таблетка)
+// ==========================================
+.btn-base {
   display: inline-flex;
   align-items: center;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 6px -1px rgba(251, 191, 36, 0.2);
-
-  &:hover {
-    background: #F59E0B;
-    transform: translateY(-1px);
-    box-shadow: 0 10px 15px -3px rgba(251, 191, 36, 0.3);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-}
-
-.btn-secondary {
-  background: #F3F4F6;
-  color: #4B5563;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 14px;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 100px;
   font-weight: 600;
+  font-size: 13px;
+  border: none;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
+  &:active { transform: scale(0.96); }
+  svg { width: 18px; height: 18px; }
+}
 
-  &:hover {
-    background: #E5E7EB;
-    color: #1F2937;
+// Конкретні стилі
+.btn-primary, button { @extend .btn-base; background: $primary; color: $gray-900; &:hover { background: $primary-hover; } }
+.btn-edit { @extend .btn-base; background: $gray-100; color: $gray-500; &:hover { background: $gray-200; } }
+.btn-feed { @extend .btn-base; background: $green-soft; color: $green-dark; &:hover { background: color.adjust($green-soft, $lightness: -5%); } }
+.btn-danger { @extend .btn-base; background: $red-soft; color: $red-dark; &:hover { background: color.adjust($red-soft, $lightness: -2%); } }
+.btn-secondary { @extend .btn-base; background: $gray-100; color: $gray-500; }
+
+.badge-home { @extend .btn-base; background: $gray-100; color: $gray-400; cursor: default; border: 1px solid $gray-200; }
+
+// ==========================================
+// 3. ФІКС ХЕДЕРА (Щоб "Додати" не ультавала)
+// ==========================================
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h1 { margin: 0; font-size: 24px; color: $gray-900; }
+
+  // 🔥 ОСЬ ЦЕЙ ФІКС:
+  .btn-primary {
+    flex: 0 0 auto !important;
+    width: auto !important;
   }
 }
 
-
-.modal-footer-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
+// ==========================================
+// 4. ФУТЕР МОДАЛКИ (4 в ряд)
+// ==========================================
+.modal-footer {
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  padding-top: 16px;
   margin-top: 24px;
+  border-top: 1px solid $gray-200;
+  flex-wrap: nowrap !important; // Тільки один ряд
+
+  .btn-base, .badge-home, .btn-danger, .btn-edit, .btn-feed, .btn-adopt {
+    flex: 1 1 0 !important;   // Рівномірний розподіл
+    min-width: 90px;
+    padding: 0 8px;
+  }
+}
+
+// Скрол для випадайок
+.custom-dropdown {
+  max-height: 180px;
+  overflow-y: auto;
+  // ... решта твоїх стилів для дропдауна
+}
+
+// Картинка "аля ти пон"
+::ng-deep app-animal-card-detail {
+  .detail-image-container {
+    max-width: 350px !important;
+    height: 200px !important;
+    margin: 0 auto 15px !important;
+    img { border-radius: 12px; height: 100%; width: 100%; object-fit: cover; }
+  }
+}
+
+// ==========================================
+// 5. МОДАЛКА (4 КНОПКИ В РЯД)
+// ==========================================
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 16px;
+  margin-top: 24px;
+  border-top: 1px solid $gray-200;
+  flex-wrap: nowrap; // 🔥 Тільки один ряд
+
+  .btn-base, .badge-home {
+    flex: 1 1 0;      // Розподіляємо місце порівну
+    min-width: 90px;  // Щоб текст не злипався
+    padding: 0 8px;   // Трохи менші відступи всередині
+  }
+}
+
+// 🔥 КАРТИНКА В ДЕТАЛЯХ (АЛЯ ТИ ПОН)
+::ng-deep app-animal-card-detail {
+  .detail-image-container {
+    max-width: 350px !important;
+    height: 180px !important;
+    margin: 0 auto 15px !important;
+    img { border-radius: 12px; height: 100%; width: 100%; object-fit: cover; }
+  }
+}
+
+// ==========================================
+// 6. КАРТКИ ТА ВИПАДАЙКИ
+// ==========================================
+.cards-grid {
+  display: grid;
+  // Змінюємо 200px на 280px, щоб картки стали ширшими і їх влазило 4 в ряд
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+  gap: 20px;
+}
+
+// Збільшуємо висоту зображення на самій картці (було 130px)
+::ng-deep .card-image {
+  height: 200px !important;
+}
+
+
+.custom-dropdown {
+  position: absolute;
+  top: 100%; left: 0; right: 0;
+  background: $white; border: 1px solid $gray-200; border-radius: 12px;
+  max-height: 180px !important; overflow-y: auto !important; z-index: 9999;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+
+  .dropdown-item {
+    padding: 10px 14px; border-bottom: 1px solid $gray-100; font-size: 13px; cursor: pointer;
+    &:hover { background: $gray-100; }
+    &.load-more { background: $bg-light; color: $primary-hover; text-align: center; font-weight: 700; position: sticky; bottom: 0; }
+  }
+}
+
+.chips-container {
+  display: flex; flex-wrap: wrap; gap: 8px; padding: 12px;
+  background: $bg-light; border: 1.5px dashed $gray-200; border-radius: 10px;
 }

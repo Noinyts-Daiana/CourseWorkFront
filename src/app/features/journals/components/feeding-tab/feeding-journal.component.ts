@@ -220,19 +220,28 @@ export class FeedingJournalComponent implements OnInit {
     this.currentPage.set(newPage);
   }
 
-  // --- Форма та Модалка ---
   onAnimalInput(event: Event) {
-    const value = (event.target as HTMLInputElement).value;
+    const value = (event.target as HTMLInputElement).value.toLowerCase();
     this.animalSearchTerm.set(value);
     this.newFeedingData.animalId = null;
-    this.animalService.getAnimals(1, 10, value).subscribe({
-      next: (res: any) => this.animalsList.set(res.items),
+
+    this.animalService.getAvailableAnimals().subscribe({
+      next: (res: any) => {
+        const animals = Array.isArray(res) ? res : res.items || [];
+
+        const filteredAnimals = animals.filter((a: any) => {
+          const name = (a.animalName || a.name || '').toLowerCase();
+          return name.includes(value);
+        });
+
+        this.animalsList.set(filteredAnimals.slice(0, 10));
+      },
     });
   }
 
   selectAnimal(animal: any) {
-    this.animalSearchTerm.set(animal.name);
-    this.newFeedingData.animalId = animal.id;
+    this.animalSearchTerm.set(animal.animalName || animal.name);
+    this.newFeedingData.animalId = animal.animalId || animal.id;
     this.isAnimalsDropdownOpen.set(false);
   }
 

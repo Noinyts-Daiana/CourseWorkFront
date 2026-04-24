@@ -15,6 +15,7 @@ export class AnimalService {
     speciesId: number | null = null,
     breedId: number | null = null,
     sex: number | null = null,
+    isAdopted: boolean | null = null,
   ) {
     let params = new HttpParams().set('pageNumber', pageNumber).set('pageSize', pageSize);
 
@@ -31,6 +32,7 @@ export class AnimalService {
     if (speciesId !== null) params = params.set('speciesId', speciesId.toString());
     if (breedId !== null) params = params.set('breedId', breedId.toString());
     if (sex !== null) params = params.set('sex', sex.toString());
+    if (isAdopted !== null) params = params.set('isAdopted', isAdopted);
 
     return this.http.get(`${this.apiUrl}`, { params });
   }
@@ -49,5 +51,8 @@ export class AnimalService {
 
   deleteAnimal(id: number) {
     return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+  getAvailableAnimals(){
+    return this.http.get(this.apiUrl);
   }
 }
