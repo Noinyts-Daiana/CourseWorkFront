@@ -2,7 +2,6 @@
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
-import {UserService } from '../../service/user.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -11,22 +10,19 @@ import {UserService } from '../../service/user.service';
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
 })
-export class SidebarComponent implements OnInit {
-  private userService = inject(UserService);
+export class SidebarComponent {
+  auth = inject(AuthService);
 
-  currentUser = signal<any>(null);
-  ngOnInit() {
-    this.loadProfile();
+  // Хелпер для шаблону
+  has(permission: string): boolean {
+    return this.auth.hasPermission(permission);
   }
 
-  loadProfile() {
-    this.userService.getProfile().subscribe({
-      next: (user) => {
-        // Записуємо дані в сигнал
-        this.currentUser.set(user);
-        console.log('Дані профілю завантажено!', user);
-      },
-      error: (err) => console.error('Не вдалося завантажити профіль', err),
-    });
+  hasAny(...permissions: string[]): boolean {
+    return this.auth.hasAnyPermission(...permissions);
+  }
+
+  logout() {
+    this.auth.logout();
   }
 }

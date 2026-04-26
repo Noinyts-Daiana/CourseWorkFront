@@ -10,6 +10,7 @@ import { UsersPageComponent } from './features/users/users-page.component';
 import ProfilePageComponent from './features/profile/profile-page.component';
 import { ReportsPageComponent } from './features/report/report-page.component';
 import { AlertsPageComponent } from './features/alerts/alert-page.component';
+import { authGuard, permissionGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -20,16 +21,52 @@ export const routes: Routes = [
   {
     path: '',
     component: AdminLayoutComponent,
+    canActivate: [authGuard],
     children: [
-      { path: 'dashboard', component: DashboardPageComponent },
-      { path: 'animals', component: AnimalsPageComponent },
-      { path: 'inventory', component: InventoryPageComponent },
-      { path: 'medicine', component: MedicinePageComponent },
-      { path: 'journals', component: JournalsPageComponent },
-      { path: 'users', component: UsersPageComponent },
-      { path: 'reports', component: ReportsPageComponent },
-      { path: 'alerts', component: AlertsPageComponent },
-      { path: 'user-profile', component: ProfilePageComponent },
+      {
+        path: 'dashboard',
+        component: DashboardPageComponent,
+        canActivate: [permissionGuard('ViewDashboard')],
+      },
+      {
+        path: 'animals',
+        component: AnimalsPageComponent,
+        canActivate: [permissionGuard('ViewAnimals')],
+      },
+      {
+        path: 'medicine',
+        component: MedicinePageComponent,
+        canActivate: [permissionGuard('ViewMedicalExams')],
+      },
+      {
+        path: 'inventory',
+        component: InventoryPageComponent,
+        canActivate: [permissionGuard('ReplenishFood')],
+      },
+      {
+        path: 'journals',
+        component: JournalsPageComponent,
+        canActivate: [permissionGuard('ViewFinanceJournal')],
+      },
+      {
+        path: 'users',
+        component: UsersPageComponent,
+        canActivate: [permissionGuard('EditUser')],
+      },
+      {
+        path: 'reports',
+        component: ReportsPageComponent,
+        canActivate: [permissionGuard('GenerateReports')],
+      },
+      {
+        path: 'alerts',
+        component: AlertsPageComponent,
+        canActivate: [permissionGuard('ViewAlerts')],
+      },
+      {
+        path: 'user-profile',
+        component: ProfilePageComponent,
+      },
     ],
   },
 
