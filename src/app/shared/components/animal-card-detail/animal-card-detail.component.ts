@@ -34,6 +34,7 @@ export class AnimalCardDetailComponent implements OnInit {
   @Input() mainPhotoUrl: string | null = null;
   @Input() characteristics: string[] = [];
   @Input() description: string = '';
+  @Input() isClientOnly: boolean = false;
   private cdr = inject(ChangeDetectorRef);
 
   @Output() closeModal = new EventEmitter<void>();

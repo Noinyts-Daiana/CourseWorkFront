@@ -77,13 +77,10 @@ export class DashboardService {
       );
   }
 
-  // ==========================================
-  // ⚡️ SIGNALR ЛОГІКА (Магія реального часу)
-  // ==========================================
   private startSignalRConnection() {
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(this.hubUrl)
-      .withAutomaticReconnect() // Автоматично перепідключається, якщо впаде інтернет
+      .withAutomaticReconnect()
       .build();
 
     this.hubConnection
@@ -91,13 +88,11 @@ export class DashboardService {
       .then(() => console.log('🟢 SignalR Підключено до Дашборду!'))
       .catch((err) => console.error('🔴 Помилка підключення SignalR:', err));
 
-    // Слухаємо бекенд: щойно прилетить подія "ReceiveNewAlert"
     this.hubConnection.on('ReceiveNewAlert', (newAlert: SystemAlert) => {
       console.log('🔔 Прилетів новий алерт!', newAlert);
 
       const current = this.alertsSubject.value;
 
-      // Додаємо новий алерт на самий верх списку
       if (newAlert.isAuto) {
         this.alertsSubject.next({
           ...current,

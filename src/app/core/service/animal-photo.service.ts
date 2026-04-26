@@ -16,14 +16,16 @@ export class AnimalPhotoService {
   }
 
   getPhotos(animalId: number) {
-    return this.http.get<any[]>(`${this.apiUrl}/animal/${animalId}`);
+    return this.http.get<any[]>(`${this.apiUrl}/animal/${animalId}`, { withCredentials: true});
   }
 
   setMainPhoto(photoId: number, animalId: number) {
-    return this.http.patch(`${this.apiUrl}/${photoId}/setmain/animal/${animalId}`, {});
+    return this.http.patch(`${this.apiUrl}/${photoId}/setmain/animal/${animalId}`, {
+      withCredentials: true,
+    });
   }
 
   deletePhoto(photoId: number) {
-    return this.http.delete(`${this.apiUrl}/${photoId}`);
+    return this.http.delete(`${this.apiUrl}/${photoId}`, { withCredentials: true });
   }
 }

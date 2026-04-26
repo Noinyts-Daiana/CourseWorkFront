@@ -20,22 +20,22 @@ export class TransactionService {
     if (filters.fromDate) params = params.set('fromDate', filters.fromDate);
     if (filters.toDate) params = params.set('toDate', filters.toDate);
 
-    return this.http.get<any>(`${this.apiUrl}/journal`, { params });
+    return this.http.get<any>(`${this.apiUrl}/journal`, { params, withCredentials: true });
   }
 
   getCategories(page: number = 1, size: number = 100): Observable<any> {
     const params = new HttpParams().set('pageNumber', page).set('pageSize', size);
 
-    return this.http.get<any>(`${this.apiUrl}/categories`, { params });
+    return this.http.get<any>(`${this.apiUrl}/categories`, { params, withCredentials: true});
   }
 
   createTransaction(dto: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, dto, { withCredentials: true });
+    return this.http.post<any>(this.apiUrl, dto, { withCredentials: true});
   }
   updateTransaction(id: number, dto: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, dto);
+    return this.http.put<any>(`${this.apiUrl}/${id}`, dto, { withCredentials: true });
   }
   deleteTransaction(id: number) {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+    return this.http.delete(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 }

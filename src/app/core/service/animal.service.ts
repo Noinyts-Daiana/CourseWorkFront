@@ -34,23 +34,23 @@ export class AnimalService {
     if (sex !== null) params = params.set('sex', sex.toString());
     if (isAdopted !== null) params = params.set('isAdopted', isAdopted);
 
-    return this.http.get(`${this.apiUrl}`, { params });
+    return this.http.get(`${this.apiUrl}`, { params, withCredentials: true});
   }
 
   getAnimalById(id: number) {
-    return this.http.get(`${this.apiUrl}/${id}`);
+    return this.http.get(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   addAnimal(animalData: any) {
-    return this.http.post(this.apiUrl, animalData);
+    return this.http.post(this.apiUrl, animalData, { withCredentials: true });
   }
 
   updateAnimal(id: number, animalData: any) {
-    return this.http.put(`${this.apiUrl}/${id}`, animalData);
+    return this.http.put(`${this.apiUrl}/${id}`, animalData, { withCredentials: true });
   }
 
   deleteAnimal(id: number) {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+    return this.http.delete(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
   getAvailableAnimals(){
     return this.http.get(this.apiUrl);

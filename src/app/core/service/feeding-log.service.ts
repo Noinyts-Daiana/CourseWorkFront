@@ -8,24 +8,24 @@ export class FeedingLogService {
   private apiUrl = 'http://localhost:5036/api/feeding-log';
 
   getRecentLogs(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/recent`);
+    return (this.http.get(`${this.apiUrl}/recent`, { withCredentials: true }));
   }
 
   create(data: any): Observable<any> {
-    return this.http.post(this.apiUrl, data);
+    return this.http.post(this.apiUrl, data, { withCredentials: true });
   }
   feedAnimal(dto: any) {
     return this.http.post(this.apiUrl, dto, { withCredentials: true });
   }
 
   getAnimalLogs(animalId: number) {
-    return this.http.get(`${this.apiUrl}/animal/${animalId}`);
+    return this.http.get(`${this.apiUrl}/animal/${animalId}`, { withCredentials: true });
   }
 
   update(id: number, data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, data);
+    return this.http.put(`${this.apiUrl}/${id}`, data, { withCredentials: true });
   }
   deleteFeedingLog(id: number) {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+    return this.http.delete(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 }

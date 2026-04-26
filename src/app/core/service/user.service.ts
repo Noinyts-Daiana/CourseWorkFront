@@ -2,8 +2,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-
-
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private http = inject(HttpClient);
@@ -54,11 +52,11 @@ export class UserService {
   }
 
   getUserById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+    return this.http.get<any>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   getUsersByRole(roleId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/role/${roleId}`);
+    return this.http.get<any[]>(`${this.apiUrl}/role/${roleId}`, { withCredentials: true });
   }
 
   getUsers(
@@ -75,12 +73,11 @@ export class UserService {
     if (searchTerm) params = params.set('searchTerm', searchTerm);
     if (roleId > 0) params = params.set('roleId', roleId.toString());
 
-    // Додаємо статус, якщо він вибраний
     if (isActive !== null) {
       params = params.set('isActive', isActive.toString());
     }
 
-    return this.http.get(`${this.apiUrl}`, { params });
+    return this.http.get(`${this.apiUrl}`, { params, withCredentials: true });
   }
 
   toggleStatus(id: number): Observable<any> {

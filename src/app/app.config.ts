@@ -3,14 +3,11 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
 import { routes } from './app.routes';
 import { AuthService } from './core/service/auth.service';
+import { firstValueFrom } from 'rxjs';
 
 // При старті застосунку намагаємося відновити сесію з куки
 function initAuth(authService: AuthService) {
-  return () =>
-    authService
-      .restoreSession()
-      .subscribe()
-      .add(() => {}); // помилки ковтаємо — редірект в сервісі
+  return () => firstValueFrom(authService.restoreSession()).catch(() => null);
 }
 
 export const appConfig: ApplicationConfig = {

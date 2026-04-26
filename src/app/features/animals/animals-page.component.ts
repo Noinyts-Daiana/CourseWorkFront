@@ -11,10 +11,11 @@ import { ModalComponent } from '../../shared/components/modal/modal.component';
 import { AnimalCardComponent } from '../../shared/components/animal-card/animal-card.component';
 import { AnimalCardDetailComponent } from '../../shared/components/animal-card-detail/animal-card-detail.component';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
-import {FeedingLogService} from "../../core/service/feeding-log.service";
-import {AdoptAnimalService} from "../../core/service/adopt-animal.service";
-import {FoodTypeService} from "../../core/service/food-type.service";
-import {UserService} from '../../core/service/user.service';
+import { FeedingLogService } from '../../core/service/feeding-log.service';
+import { AdoptAnimalService } from '../../core/service/adopt-animal.service';
+import { FoodTypeService } from '../../core/service/food-type.service';
+import { UserService } from '../../core/service/user.service';
+import { AuthService } from '../../core/service/auth.service';
 
 @Component({
   selector: 'app-animals-page',
@@ -39,6 +40,18 @@ export class AnimalsPageComponent implements OnInit {
   private feedingService = inject(FeedingLogService);
   private userService = inject(UserService);
   private adoptService = inject(AdoptAnimalService);
+  auth = inject(AuthService);
+
+  isClientOnly = computed(
+    () =>
+      !this.auth.hasAnyPermission(
+        'AssignAnimal',
+        'EditAnimal',
+        'DeleteAnimal',
+        'FeedAnimal',
+        'AddAnimal',
+      ),
+  );
 
   adoptErrorMessage = signal('');
 
@@ -280,7 +293,6 @@ export class AnimalsPageComponent implements OnInit {
       'Приручити',
       'btn-adopt',
       () => this.saveAdoption(),
-
     );
   }
 
@@ -382,6 +394,30 @@ export class AnimalsPageComponent implements OnInit {
       this.speciesList.set(list);
       this.filteredSpeciesList.set(list);
     });
+  }
+
+  // Клієнт одним кліком приручає тварину — свій userId надсилається автоматично
+  selfAdopt() {
+    if (!this.selectedAnimal) return;
+    this.openConfirm(
+      '🐾 Приручити тварину?',
+      `Ви хочете забрати ${this.selectedAnimal.name} додому? Адміністратор отримаєповідомлення про це.`,
+      'Так, приручити!',
+      'btn-adopt',
+      () => {
+        this.adoptService.selfAdopt({ animalId: this.selectedAnimal.id }).subscribe({
+          next: () => {
+            this.isConfirmOpen.set(false);
+            this.closeDetailModal();
+            this.loadAnimals();
+          },
+          error: (err) => {
+            this.isConfirmOpen.set(false);
+            alert(err.error?.message || 'Не вдалося оформити приручення');
+          },
+        });
+      },
+    );
   }
 
   saveAdoption() {

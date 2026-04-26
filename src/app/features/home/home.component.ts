@@ -101,10 +101,14 @@ export class HomeComponent {
         roleId: 3,
       })
       .subscribe({
-        next: () => {
+        next: (user) => {
           this.isAuthModalOpen = false;
           this.isLoading = false;
-          this.router.navigate(['/']);
+          if (user.permissions?.includes('ViewDashboard')) {
+            this.router.navigate(['/dashboard']);
+          } else {
+            this.router.navigate(['/user-profile']);
+          }
         },
         error: (err) => {
           this.isLoading = false;

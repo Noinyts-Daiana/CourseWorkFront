@@ -16,13 +16,13 @@ export class SpeciesService {
 
     if (search) params = params.set('searchTerm', search);
 
-    return this.http.get<any>(`${this.apiUrl}/paged`, { params });
+    return this.http.get<any>(`${this.apiUrl}/paged`, { params,withCredentials: true});
   }
 
   getAllSpecies(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+    return this.http.get<any[]>(this.apiUrl, { withCredentials: true});
   }
   addSpecie(specieData: { name: string }): Observable<any> {
-    return this.http.post<any>(this.apiUrl, specieData);
+    return this.http.post<any>(this.apiUrl, specieData, { withCredentials: true });
   }
 }

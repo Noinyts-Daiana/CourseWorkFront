@@ -7,10 +7,14 @@ export class AdoptAnimalService {
   private apiUrl = 'http://localhost:5036/api/adopt-animal';
 
   adoptAnimal(dto: any) {
-    return this.http.post(`${this.apiUrl}/adopt`, dto);
+    return this.http.post(`${this.apiUrl}/adopt`, dto, { withCredentials: true });
+  }
+
+  selfAdopt(dto: { animalId: number }) {
+    return this.http.post(`${this.apiUrl}/request`, dto, { withCredentials: true });
   }
 
   returnAnimal(dto: any) {
-    return this.http.post(`${this.apiUrl}/return`, dto);
+    return this.http.post(`${this.apiUrl}/return`, dto, { withCredentials: true });
   }
 }
