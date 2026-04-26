@@ -40,7 +40,8 @@ class ProfilePageComponent implements OnInit {
     this.userService.getProfile().subscribe({
       next: (data: any) => {
         const full = data.fullName || '';
-        const date = new Date(data.createdAt);
+        const raw = data.createdAt || '';
+        const date = new Date(raw.endsWith('Z') ? raw : raw + 'Z');
 
         const formattedDate = date
           .toLocaleDateString('uk-UA', {
@@ -126,8 +127,7 @@ class ProfilePageComponent implements OnInit {
           if (validationErrors.length > 0 && validationErrors[0].length > 0) {
             errorText = validationErrors[0][0];
           }
-        }
-        else if (err.error?.message) {
+        } else if (err.error?.message) {
           errorText = err.error.message;
         }
 
@@ -138,4 +138,4 @@ class ProfilePageComponent implements OnInit {
   }
 }
 
-export default ProfilePageComponent
+export default ProfilePageComponent;

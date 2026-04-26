@@ -33,21 +33,18 @@
         <input type="text" placeholder="Пошук за повідомленням..." [ngModel]="searchTerm()" (ngModelChange)="onSearch($event)" class="search-input"/>
       </div>
 
-      <select [ngModel]="typeFilter()" (ngModelChange)="typeFilter.set($event); loadAlerts()" class="filter-select">
+      <select [ngModel]="typeFilter()" (ngModelChange)="typeFilter.set($event); onFilterChange()" class="filter-select">
         <option value="">Всі типи</option>
-        <option value="LowStock">Низький запас</option>
-        <option value="OverdueVaccination">Прострочене щеплення</option>
-        <option value="Finance">Фінанси</option>
-        <option value="System">Система</option>
-        <option value="Other">Інше</option>
+        <option value="inventory">Інвентар</option>
+        <option value="medical">Медицина</option>
+        <option value="system">Система</option>
       </select>
 
-      <select [ngModel]="severityFilter()" (ngModelChange)="severityFilter.set($event); loadAlerts()" class="filter-select">
+      <select [ngModel]="severityFilter()" (ngModelChange)="severityFilter.set($event); onFilterChange()" class="filter-select">
         <option value="">Всі пріоритети</option>
-        <option value="Critical">Критичний</option>
-        <option value="High">Високий</option>
-        <option value="Medium">Середній</option>
-        <option value="Low">Низький</option>
+        <option value="danger">Критичний</option>
+        <option value="warning">Попередження</option>
+        <option value="info">Інформація</option>
       </select>
     </div>
 
@@ -58,7 +55,7 @@
           <div class="spinner"></div>
           <p>Завантаження…</p>
         </div>
-      } @else if (alerts().length === 0) {
+      } @else if (filteredAlerts().length === 0) {
         <div class="empty-state">
           <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
@@ -78,7 +75,7 @@
           </tr>
           </thead>
           <tbody>
-            @for (alert of filteredAlerts(); track alert.id) {
+            @for (alert of pagedAlerts(); track alert.id) {
               <tr [class.row-done]="alert.isDone">
                 <td>
                   <span class="badge-severity" [ngClass]="getSeverityClass(alert.severity)">
@@ -122,7 +119,7 @@
 
         <!-- Pagination -->
         <div class="pagination-row">
-          <span class="pagination-info">Показано {{ alerts().length }} з {{ totalCount() }}</span>
+          <span class="pagination-info">Показано {{ pagedAlerts().length }} з {{ totalCount() }}</span>
           <div class="pagination-btns">
             <button [disabled]="currentPage() <= 1" (click)="changePage(currentPage() - 1)" class="page-btn">‹</button>
             @for (p of pageNumbers(); track p) {

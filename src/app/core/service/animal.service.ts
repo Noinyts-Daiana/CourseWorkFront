@@ -34,7 +34,7 @@ export class AnimalService {
     if (sex !== null) params = params.set('sex', sex.toString());
     if (isAdopted !== null) params = params.set('isAdopted', isAdopted);
 
-    return this.http.get(`${this.apiUrl}`, { params, withCredentials: true});
+    return this.http.get(`${this.apiUrl}`, { params, withCredentials: true });
   }
 
   getAnimalById(id: number) {
@@ -52,7 +52,12 @@ export class AnimalService {
   deleteAnimal(id: number) {
     return this.http.delete(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
-  getAvailableAnimals(){
+  getAvailableAnimals() {
     return this.http.get(this.apiUrl);
+  }
+
+  getPublicAnimals(pageNumber: number = 1, pageSize: number = 8) {
+    const params = new HttpParams().set('pageNumber', pageNumber).set('pageSize', pageSize);
+    return this.http.get(`${this.apiUrl}/public`, { params });
   }
 }

@@ -13,22 +13,44 @@ import { SystemAlertService, SystemAlertDto } from '../../core/service/system-al
 export class AlertsPageComponent implements OnInit {
   private alertService = inject(SystemAlertService);
 
-
-  alerts = signal<SystemAlertDto[]>([]);
-  totalCount = signal(0);
-  currentPage = signal(1);
-  pageSize = signal(15);
+  // Всі дані з сервера (без фільтрів)
+  allAlerts = signal<SystemAlertDto[]>([]);
   isLoading = signal(false);
 
+  // Фільтри
   showDone = signal<boolean>(false);
   searchTerm = signal('');
   typeFilter = signal('');
   severityFilter = signal('');
 
+  // Пагінація на клієнті
+  currentPage = signal(1);
+  pageSize = 15;
+
   isModalOpen = signal(false);
   newAlert = { type: 'System', severity: 'Medium', message: '' };
 
-  totalPages = computed(() => Math.ceil(this.totalCount() / this.pageSize()) || 1);
+  // Фільтрований список (всі сторінки)
+  filteredAlerts = computed(() => {
+    let list = this.allAlerts();
+    const term = this.searchTerm().toLowerCase();
+    const type = this.typeFilter();
+    const sev = this.severityFilter();
+    if (term) list = list.filter((a) => a.message?.toLowerCase().includes(term));
+    if (type) list = list.filter((a) => a.type === type);
+    if (sev) list = list.filter((a) => a.severity === sev);
+    return list;
+  });
+
+  totalCount = computed(() => this.filteredAlerts().length);
+  totalPages = computed(() => Math.ceil(this.totalCount() / this.pageSize) || 1);
+
+  // Поточна сторінка після фільтрації
+  pagedAlerts = computed(() => {
+    const page = this.currentPage();
+    const start = (page - 1) * this.pageSize;
+    return this.filteredAlerts().slice(start, start + this.pageSize);
+  });
 
   pageNumbers = computed(() => {
     const total = this.totalPages();
@@ -40,27 +62,15 @@ export class AlertsPageComponent implements OnInit {
     return pages;
   });
 
-  filteredAlerts = computed(() => {
-    let list = this.alerts();
-    const term = this.searchTerm().toLowerCase();
-    const type = this.typeFilter();
-    const sev = this.severityFilter();
-    if (term) list = list.filter((a) => a.message?.toLowerCase().includes(term));
-    if (type) list = list.filter((a) => a.type === type);
-    if (sev) list = list.filter((a) => (a as any).severity === sev);
-    return list;
-  });
-
   ngOnInit() {
     this.loadAlerts();
   }
 
   loadAlerts() {
     this.isLoading.set(true);
-    this.alertService.getAll(this.showDone(), this.currentPage(), this.pageSize()).subscribe({
+    this.alertService.getAll(this.showDone(), 1, 1000).subscribe({
       next: (res) => {
-        this.alerts.set(res.items);
-        this.totalCount.set(res.total);
+        this.allAlerts.set(res.items);
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false),
@@ -75,11 +85,15 @@ export class AlertsPageComponent implements OnInit {
 
   changePage(page: number) {
     this.currentPage.set(page);
-    this.loadAlerts();
   }
 
   onSearch(term: string) {
     this.searchTerm.set(term);
+    this.currentPage.set(1);
+  }
+
+  onFilterChange() {
+    this.currentPage.set(1);
   }
 
   markDone(id: number) {
@@ -113,42 +127,36 @@ export class AlertsPageComponent implements OnInit {
 
   getSeverityClass(severity: string): string {
     const map: Record<string, string> = {
-      Critical: 'sev-critical',
-      High: 'sev-high',
-      Medium: 'sev-medium',
-      Low: 'sev-low',
+      danger: 'sev-critical',
+      warning: 'sev-medium',
+      info: 'sev-low',
     };
     return map[severity] ?? 'sev-low';
   }
 
   getSeverityLabel(severity: string): string {
     const map: Record<string, string> = {
-      Critical: 'Критичний',
-      High: 'Високий',
-      Medium: 'Середній',
-      Low: 'Низький',
+      danger: 'Критичний',
+      warning: 'Попередження',
+      info: 'Інформація',
     };
     return map[severity] ?? severity ?? '—';
   }
 
   getTypeClass(type: string): string {
     const map: Record<string, string> = {
-      LowStock: 'type-stock',
-      OverdueVaccination: 'type-vaccine',
-      Finance: 'type-finance',
-      System: 'type-system',
-      Other: 'type-other',
+      inventory: 'type-stock',
+      medical: 'type-vaccine',
+      system: 'type-system',
     };
     return map[type] ?? 'type-other';
   }
 
   getTypeLabel(type: string): string {
     const map: Record<string, string> = {
-      LowStock: 'Низький запас',
-      OverdueVaccination: 'Щеплення',
-      Finance: 'Фінанси',
-      System: 'Система',
-      Other: 'Інше',
+      inventory: 'Інвентар',
+      medical: 'Медицина',
+      system: 'Система',
     };
     return map[type] ?? type ?? '—';
   }
