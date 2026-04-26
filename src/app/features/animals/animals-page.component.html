@@ -448,9 +448,9 @@
 
           <div class="form-actions" style="margin-top: 32px; display: flex; justify-content: flex-end; gap: 12px;">
             <button type="button" class="btn-secondary" (click)="isAdoptModalOpen.set(false)">Скасувати</button>
-            <button type="button" class="btn-warning" (click)="confirmAdoption()" [disabled]="!newAdoption.ownerId"
-                    [style.background]="!newAdoption.ownerId ? '#D1D5DB' : '#F59E0B'"
-                    [style.cursor]="!newAdoption.ownerId ? 'not-allowed' : 'pointer'"
+            <button type="button" class="btn-warning" (click)="confirmAdoption()" [disabled]="!newAdoption.OwnerId"
+                    [style.background]="!newAdoption.OwnerId ? '#D1D5DB' : '#F59E0B'"
+                    [style.cursor]="!newAdoption.OwnerId ? 'not-allowed' : 'pointer'"
                     style="color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 500;">
               Зареєструвати приручення
             </button>
@@ -487,3 +487,4 @@
     </div>
   </app-modal>
 }
+

@@ -32,4 +32,8 @@ export class VaccinationsService {
     };
     return this.http.put(`${this.apiUrl}/${id}`, dataToSend);
   }
+
+  deleteVaccines(id: number) {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
 }

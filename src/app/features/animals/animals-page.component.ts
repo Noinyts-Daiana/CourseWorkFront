@@ -85,7 +85,7 @@ export class AnimalsPageComponent implements OnInit {
   newAnimalData = this.getEmptyAnimalObject();
   editAnimalData = this.getEmptyAnimalObject();
 
-  newAdoption = { ownerId: null as number | null, ownerName: '' };
+  newAdoption = { OwnerId: null as number | null, ownerName: '' };
   foodTypeList = signal<any[]>([]);
   isFoodDropdownOpen = signal(false);
   foodSearchTerm = signal('');
@@ -110,7 +110,7 @@ export class AnimalsPageComponent implements OnInit {
 
   openAdoptModal() {
     this.adoptErrorMessage.set('');
-    this.newAdoption = { ownerId: null, ownerName: '' };
+    this.newAdoption = { OwnerId: null, ownerName: '' };
     this.userSearchTerm.set('');
     this.userCurrentPage.set(1);
     this.loadUsers();
@@ -135,7 +135,7 @@ export class AnimalsPageComponent implements OnInit {
     this.userSearchTerm.set(value);
     this.isUserDropdownOpen.set(true);
 
-    this.newAdoption.ownerId = null;
+    this.newAdoption.OwnerId = null;
     this.newAdoption.ownerName = value;
 
     this.userCurrentPage.set(1);
@@ -143,7 +143,7 @@ export class AnimalsPageComponent implements OnInit {
   }
 
   selectUser(user: any) {
-    this.newAdoption.ownerId = user.id || user.Id || user.userId || user.UserId;
+    this.newAdoption.OwnerId = user.id || user.Id || user.userId || user.UserId;
 
     const name = user.fullName || user.FullName || user.name || user.Name || 'Невідомий користувач';
     this.newAdoption.ownerName = name;
@@ -151,7 +151,7 @@ export class AnimalsPageComponent implements OnInit {
     this.userSearchTerm.set(this.newAdoption.ownerName);
     this.isUserDropdownOpen.set(false);
 
-    console.log('Обрано власника з ID:', this.newAdoption.ownerId);
+    console.log('Обрано власника з ID:', this.newAdoption.OwnerId);
   }
 
   closeUserDropdown() {
@@ -272,7 +272,7 @@ export class AnimalsPageComponent implements OnInit {
   }
 
   confirmAdoption() {
-    if (!this.newAdoption.ownerId) return;
+    if (!this.newAdoption.OwnerId) return;
 
     this.openConfirm(
       'Підтвердити приручення',
@@ -383,26 +383,15 @@ export class AnimalsPageComponent implements OnInit {
       this.filteredSpeciesList.set(list);
     });
   }
-  confirmDeletePhoto(photoId: number) {
-    this.openConfirm(
-      'Видалити фото?',
-      'Ви впевнені, що хочете видалити це зображення?',
-      'Видалити',
-      'btn-danger-text',
-      () => {
-        console.log('Фото видалено:', photoId);
-        this.isConfirmOpen.set(false);
-      },
-    );
-  }
 
   saveAdoption() {
     this.adoptErrorMessage.set('');
     const payload = {
-      animalId: this.selectedAnimal.id,
-      ownerId: this.newAdoption.ownerId,
+      AnimalId: this.selectedAnimal.id,
+      OwnerId: this.newAdoption.OwnerId,
     };
 
+    console.log('Відправляю payload:', payload);
     this.adoptService.adoptAnimal(payload).subscribe({
       next: () => {
         this.isConfirmOpen.set(false);

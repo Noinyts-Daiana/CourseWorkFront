@@ -1,5 +1,4 @@
-﻿
-.btn-warning {
+﻿.btn-warning {
   background-color: #FACC15;
   color: #854D0E;
   padding: 10px 24px;
@@ -130,10 +129,196 @@
   display: flex; align-items: center; justify-content: center;
   &:hover { background: #BE123C; }
 }
+
+.page-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.search-section {
+  margin-bottom: 32px;
+  .search-wrapper {
+    position: relative;
+    .search-icon {
+      position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+      color: #9CA3AF; display: flex; align-items: center;
+    }
+    .search-input {
+      width: 95%; height: 48px; padding-left: 48px; border-radius: 12px;
+      border: 1px solid #E5E7EB; outline: none; background: white;
+      &:focus { border-color: #FACC15; box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.1); }
+    }
+  }
+}
+
+/* СІТКА 4 В РЯД */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
   align-items: stretch;
-  grid-auto-rows: auto;
+  margin-bottom: 32px;
+
+  @media (max-width: 1200px) { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+/* ОБГОРТКА ДЛЯ БЕДЖА */
+.card-wrapper {
+  position: relative; // Щоб бедж був "прив'язаний" до картки
+  height: 100%;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  &:hover { transform: translateY(-4px); }
+
+  app-inventory-card { height: 100%; display: block; }
+}
+
+/* ФІКС БЕДЖА: Тепер він не наїзжає */
+.warning-badge-overlay {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  background: #FEF9C3;
+  color: #854D0E;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid #FDE047;
+  pointer-events: none; // Щоб клік проходив крізь бедж на картку
+}
+
+/* КНОПКИ МОДАЛОК */
+.form-actions {
+  display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;
+}
+
+.btn-warning {
+  background: #FACC15; color: #854D0E; padding: 10px 24px;
+  border-radius: 12px; font-weight: 700; border: none; cursor: pointer;
+  display: flex; align-items: center; transition: 0.2s;
+  &:hover { background: #EAB308; }
+}
+
+.btn-secondary {
+  background: #F3F4F6; color: #4B5563; padding: 10px 24px;
+  border-radius: 12px; font-weight: 600; border: none; cursor: pointer;
+}
+
+/* ВАЛІДАЦІЙНІ ПОЛЯ В МОДАЛКАХ */
+.form-group {
+  margin-bottom: 20px;
+  label { display: block; margin-bottom: 6px; font-weight: 600; color: #374151; font-size: 14px; }
+  input, select {
+    width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #D1D5DB;
+    box-sizing: border-box; outline-color: #FACC15;
+  }
+}
+
+/* Обгортка для інпута з іконкою */
+.input-with-dropdown {
+  position: relative; // КРИТИЧНО для позиціонування іконки та списку
+
+  .form-control {
+    width: 100%;
+    padding-right: 40px; // Місце для стрілочки
+  }
+
+  .dropdown-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%); // Центруємо стрілку по вертикалі
+    color: #9CA3AF;
+    pointer-events: none; // Щоб клік проходив крізь іконку в інпут
+    display: flex;
+    align-items: center;
+  }
+}
+
+/* Список брендів - робимо його "літаючим" */
+.custom-dropdown {
+  position: absolute; // Список випливає НАД іншими елементами
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  z-index: 1000; // Щоб був поверх усього
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+  .dropdown-item {
+    padding: 10px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+      background: #F3F4F6;
+    }
+
+    &.load-more {
+      color: #4F46E5;
+      font-weight: 700;
+      text-align: center;
+      border-top: 1px solid #F3F4F6;
+      background: #F9FAFB;
+      position: sticky; // Кнопка "ще" завжди знизу при скролі
+      bottom: 0;
+    }
+  }
+}
+
+/* Виправляємо стандартний select для одиниць виміру */
+select {
+  appearance: none; // Прибираємо стандартну стрілку браузера
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239CA3AF'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+.filter-chips {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+
+  button {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid #E5E7EB;
+    background: white;
+    color: #4B5563;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+
+    &:hover { background: #F9FAFB; }
+
+    &.active {
+      background: #FACC15; // Твій основний жовтий
+      color: #854D0E;
+      border-color: #FDE047;
+    }
+
+    &.warning-chip.active {
+      background: #FEF9C3;
+      border-color: #FDE047;
+      color: #CA8A04;
+    }
+  }
 }

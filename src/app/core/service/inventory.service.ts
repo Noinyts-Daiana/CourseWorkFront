@@ -1,15 +1,25 @@
 ﻿import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class InventoryService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:5036/api/food-type';
 
-  getItems(pageNumber: number = 1, pageSize: number = 9, searchTerm: string = '') {
-    return this.http.get(
-      `${this.apiUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}&searchTerm=${searchTerm}`,
-    );
+  getItems(page: number, size: number, search: string, isLowStock: boolean | null = null) {
+    let params = new HttpParams()
+        .set('pageNumber', page.toString())
+        .set('pageSize', size.toString());
+
+    if (search) {
+      params = params.set('searchTerm', search);
+    }
+
+    if (isLowStock !== null) {
+      params = params.set('isLowStock', isLowStock.toString());
+    }
+
+    return this.http.get<any>(this.apiUrl, { params });
   }
 
   addItem(data: any) {

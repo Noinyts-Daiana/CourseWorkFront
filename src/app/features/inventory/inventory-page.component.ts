@@ -5,16 +5,26 @@ import { InventoryService } from '../../core/service/inventory.service';
 import { ModalComponent } from '../../shared/components/modal/modal.component';
 import { InventoryCardComponent } from '../../shared/components/inventory-card/inventory-card.component';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
+import { FoodTypeService } from '../../core/service/food-type.service';
+import { ConfirmModalComponent } from '../../shared/components/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-inventory-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, ModalComponent, InventoryCardComponent, PaginationComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ModalComponent,
+    InventoryCardComponent,
+    PaginationComponent,
+    ConfirmModalComponent,
+  ],
   templateUrl: './inventory-page.component.html',
   styleUrl: './inventory-page.component.scss',
 })
 export class InventoryPageComponent implements OnInit {
   private inventoryService = inject(InventoryService);
+  private foodService = inject(FoodTypeService);
 
   // --- СТАН ДАНИХ (додано searchTerm) ---
   inventoryItems = signal<any[]>([]);
@@ -45,14 +55,60 @@ export class InventoryPageComponent implements OnInit {
     minThreshold: null as number | null,
   };
   adjustAmount: number | null = null;
+  isEditMode = signal(false);
+  selectedItemForEdit: any = null;
+  // --- СИГНАЛИ ДЛЯ ПІДТВЕРДЖЕННЯ ---
+  isConfirmOpen = signal(false);
+  confirmConfig = signal({
+    title: '',
+    message: '',
+    action: () => {},
+  });
+
+  // Допоміжний метод для відкриття вікна
+  openConfirm(title: string, message: string, action: () => void) {
+    this.confirmConfig.set({ title, message, action });
+    this.isConfirmOpen.set(true);
+  }
+
+  // Оновлений метод видалення
+  onDeleteItem(item: any) {
+    this.openConfirm(
+      'Видалити позицію?',
+      `Ви впевнені, що хочете видалити "${item.name}"? Вся історія залишків та приходів буде втрачена.`,
+      () => {
+        this.foodService.deleteFood(item.id).subscribe({
+          next: () => {
+            this.isConfirmOpen.set(false);
+            this.loadItems();
+          },
+          error: (err) => {
+            this.isConfirmOpen.set(false);
+            alert(err.error?.message || 'Помилка при видаленні');
+          },
+        });
+      },
+    );
+  }
 
   ngOnInit() {
     this.loadItems();
   }
 
+  // inventory-page.component.ts
+
+  // 1. Додай новий сигнал у клас
+  selectedStockFilter = signal<boolean | null>(null);
+
+  // 2. Онови метод завантаження, щоб він враховував фільтр
   loadItems() {
     this.inventoryService
-      .getItems(this.currentPage(), this.pageSize(), this.searchTerm())
+      .getItems(
+        this.currentPage(),
+        this.pageSize(),
+        this.searchTerm(),
+        this.selectedStockFilter(), // ❗️ Додаємо сюди
+      )
       .subscribe({
         next: (res: any) => {
           const items = (res.items || []).map((item: any) => ({
@@ -65,6 +121,46 @@ export class InventoryPageComponent implements OnInit {
       });
   }
 
+  // 3. Метод для перемикання фільтрів (викликатиметься з HTML)
+  setStockFilter(value: boolean | null) {
+    this.selectedStockFilter.set(value);
+    this.currentPage.set(1); // Скидаємо на першу сторінку
+    this.loadItems();
+  }
+  openAddModal() {
+    this.isEditMode.set(false);
+    this.selectedItemForEdit = null;
+    this.newItemData = { name: '', brand: '', unit: 'Кг', stockQuantity: null, minThreshold: null };
+    this.isAddModalOpen.set(true);
+  }
+
+  onEditItem(item: any) {
+    this.isEditMode.set(true);
+    this.selectedItemForEdit = item;
+    // Наповнюємо форму даними
+    this.newItemData = { ...item };
+    this.isAddModalOpen.set(true);
+  }
+
+  saveItem() {
+    if (this.isEditMode()) {
+      this.foodService.updateFood(this.selectedItemForEdit.id, this.newItemData).subscribe({
+        next: () => {
+          this.isAddModalOpen.set(false);
+          this.loadItems();
+        },
+      });
+    } else {
+      // СТВОРЕННЯ
+      this.inventoryService.addItem(this.newItemData).subscribe({
+        next: () => {
+          this.isAddModalOpen.set(false);
+          this.loadItems();
+        },
+      });
+    }
+  }
+
   onMainSearch(event: Event) {
     const term = (event.target as HTMLInputElement).value;
     this.searchTerm.set(term);
@@ -75,13 +171,6 @@ export class InventoryPageComponent implements OnInit {
   onPageChange(page: number) {
     this.currentPage.set(page);
     this.loadItems();
-  }
-
-  openAddModal() {
-    this.newItemData = { name: '', brand: '', unit: 'Кг', stockQuantity: null, minThreshold: null };
-    this.brandSearchTerm.set('');
-    this.loadBrands(1, '');
-    this.isAddModalOpen.set(true);
   }
 
   saveNewItem() {

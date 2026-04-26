@@ -1,52 +1,86 @@
 ﻿<div class="page-container">
   <header class="page-header">
-    <div>
+    <div class="header-text">
       <h1>Склад та інвентар</h1>
       <p>Управління кормами та медикаментами</p>
     </div>
     <button class="btn-warning" (click)="openAddModal()">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M5 12h14m-7-7v14"/>
       </svg>
       Додати позицію
     </button>
   </header>
 
-  <div class="search-section" style="margin-bottom: 32px; width: 100%;">
-    <div style="position: relative; width: 100%;">
-    <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; pointer-events: none; color: #9CA3AF;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-      </svg>
-    </span>
+  <div class="search-section">
+    <div class="search-wrapper">
+      <span class="search-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="5" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+        </svg>
+      </span>
       <input
         type="text"
         class="search-input"
-        autocomplete="off"
-        style="padding: 12px 16px 12px 48px; width: 100%; box-sizing: border-box; border-radius: 10px; border: 1px solid #E5E7EB; height: 48px; outline-color: #FBBF24; font-size: 15px; background: white;"
         placeholder="Пошук за назвою або брендом..."
         [value]="searchTerm()"
         (input)="onMainSearch($event)">
     </div>
   </div>
+  <div class="filter-chips">
+    <button
+      [class.active]="selectedStockFilter() === null"
+      (click)="setStockFilter(null)">
+      Всі позиції
+    </button>
+
+    <button
+      [class.active]="selectedStockFilter() === true"
+      (click)="setStockFilter(true)"
+      class="warning-chip">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;">
+        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>
+      </svg>
+      Мало запасу
+    </button>
+
+    <button
+      [class.active]="selectedStockFilter() === false"
+      (click)="setStockFilter(false)">
+      В наявності
+    </button>
+  </div>
 
   <div class="cards-grid">
     @for (item of inventoryItems(); track item.id) {
-      <app-inventory-card
-        (click)="selectedItem = item"
-        style="cursor: pointer; display: block; height: auto;"
-        [title]="item.name"
-        [brand]="item.brand"
-        [currentStock]="item.stockQuantity"
-        [minStock]="item.minThreshold"
-        [unit]="item.unit"
-        [isLowStock]="item.isLowStock">
-      </app-inventory-card>
+      <div class="card-wrapper">
+
+        @if (item.isLowStock) {
+          <div class="warning-badge-overlay">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>
+            </svg>
+            Мало запасу
+          </div>
+        }
+
+        <app-inventory-card
+          [title]="item.name"
+          [brand]="item.brand"
+          [currentStock]="item.stockQuantity"
+          [minStock]="item.minThreshold"
+          [unit]="item.unit"
+          [isLowStock]="item.isLowStock"
+          (edit)="onEditItem(item)"
+          (delete)="onDeleteItem(item)"
+          (click)="selectedItem = item">
+        </app-inventory-card>
+      </div>
     }
   </div>
 
   @if (totalCount() > 0) {
-    <div style="margin-top: 32px; padding-top: 16px; border-top: 1px solid #E5E7EB;">
+    <div class="pagination-wrapper">
       <app-pagination
         [currentPage]="currentPage()"
         [pageSize]="pageSize()"
@@ -58,57 +92,74 @@
     </div>
   }
 
-
   @if (isAddModalOpen()) {
     <app-modal (close)="isAddModalOpen.set(false)">
-      <div class="modal-header"><h2>Додати позицію інвентарю</h2></div>
+      <div class="modal-header">
+        <h2>{{ isEditMode() ? 'Редагувати позицію' : 'Додати позицію інвентарю' }}</h2>
+      </div>
+
       <form class="modal-form">
         <div class="form-group">
           <label>Назва</label>
           <input type="text" placeholder="Наприклад: Сухий корм" [(ngModel)]="newItemData.name" name="name">
         </div>
 
-        <div class="form-group" style="position: relative;">
+        <div class="form-group">
           <label>Бренд</label>
           <div class="input-with-dropdown">
-            <input type="text" placeholder="Наприклад: Royal Canin (почніть вводити або оберіть)" [value]="newItemData.brand" (input)="onBrandInput($event)" (focus)="isBrandsDropdownOpen.set(true)" (blur)="closeBrandsDropdown()" class="form-control" autocomplete="off">
-            <span class="dropdown-icon" (click)="isBrandsDropdownOpen.set(!isBrandsDropdownOpen())" style="position: absolute; right: 12px; top: 12px; cursor: pointer; color: #9CA3AF;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            <input type="text"
+                   class="form-control"
+                   placeholder="Оберіть або введіть бренд"
+                   [value]="newItemData.brand"
+                   (input)="onBrandInput($event)"
+                   (focus)="isBrandsDropdownOpen.set(true)"
+                   (blur)="closeBrandsDropdown()"
+                   autocomplete="off">
+            <span class="dropdown-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </span>
-          </div>
 
-          @if (isBrandsDropdownOpen() && brandsList().length > 0) {
-            <div class="custom-dropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #E5E7EB; border-radius: 8px; margin-top: 4px; max-height: 200px; overflow-y: auto; z-index: 1000; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
-              @for (brand of brandsList(); track brand) {
-                <div class="dropdown-item" (click)="selectBrand(brand)" style="padding: 10px 14px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='white'">{{ brand }}</div>
-              }
-              @if (brandsCurrentPage() < brandsTotalPages()) {
-                <div class="dropdown-item load-more" (click)="loadMoreBrands()" style="padding: 10px 14px; cursor: pointer; color: #2563EB; text-align: center; font-size: 13px; border-top: 1px solid #E5E7EB; background: #EFF6FF;">Завантажити ще...</div>
-              }
-            </div>
-          }
+            @if (isBrandsDropdownOpen() && brandsList().length > 0) {
+              <div class="custom-dropdown">
+                @for (brand of brandsList(); track brand) {
+                  <div class="dropdown-item" (click)="selectBrand(brand)">{{ brand }}</div>
+                }
+                @if (brandsCurrentPage() < brandsTotalPages()) {
+                  <div class="dropdown-item load-more" (click)="loadMoreBrands(); $event.stopPropagation()">
+                    Завантажити ще...
+                  </div>
+                }
+              </div>
+            }
+          </div>
         </div>
 
         <div class="form-grid">
           <div class="form-group">
             <label>Одиниця виміру</label>
             <select [(ngModel)]="newItemData.unit" name="unit">
-              <option value="Кг">Кг</option><option value="Шт">Шт</option><option value="Доза">Доза</option><option value="Уп">Уп</option>
+              <option value="Кг">Кг</option>
+              <option value="Шт">Шт</option>
+              <option value="Доза">Доза</option>
+              <option value="Уп">Уп</option>
             </select>
           </div>
           <div class="form-group">
             <label>Поточний залишок</label>
-            <input type="number" placeholder="0" [(ngModel)]="newItemData.stockQuantity" name="stockQuantity">
+            <input type="number" [(ngModel)]="newItemData.stockQuantity" name="stockQuantity" [disabled]="isEditMode()">
           </div>
         </div>
+
         <div class="form-group">
-          <label>Мінімальний поріг</label>
+          <label>Мінімальний поріг (запасу)</label>
           <input type="number" placeholder="Попереджати, якщо менше..." [(ngModel)]="newItemData.minThreshold" name="minThreshold">
         </div>
 
         <div class="form-actions">
           <button type="button" class="btn-secondary" (click)="isAddModalOpen.set(false)">Скасувати</button>
-          <button type="button" class="btn-warning" (click)="saveNewItem()">Зберегти позицію</button>
+          <button type="button" class="btn-warning" (click)="saveItem()">
+            {{ isEditMode() ? 'Зберегти зміни' : 'Створити позицію' }}
+          </button>
         </div>
       </form>
     </app-modal>
@@ -116,9 +167,9 @@
 
   @if (selectedItem && !isIncomeModalOpen() && !isExpenseModalOpen()) {
     <app-modal (close)="selectedItem = null">
-      <div class="modal-header" style="margin-bottom: 24px;"><h2>Картка товару</h2></div>
+      <div class="modal-header"><h2>Картка товару</h2></div>
       <div class="detail-header-card">
-        <div class="avatar" style="background: #FEF9C3; color: #CA8A04;">
+        <div class="avatar-inventory">
           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>
           </svg>
@@ -128,9 +179,10 @@
           <p>{{ selectedItem.brand }}</p>
         </div>
       </div>
+
       <div class="detail-stats-grid">
         <div class="stat-box">
-          <span class="label">Поточний залишок</span>
+          <span class="label">Залишок</span>
           <div class="value-row">
             <span class="value">{{ selectedItem.stockQuantity }}</span>
             <span class="unit">{{ selectedItem.unit }}</span>
@@ -138,20 +190,22 @@
         </div>
         <div class="stat-box">
           <span class="label">Мін. поріг</span>
-          <div class="value-row warning">
+          <div class="value-row" [class.warning]="selectedItem.isLowStock">
             <span class="value">{{ selectedItem.minThreshold }}</span>
             <span class="unit">{{ selectedItem.unit }}</span>
           </div>
         </div>
       </div>
+
       <div class="actions-section">
-        <h4 class="section-title">Швидкі дії з балансом</h4>
+        <h4 class="section-title">Дії з балансом</h4>
         <div class="action-buttons">
           <button class="btn-action-green" (click)="openAdjustModal('income')">Прихід</button>
           <button class="btn-action-red" (click)="openAdjustModal('expense')">Списання</button>
         </div>
       </div>
-      <div class="form-actions" style="margin-top: 32px;">
+
+      <div class="form-actions" style="margin-top: 24px;">
         <button type="button" class="btn-secondary" (click)="selectedItem = null">Закрити</button>
       </div>
     </app-modal>
@@ -168,15 +222,15 @@
           </div>
         </div>
         <div class="form-group">
-          <label>Кількість ({{ selectedItem.unit }})</label>
+          <label>Кількість до додавання</label>
           <div class="input-with-suffix input-green">
-            <input type="number" placeholder="0.0" step="1" min="1" [(ngModel)]="adjustAmount" name="incAmount">
+            <input type="number" [(ngModel)]="adjustAmount" name="incAmount" min="1">
             <span class="suffix">{{ selectedItem.unit }}</span>
           </div>
         </div>
-        <div class="form-actions" style="margin-top: 32px;">
+        <div class="form-actions">
           <button type="button" class="btn-secondary" (click)="isIncomeModalOpen.set(false)">Скасувати</button>
-          <button type="button" class="btn-green" (click)="submitAdjustStock(true)">Підтвердити прихід</button>
+          <button type="button" class="btn-green" (click)="submitAdjustStock(true)">Підтвердити</button>
         </div>
       </form>
     </app-modal>
@@ -193,17 +247,28 @@
           </div>
         </div>
         <div class="form-group">
-          <label>Кількість ({{ selectedItem.unit }})</label>
+          <label>Кількість до списання</label>
           <div class="input-with-suffix input-red">
-            <input type="number" placeholder="0.0" step="1" min="1" [(ngModel)]="adjustAmount" name="expAmount">
+            <input type="number" [(ngModel)]="adjustAmount" name="expAmount" min="1">
             <span class="suffix">{{ selectedItem.unit }}</span>
           </div>
         </div>
-        <div class="form-actions" style="margin-top: 32px;">
+        <div class="form-actions">
           <button type="button" class="btn-secondary" (click)="isExpenseModalOpen.set(false)">Скасувати</button>
           <button type="button" class="btn-red" (click)="submitAdjustStock(false)">Списати</button>
         </div>
       </form>
     </app-modal>
+  }
+
+  @if (isConfirmOpen()) {
+    <app-confirm-modal
+      [title]="confirmConfig().title"
+      [message]="confirmConfig().message"
+      btnText="Видалити"
+      btnClass="btn-danger"
+      (confirm)="confirmConfig().action()"
+      (cancel)="isConfirmOpen.set(false)">
+    </app-confirm-modal>
   }
 </div>

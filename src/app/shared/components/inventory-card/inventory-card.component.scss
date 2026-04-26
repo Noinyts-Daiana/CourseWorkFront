@@ -4,67 +4,166 @@
 }
 
 .inventory-card {
-  background: #FFFFFF;
-  border: 1px solid #F3F4F6;
+  position: relative; // Обов'язково для правильного позиціонування беджа
+  background: white;
+  border: 1px solid #E5E7EB;
   border-radius: 16px;
-  padding: 20px;
-
-
+  padding: 24px;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  min-height: 280px;
+  transition: all 0.2s ease;
   box-sizing: border-box;
 
-
-  &.warning-card {
-    border-color: #FDE047;
-    box-shadow: 0 4px 12px rgba(253, 224, 71, 0.1);
+  &:hover {
+    border-color: #FACC15;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   }
 
+  &.warning-card {
+    border: 2px solid #FDE047; // Робимо рамку товстішою для уваги
+    background: #FFFEF5;
+  }
+
+  /* БЕДЖ: Тепер він чітко в кутку ВСЕРЕДИНІ картки */
   .warning-badge {
     position: absolute;
-    top: -12px; right: 16px;
+    top: 12px;
+    right: 12px;
     background: #FEF9C3;
     color: #854D0E;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 11px;
     font-weight: 700;
-    display: flex; align-items: center; gap: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
     border: 1px solid #FDE047;
-    .icon { border: 1px solid #854D0E; border-radius: 50%; width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; }
+    z-index: 5;
   }
 
   .card-header {
-    display: flex; gap: 12px; margin-bottom: 24px; margin-top: 8px;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    margin-top: 10px; // Додаємо місце зверху для беджа
+
     .icon-box {
-      width: 48px; height: 48px; border-radius: 12px; background: #F8FAFC; display: flex; align-items: center; justify-content: center; font-size: 20px;
-      &.warning-icon { background: #FEF9C3; color: #CA8A04; }
+      min-width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: #F3F4F6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+
+      &.warning-icon {
+        background: #FEF9C3;
+        color: #CA8A04;
+      }
     }
-    .info h3 { margin: 0 0 4px; font-size: 18px; color: #111827; line-height: 1.2; }
-    .info p { margin: 0; font-size: 14px; color: #6B7280; }
+
+    .info h3 {
+      margin: 0;
+      font-size: 16px;
+      color: #111827;
+      line-height: 1.2;
+    }
+    .info p { margin: 0; font-size: 13px; color: #6B7280; }
   }
 
   .stock-info {
-    margin-bottom: 24px; flex: 1;
+    margin-bottom: 24px;
+    flex-grow: 1; // Виштовхує кнопку вниз
+
     .stock-labels {
-      display: flex; justify-content: space-between; margin-bottom: 8px; align-items: flex-end;
-      .label { font-size: 13px; color: #6B7280; }
-      .value { font-size: 16px; font-weight: 800; color: #111827; }
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      .label { font-size: 13px; color: #4B5563; }
+      .value { font-size: 15px; font-weight: 800; color: #111827; }
       .text-warning { color: #CA8A04; }
     }
+
     .progress-bg {
-      height: 8px; background: #F3F4F6; border-radius: 4px; overflow: hidden; margin-bottom: 8px;
-      .progress-fill { height: 100%; border-radius: 4px; transition: width 0.3s ease; }
-      .fill-success { background: #10B981; }
-      .fill-warning { background: #FACC15; }
+      height: 8px;
+      background: #E5E7EB;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 8px;
+
+      .progress-fill {
+        height: 100%;
+        transition: width 0.5s ease;
+        &.fill-success { background: #10B981; }
+        &.fill-warning { background: #FACC15; }
+      }
     }
     .min-label { font-size: 12px; color: #9CA3AF; }
   }
 
+  /* СТИЛЬНА КНОПКА (як у Figma) */
   .btn-order {
-    width: 100%; padding: 10px; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; color: #374151; font-weight: 600; cursor: pointer; transition: 0.2s;
-    &:hover { background: #F3F4F6; }
+    width: 100%;
+    padding: 12px;
+    background: #F8FAFC;
+    color: #475569;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #F1F5F9;
+      border-color: #CBD5E1;
+      color: #1E293B;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    svg { color: #64748B; }
+  }
+
+}
+.card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: auto; // Виштовхує кнопки вниз картки
+
+  .btn-edit-icon {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    background: #F0F9FF;
+    color: #0369A1;
+    border: 1px solid #BAE6FD;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    &:hover { background: #E0F2FE; }
+  }
+
+  .btn-delete-icon {
+    padding: 10px;
+    background: #FEF2F2;
+    color: #DC2626;
+    border: 1px solid #FECACA;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    &:hover { background: #FEE2E2; }
   }
 }

@@ -1,0 +1,23 @@
+﻿<app-modal (close)="cancel.emit()">
+  <div style="text-align: center; padding: 24px 16px 8px;">
+    <div style="margin: 0 auto 16px; width: 48px; height: 48px; background: #FEE2E2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #EF4444;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+    </div>
+
+    <h2 style="margin-bottom: 12px; color: #111827; font-size: 20px;">
+      {{ title }}
+    </h2>
+
+    <p style="color: #6B7280; font-size: 14px; margin-bottom: 24px; line-height: 1.5;">
+      {{ message }}
+    </p>
+
+    <div style="display: flex; gap: 12px; justify-content: center;">
+      <button class="btn-secondary" (click)="cancel.emit()" style="flex: 1; justify-content: center;">Скасувати</button>
+
+      <button [class]="btnClass" (click)="confirm.emit()" style="flex: 1; justify-content: center; background: #EF4444; color: white; border: none; padding: 10px 16px; border-radius: 100px; font-weight: 500; cursor: pointer;">
+        {{ btnText }}
+      </button>
+    </div>
+  </div>
+</app-modal>

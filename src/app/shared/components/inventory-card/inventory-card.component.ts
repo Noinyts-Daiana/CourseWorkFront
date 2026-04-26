@@ -1,4 +1,4 @@
-﻿import { Component, Input } from '@angular/core';
+﻿import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -9,16 +9,29 @@ import { CommonModule } from '@angular/common';
   styleUrl: './inventory-card.component.scss',
 })
 export class InventoryCardComponent {
-  @Input() title: string = '';
-  @Input() brand: string = '';
-  @Input() currentStock: number = 0;
-  @Input() minStock: number = 0;
-  @Input() unit: string = '';
-  @Input() isLowStock: boolean = false;
+  @Input() title = '';
+  @Input() brand = '';
+  @Input() currentStock = 0;
+  @Input() minStock = 0;
+  @Input() unit = '';
+  @Input() isLowStock = false;
 
-  getPercentage(): number {
-    if (this.minStock === 0) return 100;
-    const percent = (this.currentStock / (this.minStock * 2)) * 100;
-    return Math.min(percent, 100);
+  @Output() edit = new EventEmitter<void>();
+  @Output() delete = new EventEmitter<void>();
+
+  getPercentage() {
+    if (this.currentStock <= 0) return 0;
+    const max = Math.max(this.currentStock, this.minStock * 2);
+    return (this.currentStock / max) * 100;
+  }
+
+  onEditClick(event: Event) {
+    event.stopPropagation(); // Щоб не відкрилася модалка деталей
+    this.edit.emit();
+  }
+
+  onDeleteClick(event: Event) {
+    event.stopPropagation(); // Щоб не відкрилася модалка деталей
+    this.delete.emit();
   }
 }

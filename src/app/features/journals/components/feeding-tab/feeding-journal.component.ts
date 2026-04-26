@@ -8,11 +8,12 @@ import { UserService } from '../../../../core/service/user.service';
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { FeedingLogService } from '../../../../core/service/feeding-log.service';
+import { ConfirmModalComponent } from '../../../../shared/components/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-feeding-journal',
   standalone: true,
-  imports: [CommonModule, FormsModule, ModalComponent, PaginationComponent],
+  imports: [CommonModule, FormsModule, ModalComponent, PaginationComponent, ConfirmModalComponent],
   templateUrl: './feeding-journal.component.html',
   styleUrl: '../../journals-page.component.scss',
 })
@@ -93,6 +94,47 @@ export class FeedingJournalComponent implements OnInit {
       return matchesDate && matchesSearch;
     });
   });
+
+  isConfirmOpen = signal(false);
+  confirmConfig = signal({
+    title: '',
+    message: '',
+    btnText: 'Видалити',
+    btnClass: 'btn-danger',
+    action: () => {},
+  });
+
+  openConfirm(
+    title: string,
+    message: string,
+    btnText: string,
+    btnClass: string,
+    action: () => void,
+  ) {
+    this.confirmConfig.set({ title, message, btnText, btnClass, action });
+    this.isConfirmOpen.set(true);
+  }
+
+  deleteLog(id: number) {
+    this.openConfirm(
+      'Видалити запис?',
+      'Ви впевнені, що хочете видалити цей запис про годування?',
+      'Видалити',
+      'btn-danger',
+      () => {
+        this.feedingService.deleteFeedingLog(id).subscribe({
+          next: () => {
+            this.isConfirmOpen.set(false);
+            this.loadFeedingLogs(); // Оновлюємо таблицю
+          },
+          error: (err) => {
+            console.error('Помилка при видаленні:', err);
+            this.isConfirmOpen.set(false);
+          },
+        });
+      },
+    );
+  }
 
   totalCount = computed(() => this.filteredFeedingLogs().length);
   totalPages = computed(() => Math.ceil(this.totalCount() / this.pageSize()) || 1);
@@ -225,23 +267,20 @@ export class FeedingJournalComponent implements OnInit {
     this.animalSearchTerm.set(value);
     this.newFeedingData.animalId = null;
 
-    this.animalService.getAvailableAnimals().subscribe({
+    this.animalService.getAnimals(1, 10, value, [], null, null, null, false).subscribe({
       next: (res: any) => {
-        const animals = Array.isArray(res) ? res : res.items || [];
-
-        const filteredAnimals = animals.filter((a: any) => {
-          const name = (a.animalName || a.name || '').toLowerCase();
-          return name.includes(value);
-        });
-
-        this.animalsList.set(filteredAnimals.slice(0, 10));
+        this.animalsList.set(res.items || []);
+      },
+      error: (err) => {
+        console.error('Помилка пошуку тварин:', err);
+        this.animalsList.set([]);
       },
     });
   }
 
   selectAnimal(animal: any) {
-    this.animalSearchTerm.set(animal.animalName || animal.name);
-    this.newFeedingData.animalId = animal.animalId || animal.id;
+    this.animalSearchTerm.set(animal.name);
+    this.newFeedingData.animalId = animal.id;
     this.isAnimalsDropdownOpen.set(false);
   }
 

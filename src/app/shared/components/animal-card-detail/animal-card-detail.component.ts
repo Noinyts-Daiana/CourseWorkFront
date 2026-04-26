@@ -13,11 +13,12 @@ import { CommonModule } from '@angular/common';
 import { MedicalExamsService } from '../../../core/service/medical-exams.service';
 import { VaccinationsService } from '../../../core/service/vaccinations.service';
 import { AnimalPhotoService } from '../../../core/service/animal-photo.service';
+import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-animal-card-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ConfirmModalComponent],
   templateUrl: './animal-card-detail.component.html',
   styleUrl: './animal-card-detail.component.scss',
 })
@@ -37,6 +38,15 @@ export class AnimalCardDetailComponent implements OnInit {
 
   @Output() closeModal = new EventEmitter<void>();
   @Output() animalUpdated = new EventEmitter<void>();
+  isConfirmOpen = signal(false);
+
+  confirmConfig = signal({
+    title: '',
+    message: '',
+    btnText: 'Видалити',
+    btnClass: 'btn-danger',
+    action: () => {},
+  });
 
   activeTab: 'general' | 'medical' | 'photos' = 'general';
 
@@ -106,10 +116,26 @@ export class AnimalCardDetailComponent implements OnInit {
   }
 
   deletePhoto(photoId: number) {
-      this.photoService.deletePhoto(photoId).subscribe({
-        next: () => this.animalPhotos.update((p) => p.filter((x) => x.id !== photoId)),
-      });
+    this.confirmConfig.set({
+      title: 'Видалити фото?',
+      message: 'Ви впевнені, що хочете назавжди видалити цю фотографію?',
+      btnText: 'Видалити',
+      btnClass: 'btn-danger',
+      action: () => {
+        this.photoService.deletePhoto(photoId).subscribe({
+          next: () => {
+            this.animalPhotos.update((p) => p.filter((x) => x.id !== photoId));
+            this.isConfirmOpen.set(false);
+          },
+          error: (err) => {
+            console.error('Помилка при видаленні фото:', err);
+            this.isConfirmOpen.set(false);
+          },
+        });
+      },
+    });
 
+    this.isConfirmOpen.set(true);
   }
 
   onMainPhotoSelected(event: any) {

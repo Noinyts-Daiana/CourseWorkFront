@@ -25,4 +25,7 @@ export class FeedingLogService {
   update(id: number, data: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/${id}`, data);
   }
+  deleteFeedingLog(id: number) {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
 }

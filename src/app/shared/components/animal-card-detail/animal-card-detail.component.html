@@ -155,3 +155,15 @@
     }
   </div>
 </div>
+
+
+@if (isConfirmOpen()) {
+  <app-confirm-modal
+    [title]="confirmConfig().title"
+    [message]="confirmConfig().message"
+    [btnText]="confirmConfig().btnText"
+    [btnClass]="confirmConfig().btnClass"
+    (confirm)="confirmConfig().action()"
+    (cancel)="isConfirmOpen.set(false)">
+  </app-confirm-modal>
+}

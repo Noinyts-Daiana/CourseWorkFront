@@ -21,13 +21,14 @@
         </span>
       </div>
 
-      <div style="display: flex; align-items: center; margin-left: auto;">
-        <button class="btn-outline-pink-light" (click)="openEditVaccineModal(vaccine)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-          </svg>
-        </button>
-      </div>
+        <div style="display: flex; align-items: center; margin-left: auto; gap: 8px;">
+          <button class="btn-outline-pink-light" (click)="openEditVaccineModal(vaccine)" title="Редагувати">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="btn-outline-pink-light" (click)="confirmDelete(vaccine.id, vaccine.animalName || 'цієї тварини')" title="Видалити" style="color: #EF4444; border-color: #FEE2E2; background: #FEF2F2;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+          </button>
+        </div>
     </div>
   </div>
 }
@@ -48,18 +49,49 @@
       <p>Зареєструйте нове щеплення для тварини.</p>
     </div>
     <form class="modal-form">
-      <div class="form-group" style="margin-bottom: 20px;">
+      <div class="form-group" style="position: relative; z-index: 100; margin-bottom: 20px;">
         <label>Пацієнт (Тварина)</label>
-        <select class="form-control" [(ngModel)]="newVaccinationRecord.animalId" name="animalId">
-          <option [ngValue]="null" disabled>Оберіть тварину...</option>
-          @for (animal of animals(); track animal.id) {
-            <option [ngValue]="animal.id">{{ animal.name }}</option>
+        <div class="input-with-dropdown">
+          <input type="text" placeholder="Почніть вводити ім'я..."
+                 [value]="animalSearchTerm()"
+                 (input)="onAnimalInput($event)"
+                 (focus)="isAnimalsDropdownOpen.set(true)"
+                 (blur)="closeAnimalsDropdown()"
+                 class="form-control" autocomplete="off">
+
+          @if (isAnimalsDropdownOpen() && animalsList().length > 0) {
+            <div class="custom-dropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #E5E7EB; border-radius: 8px; margin-top: 4px; max-height: 200px; overflow-y: auto; z-index: 1000; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
+              @for (animal of animalsList(); track animal.id) {
+                <div class="dropdown-item" (click)="selectAnimal(animal)" style="padding: 10px 14px; cursor: pointer; border-bottom: 1px solid #F9FAFB;" onmouseover="this.style.background='#F5F3FF'" onmouseout="this.style.background='white'">
+                  <span style="font-weight: 500;">{{ animal.name }}</span> <span style="color: #6B7280; font-size: 12px;">({{ animal.breedName || 'Без породи' }})</span>
+                </div>
+              }
+            </div>
           }
-        </select>
+        </div>
       </div>
-      <div class="form-group" style="margin-bottom: 20px;">
+      <div class="form-group" style="margin-bottom: 20px; position: relative; z-index: 90;">
         <label>Назва вакцини</label>
-        <input type="text" [(ngModel)]="newVaccinationRecord.vaccineName" name="vaccineName">
+        <div class="input-with-dropdown">
+          <input type="text"
+                 placeholder="Введіть або оберіть зі списку..."
+                 [value]="vaccineSearchTerm()"
+                 (input)="onVaccineInput($event)"
+                 (focus)="isVaccineDropdownOpen.set(true)"
+                 (blur)="closeVaccineDropdown()"
+                 autocomplete="off"
+                 class="form-control">
+
+          @if (isVaccineDropdownOpen() && filteredVaccines().length > 0) {
+            <div class="custom-dropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #E5E7EB; border-radius: 8px; margin-top: 4px; max-height: 180px; overflow-y: auto; z-index: 1000; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
+              @for (v of filteredVaccines(); track v) {
+                <div class="dropdown-item" (click)="selectVaccine(v)" style="padding: 10px 14px; cursor: pointer; border-bottom: 1px solid #F9FAFB;" onmouseover="this.style.background='#F5F3FF'" onmouseout="this.style.background='white'">
+                  {{ v }}
+                </div>
+              }
+            </div>
+          }
+        </div>
       </div>
       <div class="form-grid">
         <div class="form-group"><label>Дата щеплення</label><input type="date" [(ngModel)]="newVaccinationRecord.dateAdministered" name="dateAdministered"></div>
@@ -107,4 +139,14 @@
       </div>
     </form>
   </app-modal>
+}
+
+
+@if (isConfirmOpen()) {
+  <app-confirm-modal
+    [title]="confirmConfig().title"
+    [message]="confirmConfig().message"
+    (confirm)="confirmConfig().action()"
+    (cancel)="isConfirmOpen.set(false)">
+  </app-confirm-modal>
 }

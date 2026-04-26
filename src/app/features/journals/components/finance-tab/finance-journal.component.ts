@@ -5,12 +5,13 @@ import { TransactionService } from '../../../../core/service/transaction.service
 import { UserService } from '../../../../core/service/user.service';
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { ConfirmModalComponent } from '../../../../shared/components/confirm-modal/confirm-modal.component';
 
 
 @Component({
   selector: 'app-finance-journal',
   standalone: true,
-  imports: [CommonModule, FormsModule, ModalComponent, PaginationComponent],
+  imports: [CommonModule, FormsModule, ModalComponent, PaginationComponent, ConfirmModalComponent],
   templateUrl: './finance-journal.component.html',
   styleUrl: '../../journals-page.component.scss',
 })
@@ -51,6 +52,42 @@ export class FinanceJournalComponent implements OnInit {
 
   totalPages = computed(() => Math.ceil(this.totalCount() / this.pageSize()) || 1);
 
+  // --- СИГНАЛИ ДЛЯ МОДАЛКИ ПІДТВЕРДЖЕННЯ ВИДАЛЕННЯ ---
+  isConfirmOpen = signal(false);
+  confirmConfig = signal({
+    title: '',
+    message: '',
+    btnText: 'Видалити',
+    btnClass: 'btn-danger',
+    action: () => {},
+  });
+
+  // Універсальний метод виклику модалки підтвердження
+  openConfirm(title: string, message: string, btnText: string, btnClass: string, action: () => void) {
+    this.confirmConfig.set({ title, message, btnText, btnClass, action });
+    this.isConfirmOpen.set(true);
+  }
+
+  deleteTransaction(id: number) {
+    this.openConfirm(
+      'Видалити транзакцію?',
+      'Ви впевнені, що хочете назавжди видалити цей фінансовий запис? Цю дію неможливо скасувати.',
+      'Видалити',
+      'btn-danger',
+      () => {
+        this.transactionService.deleteTransaction(id).subscribe({
+          next: () => {
+            this.isConfirmOpen.set(false);
+            this.loadTransactions();
+          },
+          error: (err) => {
+            console.error('Помилка при видаленні:', err);
+            this.isConfirmOpen.set(false);
+          }
+        });
+      }
+    );
+  }
   ngOnInit() {
     this.loadEmployees();
     this.loadTransactions();

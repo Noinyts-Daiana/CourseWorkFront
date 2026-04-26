@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class UserService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:5036/api/users';
-  private adoptUrl = 'http://localhost:5036/api/AdoptAnimal';
+  private adoptUrl = 'http://localhost:5036/api/adopt-animal';
 
   getProfile() {
     return this.http.get(`${this.apiUrl}/me`, { withCredentials: true });
