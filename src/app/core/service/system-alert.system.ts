@@ -7,6 +7,9 @@ export interface SystemAlertDto {
   type: string;
   message: string;
   isDone: boolean;
+  severity: string;
+  isAuto: boolean;
+  createdAt: string;
 }
 
 export interface AlertsPage {

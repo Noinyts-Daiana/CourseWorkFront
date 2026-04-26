@@ -1,0 +1,182 @@
+﻿<div class="page-container">
+  <header class="page-header">
+    <div>
+      <h1>Системні сповіщення</h1>
+      <p>Перегляд, створення та управління сповіщеннями системи</p>
+    </div>
+    <button class="btn-purple" (click)="openCreateModal()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px">
+        <path d="M5 12h14m-7-7v14"/>
+      </svg>
+      Нове сповіщення
+    </button>
+  </header>
+
+  <!-- Tabs -->
+  <div class="table-card">
+    <div class="tabs-nav">
+      <button class="tab-btn" [class.active]="showDone() === false" (click)="setTab(false)">
+        Активні
+        @if (totalCount() > 0 && showDone() === false) {
+          <span class="badge">{{ totalCount() }}</span>
+        }
+      </button>
+      <button class="tab-btn" [class.active]="showDone() === true" (click)="setTab(true)">Виконані</button>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-row">
+      <div class="search-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+        </svg>
+        <input type="text" placeholder="Пошук за повідомленням..." [ngModel]="searchTerm()" (ngModelChange)="onSearch($event)" class="search-input"/>
+      </div>
+
+      <select [ngModel]="typeFilter()" (ngModelChange)="typeFilter.set($event); loadAlerts()" class="filter-select">
+        <option value="">Всі типи</option>
+        <option value="LowStock">Низький запас</option>
+        <option value="OverdueVaccination">Прострочене щеплення</option>
+        <option value="Finance">Фінанси</option>
+        <option value="System">Система</option>
+        <option value="Other">Інше</option>
+      </select>
+
+      <select [ngModel]="severityFilter()" (ngModelChange)="severityFilter.set($event); loadAlerts()" class="filter-select">
+        <option value="">Всі пріоритети</option>
+        <option value="Critical">Критичний</option>
+        <option value="High">Високий</option>
+        <option value="Medium">Середній</option>
+        <option value="Low">Низький</option>
+      </select>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      @if (isLoading()) {
+        <div class="empty-state">
+          <div class="spinner"></div>
+          <p>Завантаження…</p>
+        </div>
+      } @else if (alerts().length === 0) {
+        <div class="empty-state">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <p>Сповіщень не знайдено</p>
+        </div>
+      } @else {
+        <table class="data-table">
+          <thead>
+          <tr>
+            <th>Пріоритет</th>
+            <th>Тип</th>
+            <th>Повідомлення</th>
+            <th>Джерело</th>
+            <th>Дата</th>
+            <th>Дії</th>
+          </tr>
+          </thead>
+          <tbody>
+            @for (alert of filteredAlerts(); track alert.id) {
+              <tr [class.row-done]="alert.isDone">
+                <td>
+                  <span class="badge-severity" [ngClass]="getSeverityClass(alert.severity)">
+                    {{ getSeverityLabel(alert.severity) }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge-type" [ngClass]="getTypeClass(alert.type)">
+                    {{ getTypeLabel(alert.type) }}
+                  </span>
+                </td>
+                <td class="msg-cell">{{ alert.message }}</td>
+                <td>
+                  <span class="source-badge" [class.source-auto]="alert.isAuto">
+                    {{ alert.isAuto ? 'Авто' : 'Вручну' }}
+                  </span>
+                </td>
+                <td class="date-cell">
+                  {{ alert.createdAt | date:'dd.MM.yyyy HH:mm' }}
+                </td>
+                <td>
+                  <div class="actions-cell">
+                    @if (!alert.isDone) {
+                      <button class="btn-icon btn-done" title="Позначити виконаним" (click)="markDone(alert.id)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M20 6 9 17l-5-5"/>
+                        </svg>
+                      </button>
+                    }
+                    <button class="btn-icon btn-delete" title="Видалити" (click)="deleteAlert(alert.id)">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="pagination-row">
+          <span class="pagination-info">Показано {{ alerts().length }} з {{ totalCount() }}</span>
+          <div class="pagination-btns">
+            <button [disabled]="currentPage() <= 1" (click)="changePage(currentPage() - 1)" class="page-btn">‹</button>
+            @for (p of pageNumbers(); track p) {
+              <button class="page-btn" [class.active]="p === currentPage()" (click)="changePage(p)">{{ p }}</button>
+            }
+            <button [disabled]="currentPage() >= totalPages()" (click)="changePage(currentPage() + 1)" class="page-btn">›</button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Create Modal -->
+@if (isModalOpen()) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Нове сповіщення</h3>
+        <button class="modal-close" (click)="closeModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Тип</label>
+          <select [(ngModel)]="newAlert.type" class="form-control">
+            <option value="LowStock">Низький запас</option>
+            <option value="OverdueVaccination">Прострочене щеплення</option>
+            <option value="Finance">Фінанси</option>
+            <option value="System">Система</option>
+            <option value="Other">Інше</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Пріоритет</label>
+          <select [(ngModel)]="newAlert.severity" class="form-control">
+            <option value="Low">Низький</option>
+            <option value="Medium">Середній</option>
+            <option value="High">Високий</option>
+            <option value="Critical">Критичний</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Повідомлення</label>
+          <textarea [(ngModel)]="newAlert.message" rows="3" placeholder="Введіть текст сповіщення…" class="form-control"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeModal()">Скасувати</button>
+        <button class="btn-purple" [disabled]="!newAlert.message.trim()" (click)="createAlert()">Створити</button>
+      </div>
+    </div>
+  </div>
+}
