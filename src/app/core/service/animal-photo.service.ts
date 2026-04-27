@@ -12,7 +12,7 @@ export class AnimalPhotoService {
     formData.append('AnimalId', animalId.toString());
     formData.append('File', file);
     // Якщо в DTO є поле Description, можна додати і його
-    return this.http.post(this.apiUrl, formData);
+    return this.http.post(this.apiUrl, formData, { withCredentials: true});
   }
 
   getPhotos(animalId: number) {
