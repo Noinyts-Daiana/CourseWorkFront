@@ -37,8 +37,8 @@ export class AlertsPageComponent implements OnInit {
     const type = this.typeFilter();
     const sev = this.severityFilter();
     if (term) list = list.filter((a) => a.message?.toLowerCase().includes(term));
-    if (type) list = list.filter((a) => a.type === type);
-    if (sev) list = list.filter((a) => a.severity === sev);
+    if (type) list = list.filter((a) => a.type?.toLowerCase() === type.toLowerCase());
+    if (sev) list = list.filter((a) => a.severity?.toLowerCase() === sev.toLowerCase());
     return list;
   });
 
@@ -128,19 +128,27 @@ export class AlertsPageComponent implements OnInit {
   getSeverityClass(severity: string): string {
     const map: Record<string, string> = {
       danger: 'sev-critical',
+      critical: 'sev-critical',
       warning: 'sev-medium',
+      medium: 'sev-medium',
+      high: 'sev-high',
       info: 'sev-low',
+      low: 'sev-low',
     };
-    return map[severity] ?? 'sev-low';
+    return map[severity?.toLowerCase()] ?? 'sev-low';
   }
 
   getSeverityLabel(severity: string): string {
     const map: Record<string, string> = {
       danger: 'Критичний',
+      critical: 'Критичний',
       warning: 'Попередження',
+      medium: 'Середній',
+      high: 'Високий',
       info: 'Інформація',
+      low: 'Низький',
     };
-    return map[severity] ?? severity ?? '—';
+    return map[severity?.toLowerCase()] ?? severity ?? '—';
   }
 
   getTypeClass(type: string): string {
@@ -148,8 +156,10 @@ export class AlertsPageComponent implements OnInit {
       inventory: 'type-stock',
       medical: 'type-vaccine',
       system: 'type-system',
+      adoption: 'type-adoption',
+      finance: 'type-finance',
     };
-    return map[type] ?? 'type-other';
+    return map[type?.toLowerCase()] ?? 'type-other';
   }
 
   getTypeLabel(type: string): string {
@@ -157,7 +167,9 @@ export class AlertsPageComponent implements OnInit {
       inventory: 'Інвентар',
       medical: 'Медицина',
       system: 'Система',
+      adoption: 'Усиновлення',
+      finance: 'Фінанси',
     };
-    return map[type] ?? type ?? '—';
+    return map[type?.toLowerCase()] ?? type ?? '—';
   }
 }

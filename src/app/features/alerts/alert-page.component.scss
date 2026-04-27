@@ -205,11 +205,12 @@
   font-weight: 600;
   white-space: nowrap;
 
-  &.type-stock   { background: #FDF4FF; color: #9333EA; }
-  &.type-vaccine { background: #EFF6FF; color: #2563EB; }
-  &.type-finance { background: #F0FDF4; color: #16A34A; }
-  &.type-system  { background: #F3F4F6; color: #4B5563; }
-  &.type-other   { background: #F9FAFB; color: #6B7280; }
+  &.type-stock    { background: #FDF4FF; color: #9333EA; }
+  &.type-vaccine  { background: #EFF6FF; color: #2563EB; }
+  &.type-finance  { background: #F0FDF4; color: #16A34A; }
+  &.type-system   { background: #F3F4F6; color: #4B5563; }
+  &.type-adoption { background: #FFF7ED; color: #C2410C; }
+  &.type-other    { background: #F9FAFB; color: #6B7280; }
 }
 
 .source-badge {

@@ -38,6 +38,8 @@
         <option value="inventory">Інвентар</option>
         <option value="medical">Медицина</option>
         <option value="system">Система</option>
+        <option value="adoption">Усиновлення</option>
+        <option value="finance">Фінанси</option>
       </select>
 
       <select [ngModel]="severityFilter()" (ngModelChange)="severityFilter.set($event); onFilterChange()" class="filter-select">
