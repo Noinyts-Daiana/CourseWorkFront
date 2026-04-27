@@ -53,7 +53,7 @@ export class AnimalService {
     return this.http.delete(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
   getAvailableAnimals() {
-    return this.http.get(this.apiUrl);
+    return this.http.get(this.apiUrl, { withCredentials: true });
   }
 
   getPublicAnimals(pageNumber: number = 1, pageSize: number = 8) {

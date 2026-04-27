@@ -336,7 +336,7 @@ export class AnimalsPageComponent implements OnInit {
           const fetchedAnimals = (res.items || []).map((a: any) => {
             let photosList = a.photos || a.Photos || [];
             photosList.sort((p1: any, p2: any) => {
-              const isMain1 = String(p1.isMain) === 'true' || String(p1.IsMain) === 'true';
+              const isMain1 = p1.isMain === true || p1.IsMain === true;
               return isMain1 ? -1 : 1;
             });
 
@@ -350,22 +350,21 @@ export class AnimalsPageComponent implements OnInit {
               breed: a.breedName || 'Невідома порода',
 
               mainPhotoUrl: (() => {
-                const p = photosList[0];
-                let url = p
-                  ? p.url ||
-                    p.Url ||
-                    p.fileUrl ||
-                    p.FileUrl ||
-                    p.photoUrl ||
-                    p.PhotoUrl ||
-                    (typeof p === 'string' ? p : null)
+                const mainPhoto =
+                  photosList.find((p: any) => p.isMain === true || p.IsMain === true) ||
+                  photosList[0];
+                let url = mainPhoto
+                  ? mainPhoto.fileUrl ||
+                    mainPhoto.FileUrl ||
+                    mainPhoto.url ||
+                    mainPhoto.Url ||
+                    (typeof mainPhoto === 'string' ? mainPhoto : null)
                   : null;
 
                 if (url && !url.startsWith('http')) {
                   url = url.replace(/\\/g, '/');
-
                   const cleanUrl = url.startsWith('/') ? url : `/${url}`;
-                  url = `https://localhost:5036${cleanUrl}`;
+                  url = `http://localhost:5036${cleanUrl}`;
                 }
 
                 return url;

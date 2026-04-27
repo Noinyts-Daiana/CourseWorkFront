@@ -85,17 +85,25 @@ export class UserService {
   }
 
   getUserAnimals(ownerId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.adoptUrl}/user/${ownerId}`);
+    return this.http.get<any[]>(`${this.adoptUrl}/user/${ownerId}`, { withCredentials: true });
   }
 
   returnAnimal(animalId: number, ownerId: number): Observable<any> {
-    return this.http.post(`${this.adoptUrl}/return`, { animalId, ownerId });
+    return this.http.post(
+      `${this.adoptUrl}/return`,
+      { animalId, ownerId },
+      { withCredentials: true },
+    );
   }
   getAvailableAnimals(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.adoptUrl}/available`);
+    return this.http.get<any[]>(`${this.adoptUrl}/available`, { withCredentials: true });
   }
 
   adoptAnimal(animalId: number, ownerId: number): Observable<any> {
-    return this.http.post(`${this.adoptUrl}/adopt`, { animalId, ownerId });
+    return this.http.post(
+      `${this.adoptUrl}/adopt`,
+      { animalId, ownerId },
+      { withCredentials: true },
+    );
   }
 }

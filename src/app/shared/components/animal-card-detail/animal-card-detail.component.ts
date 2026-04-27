@@ -78,8 +78,6 @@ export class AnimalCardDetailComponent implements OnInit {
     this.photoService.getPhotos(this.id).subscribe({
       next: (photos) => {
         this.animalPhotos.set(photos);
-        const main = photos.find((p) => p.isMain) || photos[0];
-        if (main) this.mainPhotoUrl = main.fileUrl;
         this.cdr.detectChanges();
       },
     });
@@ -143,9 +141,11 @@ export class AnimalCardDetailComponent implements OnInit {
     const file: File = event.target.files[0];
     if (file && this.id) {
       this.photoService.uploadPhoto(this.id, file).subscribe({
-        next: (res: any) => this.setMainPhoto(res.id),
+        next: (res: any) => {
+          this.setMainPhoto(res.id);
+          this.cdr.detectChanges();
+        },
       });
-      this.cdr.detectChanges();
     }
   }
   getSafeImageUrl(url: string | null | undefined): string {

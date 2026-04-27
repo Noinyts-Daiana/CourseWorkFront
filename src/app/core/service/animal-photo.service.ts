@@ -12,17 +12,21 @@ export class AnimalPhotoService {
     formData.append('AnimalId', animalId.toString());
     formData.append('File', file);
     // Якщо в DTO є поле Description, можна додати і його
-    return this.http.post(this.apiUrl, formData, { withCredentials: true});
+    return this.http.post(this.apiUrl, formData, { withCredentials: true });
   }
 
   getPhotos(animalId: number) {
-    return this.http.get<any[]>(`${this.apiUrl}/animal/${animalId}`, { withCredentials: true});
+    return this.http.get<any[]>(`${this.apiUrl}/animal/${animalId}`, { withCredentials: true });
   }
 
   setMainPhoto(photoId: number, animalId: number) {
-    return this.http.patch(`${this.apiUrl}/${photoId}/setmain/animal/${animalId}`, {
-      withCredentials: true,
-    });
+    return this.http.patch(
+      `${this.apiUrl}/${photoId}/setmain/animal/${animalId}`,
+      {},
+      {
+        withCredentials: true,
+      },
+    );
   }
 
   deletePhoto(photoId: number) {

@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit {
   currentPage = signal(1);
   totalPages = signal(1);
   totalCount = signal(0);
-  readonly pageSize = 6;
+  readonly pageSize = 4;
 
   // Adoption modal
   isAdoptionModalOpen = false;
@@ -55,10 +55,26 @@ export class HomeComponent implements OnInit {
     this.animalsLoading.set(true);
     this.animalService.getPublicAnimals(page, this.pageSize).subscribe({
       next: (res: any) => {
-        this.pets.set(res.items || []);
+        const items = (res.items || []).map((pet: any) => ({
+          ...pet,
+          _photoUrl: (() => {
+            const photos = pet.photos || pet.Photos || [];
+            const main = photos.find((p: any) => p.isMain || p.IsMain) || photos[0];
+            if (!main) return null;
+            let url = main.fileUrl || main.FileUrl || main.url || main.Url || null;
+            if (!url) return null;
+            url = url.replace(/\\/g, '/');
+            if (!url.startsWith('http'))
+              url = 'http://localhost:5036' + (url.startsWith('/') ? url : '/' + url);
+            return url;
+          })(),
+        }));
+        this.pets.set(items);
         this.currentPage.set(res.pageNumber ?? page);
-        this.totalPages.set(res.totalPages ?? 1);
-        this.totalCount.set(res.totalCount ?? 0);
+        const totalCount = res.totalCount ?? 0;
+        const pageSize = res.pageSize ?? this.pageSize;
+        this.totalPages.set((res.totalPages ?? Math.ceil(totalCount / pageSize)) || 1);
+        this.totalCount.set(totalCount);
         this.animalsLoading.set(false);
       },
       error: () => this.animalsLoading.set(false),
@@ -93,9 +109,15 @@ export class HomeComponent implements OnInit {
   }
 
   getAnimalPhoto(animal: any): string | null {
-    if (animal.photos && animal.photos.length > 0) return animal.photos[0].url;
-    if (animal.photoUrl) return animal.photoUrl;
-    return null;
+    return animal._photoUrl || null;
+  }
+
+  getSafeImageUrl(url: string | null | undefined): string {
+    if (!url) return '';
+    let cleanUrl = url.replace(/\\/g, '/');
+    if (cleanUrl.startsWith('http')) return cleanUrl;
+    if (!cleanUrl.startsWith('/')) cleanUrl = '/' + cleanUrl;
+    return `http://localhost:5036${cleanUrl}`;
   }
 
   openAdoptionModal(pet: any) {
@@ -104,7 +126,6 @@ export class HomeComponent implements OnInit {
     this.adoptionState.set('idle');
     this.adoptionError.set(null);
   }
-
 
   openAuthModal() {
     this.isAuthModalOpen = true;
