@@ -26,7 +26,7 @@ export class HomeComponent implements OnInit {
   authTab: 'login' | 'register' = 'login';
   isLoading = false;
   errorMessage = signal<string | null>(null);
-  regData = { email: '', password: '', phone: '', fullName: '' };
+  regData = { email: '', password: '', phone: '', firstName: '', lastName: '' };
 
   // Animals / pagination
   animalsLoading = signal(true);
@@ -167,7 +167,8 @@ export class HomeComponent implements OnInit {
     this.isLoading = true;
     this.authService
       .register({
-        fullName: this.regData.fullName.trim(),
+        firstName: this.regData.firstName.trim(),
+        lastName: this.regData.lastName.trim(),
         email: this.regData.email.trim(),
         password: this.regData.password,
         roleId: 3,

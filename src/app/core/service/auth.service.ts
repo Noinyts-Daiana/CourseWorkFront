@@ -43,7 +43,13 @@ export class AuthService {
     });
   }
 
-  register(data: { fullName: string; email: string; password: string; roleId: number }) {
+  register(data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    roleId: number;
+  }) {
     return this.http
       .post<AuthUser>('http://localhost:5036/api/users/register', data, { withCredentials: true })
       .pipe(tap((user) => this.setSession(user)));
