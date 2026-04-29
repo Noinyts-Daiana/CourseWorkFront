@@ -58,14 +58,34 @@ export class HomeComponent implements OnInit {
         const items = (res.items || []).map((pet: any) => ({
           ...pet,
           _photoUrl: (() => {
-            const photos = pet.photos || pet.Photos || [];
-            const main = photos.find((p: any) => p.isMain || p.IsMain) || photos[0];
+            const photos = pet.photos || pet.Photos;
+            // Якщо фотографій немає взагалі
+            if (!photos || !Array.isArray(photos) || photos.length === 0) return null;
+
+            const main =
+              photos.find((p: any) => p.isMain === true || p.IsMain === true) || photos[0];
             if (!main) return null;
-            let url = main.fileUrl || main.FileUrl || main.url || main.Url || null;
-            if (!url) return null;
-            url = url.replace(/\\/g, '/');
-            if (!url.startsWith('http'))
+
+            let url =
+              main.fileUrl ||
+              main.FileUrl ||
+              main.url ||
+              main.Url ||
+              (typeof main === 'string' ? main : null);
+
+            // Очищаємо від зайвих пробілів, якщо це рядок
+            if (typeof url === 'string') {
+              url = url.trim();
+            }
+
+            // Якщо після очищення пусто, або там текст "null"
+            if (!url || url === 'null' || url === '') return null;
+
+            if (!url.startsWith('http')) {
+              url = url.replace(/\\/g, '/');
               url = 'http://localhost:5036' + (url.startsWith('/') ? url : '/' + url);
+            }
+
             return url;
           })(),
         }));
@@ -109,7 +129,17 @@ export class HomeComponent implements OnInit {
   }
 
   getAnimalPhoto(animal: any): string | null {
-    return animal._photoUrl || null;
+    const url = animal._photoUrl;
+
+
+    if (!url || url === 'http://localhost:5036/' || url === 'http://localhost:5036/null') {
+      return null;
+    }
+
+    return url;
+  }
+  onImageError(pet: any) {
+    pet._photoUrl = null;
   }
 
   getSafeImageUrl(url: string | null | undefined): string {

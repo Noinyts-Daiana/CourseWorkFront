@@ -1,17 +1,22 @@
 ﻿<div class="animal-card">
   <div class="card-media">
     <div class="carousel-wrapper">
-      @if (photos && photos.length > 0) {
+      @if (hasVisiblePhotos) {
         <div class="slides-container">
-          <img [src]="currentPhotoUrl" [alt]="name" class="carousel-img">
+          <img
+            [src]="currentPhotoUrl"
+            [alt]="name"
+            class="carousel-img"
+            (error)="onImgError($event)"
+          >
         </div>
 
-        @if (photos.length > 1) {
+        @if (validPhotos.length > 1) {
           <button class="nav-btn prev" (click)="prevSlide($event)">‹</button>
           <button class="nav-btn next" (click)="nextSlide($event)">›</button>
 
           <div class="indicators">
-            @for (p of photos; track p.id || $index; let i = $index) {
+            @for (p of validPhotos; track p.id || $index; let i = $index) {
               <span class="dot" [class.active]="i === currentIndex" (click)="setSlide($event, i)"></span>
             }
           </div>

@@ -39,7 +39,6 @@ class ProfilePageComponent implements OnInit {
   loadProfile() {
     this.userService.getProfile().subscribe({
       next: (data: any) => {
-        const full = data.fullName || '';
         const raw = data.createdAt || '';
         const date = new Date(raw.endsWith('Z') ? raw : raw + 'Z');
 
@@ -50,20 +49,23 @@ class ProfilePageComponent implements OnInit {
           })
           .replace('.', '');
 
-        const parts = full.trim().split(' ');
-        const fName = parts[0] || '';
-        const lName = parts[1] || '';
+        // БАГ 2 ВИПРАВЛЕНО: бекенд тепер повертає firstName і lastName окремо.
+        // Але якщо з якоїсь причини прийшов лише fullName — розбиваємо як fallback.
+        const firstName = data.firstName || (data.fullName || '').trim().split(' ')[0] || '';
+        const lastName = data.lastName || (data.fullName || '').trim().split(' ')[1] || '';
+
         this.user.set({
-          firstName: parts[0],
-          lastName: parts[1],
+          firstName,
+          lastName,
           email: data.email,
           role: data.roleName,
+          roleId: data.roleId, // зберігаємо roleId щоб не скидало роль при оновленні
           joinedDate: formattedDate,
         });
 
         this.regData = {
-          firstName: fName,
-          lastName: lName,
+          firstName,
+          lastName,
           email: data.email,
         };
       },
@@ -74,67 +76,70 @@ class ProfilePageComponent implements OnInit {
     this.successMessage.set(null);
     this.errorMessage.set(null);
 
-    const fullNameData = `${this.regData.firstName} ${this.regData.lastName}`.trim();
+    // БАГ 2 ВИПРАВЛЕНО: передаємо firstName/lastName і roleId поточного користувача
+    this.userService
+      .updateProfile({
+        firstName: this.regData.firstName,
+        lastName: this.regData.lastName,
+        email: this.regData.email,
+        roleId: this.user()?.roleId,
+      })
+      .subscribe({
+        next: () => {
+          this.successMessage.set('Профіль успішно оновлено!');
+          setTimeout(() => this.successMessage.set(null), 3000);
+          this.loadProfile();
+        },
+        error: (err) => {
+          let errorText = 'Сталася помилка при оновленні профілю';
 
-    const dataToUpdate = {
-      fullName: fullNameData,
-      email: this.regData.email,
-    };
-    this.userService.updateProfile(dataToUpdate).subscribe({
-      next: (res: any) => {
-        console.log('Успіх!');
-        this.loadProfile();
-      },
-      error: (err) => {
-        let errorText = 'Сталася помилка при оновленні профілю';
-
-        if (err.status === 400 && err.error && err.error.errors) {
-          const validationErrors = Object.values(err.error.errors) as string[][];
-          if (validationErrors.length > 0 && validationErrors[0].length > 0) {
-            errorText = validationErrors[0][0];
+          if (err.status === 400 && err.error && err.error.errors) {
+            const validationErrors = Object.values(err.error.errors) as string[][];
+            if (validationErrors.length > 0 && validationErrors[0].length > 0) {
+              errorText = validationErrors[0][0];
+            }
+          } else if (err.error?.message) {
+            errorText = err.error.message;
           }
-        } else if (err.error?.message) {
-          errorText = err.error.message;
-        }
 
-        this.errorMessage.set(` ${errorText}`);
-        setTimeout(() => this.errorMessage.set(null), 5000);
-      },
-    });
+          this.errorMessage.set(` ${errorText}`);
+          setTimeout(() => this.errorMessage.set(null), 5000);
+        },
+      });
   }
 
   onChangePassword() {
     this.successMessage.set(null);
     this.errorMessage.set(null);
 
-    const dataToSend = {
-      currentPassword: this.passData.currentPassword,
-      newPassword: this.passData.newPassword,
-      confirmPassword: this.passData.confirmPassword,
-    };
+    this.userService
+      .changePassword({
+        currentPassword: this.passData.currentPassword,
+        newPassword: this.passData.newPassword,
+        confirmPassword: this.passData.confirmPassword,
+      })
+      .subscribe({
+        next: () => {
+          this.passData = { currentPassword: '', newPassword: '', confirmPassword: '' };
+          this.successMessage.set('Пароль успішно змінено!');
+          setTimeout(() => this.successMessage.set(null), 3000);
+        },
+        error: (err) => {
+          let errorText = 'Сталася помилка при зміні пароля';
 
-    this.userService.changePassword(dataToSend).subscribe({
-      next: () => {
-        this.passData = { currentPassword: '', newPassword: '', confirmPassword: '' };
-        this.successMessage.set('Пароль успішно змінено!');
-        setTimeout(() => this.successMessage.set(null), 3000);
-      },
-      error: (err) => {
-        let errorText = 'Сталася помилка при зміні пароля';
-
-        if (err.status === 400 && err.error && err.error.errors) {
-          const validationErrors = Object.values(err.error.errors) as string[][];
-          if (validationErrors.length > 0 && validationErrors[0].length > 0) {
-            errorText = validationErrors[0][0];
+          if (err.status === 400 && err.error && err.error.errors) {
+            const validationErrors = Object.values(err.error.errors) as string[][];
+            if (validationErrors.length > 0 && validationErrors[0].length > 0) {
+              errorText = validationErrors[0][0];
+            }
+          } else if (err.error?.message) {
+            errorText = err.error.message;
           }
-        } else if (err.error?.message) {
-          errorText = err.error.message;
-        }
 
-        this.errorMessage.set(`${errorText}`);
-        setTimeout(() => this.errorMessage.set(null), 5000);
-      },
-    });
+          this.errorMessage.set(`${errorText}`);
+          setTimeout(() => this.errorMessage.set(null), 5000);
+        },
+      });
   }
 }
 

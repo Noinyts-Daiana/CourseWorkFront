@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../../shared/components/modal/modal.component';
 import { UserService } from '../../core/service/user.service';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
-import {AnimalService} from "../../core/service/animal.service";
-import {ConfirmModalComponent} from "../../shared/components/confirm-modal/confirm-modal.component";
+import { AnimalService } from '../../core/service/animal.service';
+import { ConfirmModalComponent } from '../../shared/components/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-users-page',
@@ -28,13 +28,11 @@ export class UsersPageComponent implements OnInit {
 
   totalPages = computed(() => Math.ceil(this.totalCount() / this.pageSize()) || 1);
 
-  // --- Стан модалок ---
   selectedUser: any = null;
   isAddModalOpen = signal(false);
   isEditModalOpen = signal(false);
   errorMessage = signal('');
 
-  // --- Стан призначення тварин ---
   isAssignMode = signal(false);
   availableAnimals = signal<any[]>([]);
   selectedAnimalIdForAssign: number | null = null;
@@ -42,9 +40,9 @@ export class UsersPageComponent implements OnInit {
   isDropdownVisible = signal(false);
   userAnimals = signal<any[]>([]);
 
-  // --- Дані для форм ---
-  editData = { userId: 0, fullName: '', email: '', roleId: 1 };
-  regData = { fullName: '', email: '', roleId: 2, password: '' };
+  // БАГ 3 ВИПРАВЛЕНО: розділяємо на firstName/lastName замість fullName
+  editData = { userId: 0, firstName: '', lastName: '', email: '', roleId: 1, isActive: true };
+  regData = { firstName: '', lastName: '', email: '', roleId: 2, password: '' };
 
   ngOnInit() {
     this.loadUsers();
@@ -66,8 +64,6 @@ export class UsersPageComponent implements OnInit {
         },
       });
   }
-
-  // --- Логіка фільтрації (Active Filters) ---
 
   onStatusFilterChange(value: string) {
     if (value === 'all') this.selectedStatusFilter.set(null);
@@ -110,8 +106,6 @@ export class UsersPageComponent implements OnInit {
     return roles[id] || '';
   }
 
-  // --- Решта логіки ---
-
   onSelectUser(user: any) {
     this.selectedUser = user;
     this.resetAssignState();
@@ -131,14 +125,13 @@ export class UsersPageComponent implements OnInit {
       error: () => this.userAnimals.set([]),
     });
   }
-  // Встановити фільтр статусу кліком по картці
+
   setStatusFilter(status: boolean) {
     this.selectedStatusFilter.set(status);
     this.currentPage.set(1);
     this.loadUsers();
   }
 
-  // --- СИГНАЛИ ДЛЯ МОДАЛКИ ПІДТВЕРДЖЕННЯ ---
   isConfirmOpen = signal(false);
   confirmConfig = signal({
     title: '',
@@ -159,7 +152,6 @@ export class UsersPageComponent implements OnInit {
     this.isConfirmOpen.set(true);
   }
 
-  // Оновлений метод повернення тварини
   confirmReturnAnimal(animalId: number, animalName: string) {
     this.openConfirm(
       'Повернути тварину?',
@@ -178,7 +170,6 @@ export class UsersPageComponent implements OnInit {
     );
   }
 
-  // Оновлений метод зміни статусу акаунта
   confirmToggleActive() {
     const actionText = this.selectedUser.isActive ? 'деактивувати' : 'активувати';
     this.openConfirm(
@@ -198,23 +189,22 @@ export class UsersPageComponent implements OnInit {
       },
     );
   }
+
   clearStatusFilter() {
     this.selectedStatusFilter.set(null);
     this.currentPage.set(1);
     this.loadUsers();
   }
+
   toggleAssignMode() {
     if (!this.isAssignMode()) {
-      // Робимо запит до AnimalService, передаючи 'false' для приручених
       this.animalService.getAnimals(1, 100, '', [], null, null, null, false).subscribe({
         next: (res: any) => {
-          // Перетворюємо дані з формату "Animal" у формат, який чекає твоя модалка
           const onlyFree = (res.items || []).map((a: any) => ({
             animalId: a.id,
             animalName: a.name,
             animalBreed: a.breedName || 'Без породи',
           }));
-
           this.availableAnimals.set(onlyFree);
           this.isAssignMode.set(true);
           this.isDropdownVisible.set(true);
@@ -229,9 +219,7 @@ export class UsersPageComponent implements OnInit {
   filteredAnimals = computed(() => {
     const query = this.animalSearchQuery().toLowerCase().trim();
     const animals = this.availableAnimals();
-
     if (!query) return animals;
-
     return animals.filter(
       (a) =>
         a.animalName?.toLowerCase().includes(query) || a.animalBreed?.toLowerCase().includes(query),
@@ -246,17 +234,13 @@ export class UsersPageComponent implements OnInit {
 
   onConfirmAssign() {
     if (!this.selectedAnimalIdForAssign || !this.selectedUser) return;
-
     const userId = this.selectedUser.userId || this.selectedUser.id;
-
     this.userService.adoptAnimal(this.selectedAnimalIdForAssign, userId).subscribe({
       next: () => {
         this.resetAssignState();
         this.loadUserAnimals(userId);
       },
       error: (err) => {
-        console.error('Помилка приручення:', err);
-        // Тут можна вивести повідомлення про помилку
         this.errorMessage.set(err.error?.message || 'Не вдалося приручити тварину');
       },
     });
@@ -278,7 +262,22 @@ export class UsersPageComponent implements OnInit {
   }
 
   onEdit() {
-    this.editData = { ...this.selectedUser };
+    // БАГ 3 ВИПРАВЛЕНО: розбиваємо fullName на firstName/lastName для форми редагування
+    const firstName =
+      this.selectedUser.firstName || (this.selectedUser.fullName || '').trim().split(' ')[0] || '';
+    const lastName =
+      this.selectedUser.lastName ||
+      (this.selectedUser.fullName || '').trim().split(' ').slice(1).join(' ') ||
+      '';
+
+    this.editData = {
+      userId: this.selectedUser.userId,
+      firstName,
+      lastName,
+      email: this.selectedUser.email,
+      roleId: this.selectedUser.roleId,
+      isActive: this.selectedUser.isActive,
+    };
     this.selectedUser = null;
     this.isEditModalOpen.set(true);
   }
@@ -289,6 +288,9 @@ export class UsersPageComponent implements OnInit {
         this.isEditModalOpen.set(false);
         this.loadUsers();
       },
+      error: (err) => {
+        this.errorMessage.set(err.error?.message || 'Помилка збереження');
+      },
     });
   }
 
@@ -297,7 +299,7 @@ export class UsersPageComponent implements OnInit {
       next: () => {
         this.isAddModalOpen.set(false);
         this.loadUsers();
-        this.regData = { fullName: '', email: '', roleId: 2, password: '' };
+        this.regData = { firstName: '', lastName: '', email: '', roleId: 2, password: '' };
       },
       error: (err) => this.errorMessage.set(err.error?.message || 'Помилка'),
     });

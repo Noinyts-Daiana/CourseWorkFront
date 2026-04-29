@@ -15,7 +15,6 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
 import { AnimalService } from '../../../../core/service/animal.service';
 import { MedicalExamsService } from '../../../../core/service/medical-exams.service';
 import { MedicalRecord } from '../../models/medicine.models';
-
 import { ConfirmModalComponent } from '../../../../shared/components/confirm-modal/confirm-modal.component';
 
 @Component({
@@ -31,12 +30,10 @@ export class MedicalExamsTabComponent implements OnInit, OnChanges {
   private animalService = inject(AnimalService);
   private medicalExamsService = inject(MedicalExamsService);
 
-  // --- СИГНАЛИ ДЛЯ МОДАЛОК ---
   isAddModalOpen = signal(false);
   isEditExamModalOpen = signal(false);
   selectedRecord: MedicalRecord | null = null;
 
-  // --- СИГНАЛИ ДЛЯ МОДАЛКИ ПІДТВЕРДЖЕННЯ ВИДАЛЕННЯ ---
   isConfirmOpen = signal(false);
   confirmConfig = signal({
     title: '',
@@ -46,19 +43,16 @@ export class MedicalExamsTabComponent implements OnInit, OnChanges {
     action: () => {},
   });
 
-  // --- СИГНАЛИ ДЛЯ ТАБЛИЦІ ТА ПАГІНАЦІЇ ---
   medicalExams = signal<any[]>([]);
   currentPage = signal(1);
   pageSize = signal(9);
   totalCount = signal(0);
   totalPages = computed(() => Math.ceil(this.totalCount() / this.pageSize()) || 1);
 
-  // --- СИГНАЛИ ДЛЯ ВИПАДАЙКИ ТВАРИН ---
   animalSearchTerm = signal('');
   isAnimalsDropdownOpen = signal(false);
   animalsList = signal<any[]>([]);
 
-  // --- ДАНІ ФОРМ ---
   newExamRecord = {
     animalId: null as number | null,
     examDate: '',
@@ -80,7 +74,6 @@ export class MedicalExamsTabComponent implements OnInit, OnChanges {
     this.loadMedicalExams();
   }
 
-  // Оновлюємо дані, коли змінюється рядок пошуку від батьківського компонента
   ngOnChanges(changes: SimpleChanges) {
     if (changes['searchQuery'] && !changes['searchQuery'].isFirstChange()) {
       this.currentPage.set(1);
@@ -105,7 +98,15 @@ export class MedicalExamsTabComponent implements OnInit, OnChanges {
     this.loadMedicalExams();
   }
 
-  // --- ЛОГІКА ПОШУКОВОЇ ВИПАДАЙКИ ТВАРИН ---
+  // ДАТА БАГ ВИПРАВЛЕНО: рядок 'YYYY-MM-DD' без часу парситься JS як UTC-опівніч,
+  // тому при відображенні в timezone UTC+2/+3 дата зсувалась на +1 день.
+  // Додаємо T12:00:00 (полудень) — тоді timezone ніколи не перекине дату.
+  toDisplayDate(isoDate: string | null | undefined): Date | null {
+    if (!isoDate) return null;
+    const datePart = isoDate.split('T')[0];
+    return new Date(datePart + 'T12:00:00');
+  }
+
   onAnimalInput(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.animalSearchTerm.set(value);
@@ -113,7 +114,6 @@ export class MedicalExamsTabComponent implements OnInit, OnChanges {
     if (this.isAddModalOpen()) this.newExamRecord.animalId = null;
     if (this.isEditExamModalOpen()) this.editExamData.animalId = null;
 
-    // isAdopted = false
     this.animalService.getAnimals(1, 10, value, [], null, null, null, false).subscribe({
       next: (res: any) => this.animalsList.set(res.items || []),
     });
@@ -130,7 +130,6 @@ export class MedicalExamsTabComponent implements OnInit, OnChanges {
     setTimeout(() => this.isAnimalsDropdownOpen.set(false), 200);
   }
 
-  // --- ЛОГІКА ВІДКРИТТЯ МОДАЛОК ---
   openAddExamModal() {
     this.isAddModalOpen.set(true);
     this.animalSearchTerm.set('');
@@ -145,12 +144,12 @@ export class MedicalExamsTabComponent implements OnInit, OnChanges {
       id: record.id || 0,
       animalId: record.animalId || null,
       examDate: record.examDate ? record.examDate.split('T')[0] : '',
-      temperature: record.temperature || record.temp || null,
+      temperature: record.temperature || (record as any).temp || null,
       weight: record.weight || null,
       notes: record.notes || '',
     };
 
-    this.animalSearchTerm.set(record.animalName || record.patientName || '');
+    this.animalSearchTerm.set(record.animalName || (record as any).patientName || '');
     this.animalService.getAnimals(1, 10, '', [], null, null, null, false).subscribe({
       next: (res: any) => this.animalsList.set(res.items || []),
     });
@@ -158,7 +157,6 @@ export class MedicalExamsTabComponent implements OnInit, OnChanges {
     this.isEditExamModalOpen.set(true);
   }
 
-  // --- УНІВЕРСАЛЬНИЙ МЕТОД ПІДТВЕРДЖЕННЯ ---
   openConfirm(
     title: string,
     message: string,
@@ -170,7 +168,6 @@ export class MedicalExamsTabComponent implements OnInit, OnChanges {
     this.isConfirmOpen.set(true);
   }
 
-  // --- CRUD ОПЕРАЦІЇ ---
   onAddRecord() {
     this.medicalExamsService.addMedicalExams(this.newExamRecord).subscribe({
       next: () => {
@@ -211,7 +208,6 @@ export class MedicalExamsTabComponent implements OnInit, OnChanges {
       'Видалити',
       'btn-danger',
       () => {
-        // Тут вкажи метод сервісу (наприклад deleteMedicalExams або deleteMedicalExam залежно від того, як ти його назвала)
         this.medicalExamsService.deleteMedicalExams(id).subscribe({
           next: () => {
             this.isConfirmOpen.set(false);

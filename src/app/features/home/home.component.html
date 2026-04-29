@@ -165,7 +165,11 @@
           <div class="pet-card" (click)="openAdoptionModal(pet)">
             <div class="pet-card-img">
               @if (getAnimalPhoto(pet)) {
-                <img [src]="getAnimalPhoto(pet)" [alt]="pet.name" loading="lazy">
+                <img
+                  [src]="getAnimalPhoto(pet)"
+                  [alt]="pet.name"
+                  loading="lazy"
+                  (error)="onImageError(pet)">
               } @else {
                 <div class="pet-no-photo">
                   <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">

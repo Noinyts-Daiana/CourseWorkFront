@@ -12,43 +12,63 @@ export class UserService {
     return this.http.get(`${this.apiUrl}/me`, { withCredentials: true });
   }
 
+  // БАГ 2 ВИПРАВЛЕНО: відправляємо firstName + lastName окремо (бекенд не знає fullName),
+  // і обов'язково передаємо roleId щоб не скидалось на дефолт (1 = administrator)
   updateProfile(regData: any) {
-    const dataToSend = {
-      fullName: regData.fullName,
-      email: regData.email,
-    };
-
-    return this.http.put(`${this.apiUrl}/me`, dataToSend, { withCredentials: true });
+    return this.http.put(
+      `${this.apiUrl}/me`,
+      {
+        firstName: regData.firstName,
+        lastName: regData.lastName,
+        email: regData.email,
+        roleId: regData.roleId ?? 0,
+        isActive: true,
+      },
+      { withCredentials: true },
+    );
   }
 
   changePassword(regData: any) {
-    const dataToSend = {
-      currentPassword: regData.currentPassword,
-      newPassword: regData.newPassword,
-      confirmPassword: regData.confirmPassword,
-    };
-
-    return this.http.put(`${this.apiUrl}/me/password`, dataToSend, { withCredentials: true });
+    return this.http.put(
+      `${this.apiUrl}/me/password`,
+      {
+        currentPassword: regData.currentPassword,
+        newPassword: regData.newPassword,
+        confirmPassword: regData.confirmPassword,
+      },
+      { withCredentials: true },
+    );
   }
 
+  // БАГ 3 ВИПРАВЛЕНО: теж відправляємо firstName + lastName окремо
   editUser(id: number, regData: any) {
-    const dataToSend = {
-      fullName: regData.fullName,
-      email: regData.email,
-      roleId: regData.roleId,
-    };
-    return this.http.put(`${this.apiUrl}/${id}`, dataToSend, { withCredentials: true });
+    return this.http.put(
+      `${this.apiUrl}/${id}`,
+      {
+        firstName: regData.firstName,
+        lastName: regData.lastName,
+        email: regData.email,
+        roleId: regData.roleId,
+        isActive: regData.isActive ?? true,
+      },
+      { withCredentials: true },
+    );
   }
 
+  // БАГ 3 ВИПРАВЛЕНО: те саме для створення нового користувача
   addUser(regData: any) {
-    const dataToSend = {
-      fullName: regData.fullName,
-      email: regData.email,
-      roleId: regData.roleId,
-      password: regData.password,
-    };
-
-    return this.http.post(`${this.apiUrl}`, dataToSend, { withCredentials: true });
+    return this.http.post(
+      `${this.apiUrl}`,
+      {
+        firstName: regData.firstName,
+        lastName: regData.lastName,
+        email: regData.email,
+        roleId: regData.roleId,
+        password: regData.password,
+        isActive: true,
+      },
+      { withCredentials: true },
+    );
   }
 
   getUserById(id: number): Observable<any> {
@@ -72,10 +92,7 @@ export class UserService {
 
     if (searchTerm) params = params.set('searchTerm', searchTerm);
     if (roleId > 0) params = params.set('roleId', roleId.toString());
-
-    if (isActive !== null) {
-      params = params.set('isActive', isActive.toString());
-    }
+    if (isActive !== null) params = params.set('isActive', isActive.toString());
 
     return this.http.get(`${this.apiUrl}`, { params, withCredentials: true });
   }
@@ -95,6 +112,7 @@ export class UserService {
       { withCredentials: true },
     );
   }
+
   getAvailableAnimals(): Observable<any[]> {
     return this.http.get<any[]>(`${this.adoptUrl}/available`, { withCredentials: true });
   }

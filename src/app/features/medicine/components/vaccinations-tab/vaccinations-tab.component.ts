@@ -30,12 +30,10 @@ export class VaccinationsTabComponent implements OnInit, OnChanges {
   private animalService = inject(AnimalService);
   private vacctinationsService = inject(VaccinationsService);
 
-  // --- СИГНАЛИ ДЛЯ МОДАЛОК ---
   isVaccineModalOpen = signal(false);
   isEditVaccineModalOpen = signal(false);
   editingVaccineRecord: VaccineRecord | null = null;
 
-  // --- СИГНАЛИ ДЛЯ МОДАЛКИ ПІДТВЕРДЖЕННЯ ВИДАЛЕННЯ ---
   isConfirmOpen = signal(false);
   confirmConfig = signal({
     title: '',
@@ -45,7 +43,6 @@ export class VaccinationsTabComponent implements OnInit, OnChanges {
     action: () => {},
   });
 
-  // --- СИГНАЛИ ДЛЯ ТАБЛИЦІ ТА ПАГІНАЦІЇ ---
   animals = signal<any[]>([]);
   vaccineExams = signal<any[]>([]);
   currentPage = signal(1);
@@ -53,16 +50,13 @@ export class VaccinationsTabComponent implements OnInit, OnChanges {
   totalCount = signal(0);
   totalPages = computed(() => Math.ceil(this.totalCount() / this.pageSize()) || 1);
 
-  // --- СИГНАЛИ ДЛЯ ВИПАДАЙКИ ТВАРИН ---
   animalSearchTerm = signal('');
   isAnimalsDropdownOpen = signal(false);
   animalsList = signal<any[]>([]);
 
-  // --- СИГНАЛИ ДЛЯ ВИПАДАЙКИ ВАКЦИН ---
   vaccineSearchTerm = signal('');
   isVaccineDropdownOpen = signal(false);
 
-  // --- ДАНІ ФОРМ ---
   newVaccinationRecord = {
     animalId: null as number | null,
     vaccineName: '',
@@ -82,11 +76,10 @@ export class VaccinationsTabComponent implements OnInit, OnChanges {
     this.loadVaccinations();
   }
 
-  // Відслідковуємо зміни у рядку пошуку від батьківського компонента
   ngOnChanges(changes: SimpleChanges) {
     if (changes['searchQuery'] && !changes['searchQuery'].isFirstChange()) {
-      this.currentPage.set(1); // Скидаємо на першу сторінку
-      this.loadVaccinations(); // Робимо новий запит
+      this.currentPage.set(1);
+      this.loadVaccinations();
     }
   }
 
@@ -107,7 +100,26 @@ export class VaccinationsTabComponent implements OnInit, OnChanges {
     this.loadVaccinations();
   }
 
-  // --- ЛОГІКА ПОШУКОВОЇ ВИПАДАЙКИ ТВАРИН ---
+  // --- ДАТА БАГ ВИПРАВЛЕНО ---
+  // Проблема: рядок 'YYYY-MM-DD' парситься JS як UTC-опівніч,
+  // і при відображенні в локальній timezone (UTC+2/+3) дата зсувалась на +1 день.
+  // Рішення: додаємо 'T12:00:00' щоб дата була посередині дня і timezone не впливав.
+  toLocalDateString(isoDate: string | null | undefined): string {
+    if (!isoDate) return '';
+    // Якщо є час — беремо тільки дату
+    const datePart = isoDate.split('T')[0];
+    return datePart;
+  }
+
+  // При відображенні дати в шаблоні через pipe 'date' — передаємо дату з часом
+  toDisplayDate(isoDate: string | null | undefined): Date | null {
+    if (!isoDate) return null;
+    const datePart = isoDate.split('T')[0];
+    // Додаємо noon щоб уникнути зсуву timezone
+    return new Date(datePart + 'T12:00:00');
+  }
+
+  // --- ПОШУК ТВАРИН ---
   onAnimalInput(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.animalSearchTerm.set(value);
@@ -131,26 +143,20 @@ export class VaccinationsTabComponent implements OnInit, OnChanges {
     setTimeout(() => this.isAnimalsDropdownOpen.set(false), 200);
   }
 
-  // --- ЛОГІКА ПОШУКОВОЇ ВИПАДАЙКИ ВАКЦИН ---
+  // --- ПОШУК ВАКЦИН ---
   filteredVaccines = computed(() => {
     const term = this.vaccineSearchTerm().toLowerCase();
-
-    // Дістаємо всі вакцини з таблиці, відкидаємо пусті і залишаємо тільки унікальні назви
     const existingVaccines = this.vaccineExams()
       .map((v) => v.vaccineName)
       .filter((v) => v);
-
     const allUnique = Array.from(new Set(existingVaccines));
-
-    // Якщо нічого не введено - показуємо всі унікальні з бази. Інакше - фільтруємо.
     if (!term) return allUnique;
-    return allUnique.filter((v) => v.toLowerCase().includes(term));
+    return allUnique.filter((v: string) => v.toLowerCase().includes(term));
   });
 
   onVaccineInput(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.vaccineSearchTerm.set(value);
-
     if (this.isVaccineModalOpen()) this.newVaccinationRecord.vaccineName = value;
     if (this.isEditVaccineModalOpen()) this.editVaccineData.vaccineName = value;
   }
@@ -166,7 +172,7 @@ export class VaccinationsTabComponent implements OnInit, OnChanges {
     setTimeout(() => this.isVaccineDropdownOpen.set(false), 200);
   }
 
-  // --- ЛОГІКА ВІДКРИТТЯ МОДАЛОК ---
+  // --- ВІДКРИТТЯ МОДАЛОК ---
   openAddVaccineModal() {
     this.isVaccineModalOpen.set(true);
     this.animalSearchTerm.set('');
@@ -183,21 +189,25 @@ export class VaccinationsTabComponent implements OnInit, OnChanges {
       id: vaccine.id || 0,
       animalId: vaccine.animalId || null,
       vaccineName: vaccine.vaccineName || '',
-      dateAdministered: vaccine.dateAdministered ? vaccine.dateAdministered.split('T')[0] : '',
-      nextDueDate: vaccine.nextDueDate ? vaccine.nextDueDate.split('T')[0] : '',
+      // ДАТА БАГ ВИПРАВЛЕНО: беремо тільки дату без часу
+      dateAdministered: this.toLocalDateString(vaccine.dateAdministered),
+      nextDueDate: this.toLocalDateString(vaccine.nextDueDate),
     };
 
-    this.animalSearchTerm.set(vaccine.animalName || vaccine.patientName || '');
+    // ТВАРИНИ БАГ ВИПРАВЛЕНО: встановлюємо пошуковий термін з ім'ям тварини
+    this.animalSearchTerm.set(vaccine.animalName || (vaccine as any).patientName || '');
     this.vaccineSearchTerm.set(vaccine.vaccineName || '');
 
+    // ТВАРИНИ БАГ ВИПРАВЛЕНО: завантажуємо тварин в animalsList (не в animals!)
     this.animalService.getAnimals(1, 10, '', [], null, null, null, false).subscribe({
-      next: (res: any) => this.animalsList.set(res.items || []),
+      next: (res: any) => {
+        this.animalsList.set(res.items || []);
+        // Відкриваємо модалку тільки після завантаження тварин
+        this.isEditVaccineModalOpen.set(true);
+      },
     });
-
-    this.isEditVaccineModalOpen.set(true);
   }
 
-  // Метод для відкриття вікна підтвердження видалення
   confirmDelete(id: number, name: string) {
     this.confirmConfig.set({
       title: 'Видалити вакцинацію?',
@@ -220,7 +230,6 @@ export class VaccinationsTabComponent implements OnInit, OnChanges {
     this.isConfirmOpen.set(true);
   }
 
-  // --- CRUD ОПЕРАЦІЇ ---
   onSaveVaccination() {
     this.vacctinationsService.addVaccines(this.newVaccinationRecord).subscribe({
       next: () => {
